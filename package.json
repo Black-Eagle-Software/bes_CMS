@@ -1,0 +1,14 @@
+{
+    "name": "bes_cms-api",
+    "main": "server.js",
+    "dependencies": {
+        "body-parser": "^1.18.3",
+        "crypto": "^1.0.1",
+        "express": "^4.16.4",
+        "mysql": "^2.16.0",
+        "nodemon": "^1.18.6"
+    },
+    "scripts": {
+        "start": "nodemon server.js"
+    }
+}
