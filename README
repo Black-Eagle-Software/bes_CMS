@@ -10,6 +10,7 @@
 /media/<id>         /m/<id>     GET             Returns the media with id of <id>
 /media/<id>/tags    /m/<id>/t   GET             Returns all tags for the media with id of <id>
 /tags               /t          GET             Returns all public tags
+/tags?limit=#       /t?limit=#  GET             Returns the last # of public tags
 /tags/<id>          /t/<id>     GET             Returns the tag with id of <id>
 #There are no public albums
 /albums/<id>        /a/<id>     GET             Returns the album with id of <id>
