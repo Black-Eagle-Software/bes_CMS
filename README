@@ -17,6 +17,7 @@
 #There are no public albums
 /albums/<id>            /a/<id>         GET             Returns the album with id of <id>
 /albums/<id>/media      /a/<id>/m       GET             Returns all the media for the album with id of <id>
+/albums/<id>/media/a-b  /a/<id>/m/a-b   GET             Returns all the media for hte album with id of <id> between a and b (for pagination)
 
 /users                  /u              POST            Add a new user and return it with an id attribute added
 /users/<id>/media       /u/<id>/m       POST            Adds a new media item for user with id of <id> and returns the media with an id attribute added
