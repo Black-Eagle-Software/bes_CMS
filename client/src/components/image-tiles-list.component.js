@@ -18,7 +18,7 @@ export default class ImageTilesList extends React.Component{
                 {this.props.media.map(media=>{
                     //const imgSrc = `${media.filePath}/thumbnails/${media.thumbnailFilename}`
                     
-                    return <ImageTile key={media.file.id} media={media.file} imgSrc={media.thumb} onImageClick={(image)=>this.handleImageClick(image)}/>
+                    return <ImageTile key={media.file.id} media={media} onImageClick={(image)=>this.handleImageClick(image)}/>
                 })}
             </div>
         );

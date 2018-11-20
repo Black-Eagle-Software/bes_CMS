@@ -2,7 +2,7 @@ import React from 'react';
 //import axios from 'axios';
 import Header from '../components/header.component';
 import ImageTilesList from '../components/image-tiles-list.component';
-import ImageZoom from '../components/image-zoom.component';
+import MediaZoom from '../components/media-zoom.component';
 import UploadMedia from '../components/upload.component';
 import Tags from '../components/tags.component';
 
@@ -28,7 +28,7 @@ export default class AppContainer extends React.Component{
         .then(res=>{
             let temp_media = [];
             for(let i = 0; i < res.length; i++){
-                temp_media.push({file: res[i], thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
+                temp_media.push({file: res[i], src_file: `${res[i].filePath}/${res[i].hashFilename}`, thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
             }
             this.setState({media: temp_media});
         });
@@ -79,7 +79,7 @@ export default class AppContainer extends React.Component{
         return(
             <div id={"content"} style={contStyle}>
                 {this.state.is_image_focused &&
-                    <ImageZoom image_source={this.state.zoomed_image} onCloseClick={()=>this.handleCloseClick()}/>
+                    <MediaZoom image_source={this.state.zoomed_image} onCloseClick={()=>this.handleCloseClick()}/>
                 }                
                 <Header onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
                 {this.state.show_tags && 

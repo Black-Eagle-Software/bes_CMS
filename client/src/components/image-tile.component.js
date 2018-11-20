@@ -12,9 +12,12 @@ export default class ImageTile extends React.PureComponent{
             marginBottom: "1em"
         };
 
+        const imgSrc = this.props.media.thumb;
+        const filename = this.props.media.file.originalFilename;
+
         return(
             <div style={contStyle} onClick={()=>this.handleImageClick(this.props.media)}>
-                <img src={this.props.imgSrc} alt={this.props.media.originalFilename} />
+                <img src={imgSrc} alt={filename} />
             </div>
         );
     }
