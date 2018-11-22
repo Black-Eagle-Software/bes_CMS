@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const routes = require('./routes');
 const mysql = require('mysql');
 const uuid = require('uuid/v4');
+const dBase_config = require('./dbase/config');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -10,12 +11,8 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 8080;    //set our port
 
 app.use((req, res, next)=>{
-    res.locals.connection = mysql.createConnection({
-        host: "localhost",
-        user: "besCMS",
-        password: "Wr3tch3d",
-        database: "besCMS"
-    });
+    let config = new dBase_config();
+    res.locals.connection = mysql.createConnection(config.getConfig());
     res.locals.connection.connect();
     next();
 });
