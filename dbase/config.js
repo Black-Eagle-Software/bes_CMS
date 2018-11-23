@@ -1,18 +1,22 @@
+require('dotenv').config();
+
 class dBase_Config{
     getConfig(production = false){
+        console.log(production);
+        let env = process.env;
         if(production){
             return {
-                host: "localhost",
-                user: "besCMS",
-                password: "6a7811def0f2aab5",
-                database: "besCMS"
+                host: env.DBASE_HOST_PROD,
+                user: env.DBASE_USER_PROD,
+                password: env.DBASE_PASSWORD_PROD,
+                database: env.DBASE_DATABASE_PROD
             };
         }else{
             return {
-                host: "localhost",
-                user: "besCMS_dev",
-                password: "ef7b47e5",
-                database: "besCMS_dev"
+                host: env.DBASE_HOST_DEV,
+                user: env.DBASE_USER_DEV,
+                password: env.DBASE_PASSWORD_DEV,
+                database: env.DBASE_DATABASE_DEV
             };
         }
     }
