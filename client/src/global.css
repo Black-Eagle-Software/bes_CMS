@@ -60,3 +60,11 @@ html, body{
     background: #333333;
     color: #f5f5f5;
 }
+
+.tile-bg{
+    background: #f5f5f5;
+}
+.tile-bg:hover{
+    background: #ebebeb;
+    border: 2px solid #1f1f1f;
+}
