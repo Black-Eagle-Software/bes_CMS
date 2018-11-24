@@ -1,5 +1,6 @@
 const routes = require('express').Router();
 const albums = require('./albums');
+const login = require('./login');
 const media = require('./media');
 const tags = require('./tags');
 const users = require('./users');
@@ -10,6 +11,8 @@ routes.get('/api', (req, res)=>{
 
 routes.use('/api/albums', albums);
 routes.use('/api/a', albums);
+
+routes.use('/api/login', login);
 
 routes.use('/api/media', media);
 routes.use('/api/m', media);
