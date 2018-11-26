@@ -28,9 +28,21 @@ login.post('/', (req, res, next)=>{
         res.locals.connection.end();
     });*/
     passport.authenticate('local', (err, user, info)=>{
+        if(info) {
+            return res.send(info.message); 
+        }
+        if(err){
+            return next(err);
+        }
+        if(!user){
+            return res.redirect('/');   //questionable
+        }
         console.log(`req.session.passport ${JSON.stringify(req.session.passport)}`);
         console.log(`req.user ${JSON.stringify(req.user)}`);
         req.login(user, (err)=>{
+            if(err){
+                return next(err);
+            }
             console.log(`req.session.passport ${JSON.stringify(req.session.passport)}`);
             console.log(`req.user ${JSON.stringify(req.user)}`);
             return res.send('Logged in');
