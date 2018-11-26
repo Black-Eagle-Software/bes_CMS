@@ -12,6 +12,6 @@ module.exports = (req, res)=>{
             //user.setPassword("Penis");
             res.status(200).send(JSON.stringify(results));            
         }
-        res.locals.connection.end();
+        //res.locals.connection.end();
     });
 };

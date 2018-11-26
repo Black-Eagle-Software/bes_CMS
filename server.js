@@ -5,6 +5,9 @@ const mysql = require('mysql');
 const uuid = require('uuid/v4');
 const session = require('express-session');
 require('dotenv').config();
+const passport = require('passport');
+const localStrategy = require('passport-local').Strategy;
+const User = require('./models/user');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -12,10 +15,8 @@ app.use(bodyParser.json());
 var env = process.env;
 
 var port = env.PORT || 8080;    //set our port
-
-//configure our session-store in the database
-var mysqlSessionStore = require('express-mysql-session')(session);
-let options = env.IS_PRODUCTION === "true" ? {
+//configure mysql connection to database
+let config = env.IS_PRODUCTION === "true" ? {   //.env variables are always string
     host: env.DBASE_HOST_PROD,
     user: env.DBASE_USER_PROD,
     password: env.DBASE_PASSWORD_PROD,
@@ -26,8 +27,51 @@ let options = env.IS_PRODUCTION === "true" ? {
     password: env.DBASE_PASSWORD_DEV,
     database: env.DBASE_DATABASE_DEV
 };
-var sessionConnection = mysql.createConnection(options);
-var sessionStore = new mysqlSessionStore({}, sessionConnection);
+var connection = mysql.createConnection(config);    //single connection object for all dbase interactions
+
+//configure passport to use our local strategy
+passport.use(new localStrategy(
+    { 
+        usernameField: 'email',
+        passwordField: 'password',
+        passReqToCallback: true
+    },
+    (req, email, password, done)=>{        
+        connection.query("SELECT * FROM users WHERE email=?", email, (error, results, fields)=>{
+            //connection.end();
+            if(error) return done(error);            
+            if(results.length === 0){
+                return done(null, false, req.flash('loginMessage', 'No user found'));
+            }else{
+                //email exists in the database, so now check the password
+                let user = new User(JSON.stringify(results));
+                let allowed = user.verifyPassword(password);
+                if(!allowed){
+                    return done(null, false, req.flash('loginMessage', 'Wrong or invalid password specified'));
+                } else {            
+                    return done(null, user);            
+                }
+            }
+        });
+    }
+));
+passport.serializeUser((user, done)=>{
+    done(null, user.id);
+});
+passport.deserializeUser((id, done)=>{
+    connection.query("SELECT * FROM users WHERE id=?", id, (error, results, fields)=>{
+        //connection.end();
+        if(error){
+            return done(null, error);
+        }
+        done(null, results[0]);
+    });
+});
+
+//configure our session-store in the database
+var mysqlSessionStore = require('express-mysql-session')(session);
+var sessionConnection = connection;
+var sessionStore = new mysqlSessionStore({clearExpired: true, expiration: 3600000}, sessionConnection);
 
 //add & configure sessions
 app.use(session({
@@ -42,22 +86,13 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 //configure the database connection
 app.use((req, res, next)=>{
-    let config = env.IS_PRODUCTION === "true" ? {   //.env variables are always string
-        host: env.DBASE_HOST_PROD,
-        user: env.DBASE_USER_PROD,
-        password: env.DBASE_PASSWORD_PROD,
-        database: env.DBASE_DATABASE_PROD
-    } : {
-        host: env.DBASE_HOST_DEV,
-        user: env.DBASE_USER_DEV,
-        password: env.DBASE_PASSWORD_DEV,
-        database: env.DBASE_DATABASE_DEV
-    };
-    res.locals.connection = mysql.createConnection(config);
-    res.locals.connection.connect();
+    res.locals.connection = connection;
+    //res.locals.connection.connect();
     next();
 });
 

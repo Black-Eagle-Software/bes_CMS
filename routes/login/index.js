@@ -1,5 +1,6 @@
 const User = require('../../models/user');
 const login = require('express').Router();
+const passport = require('passport');
 
 
 login.get('/', (req, res)=>{
@@ -7,10 +8,10 @@ login.get('/', (req, res)=>{
     res.send('Login page')
 });
 
-login.post('/', (req, res)=>{
+login.post('/', (req, res, next)=>{
     //attempted login.  check if they're a valid user from here.
     //console.log(req.body);
-    res.locals.connection.query("SELECT * FROM users WHERE email=?", [req.body.email], (error, results, fields)=>{
+    /*res.locals.connection.query("SELECT * FROM users WHERE email=?", [req.body.email], (error, results, fields)=>{
         if(error) throw error;
         if(results.length === 0){
             res.status(404).send("Invalid user email specified");
@@ -25,7 +26,16 @@ login.post('/', (req, res)=>{
             }
         }
         res.locals.connection.end();
-    });    
+    });*/
+    passport.authenticate('local', (err, user, info)=>{
+        console.log(`req.session.passport ${JSON.stringify(req.session.passport)}`);
+        console.log(`req.user ${JSON.stringify(req.user)}`);
+        req.login(user, (err)=>{
+            console.log(`req.session.passport ${JSON.stringify(req.session.passport)}`);
+            console.log(`req.user ${JSON.stringify(req.user)}`);
+            return res.send('Logged in');
+        });
+    })(req, res, next);    
 });
 
 module.exports = login;

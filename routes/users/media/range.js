@@ -9,6 +9,6 @@ module.exports = (req, res)=>{
         }else{
             res.status(200).send(JSON.stringify(results));            
         }
-        res.locals.connection.end();
+        //res.locals.connection.end();
     });
 };
