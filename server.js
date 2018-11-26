@@ -1,3 +1,8 @@
+/* 
+    A lot of this is taken from here: https://medium.com/@evangow/server-authentication-basics-express-sessions-passport-and-curl-359b7456003d
+    It is incredibly informative and useful.
+*/
+
 const app = require('express')();
 const bodyParser = require('body-parser');
 const routes = require('./routes');
@@ -7,6 +12,7 @@ const session = require('express-session');
 require('dotenv').config();
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
+const axios = require('axios');
 const User = require('./models/user');
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,29 +43,29 @@ passport.use(new localStrategy(
         passReqToCallback: true
     },
     (req, email, password, done)=>{
-        fetch(`/api/users?email=${email}`).then(data=>data.json()).then(results=>{
+        axios.get(`http://localhost:8080/api/users?email=${email}`).then(results=>{
             //email exists in the database, so now check the password
+            //console.log(results.data[0]);
+            results = JSON.stringify(results.data[0]);
             let user = new User(results);
             let allowed = user.verifyPassword(password);
             if(!allowed){
-                return done(null, false, req.flash('loginMessage', 'Wrong or invalid password specified'));
+                return done(null, false, {message: 'Wrong or invalid password specified'});
             } else {            
-                return done(null, user);            
+                return done(null, user);
             }
-        });
+        }).catch(error => done(error));
     }
 ));
 passport.serializeUser((user, done)=>{
     done(null, user.id);
 });
 passport.deserializeUser((id, done)=>{
-    connection.query("SELECT * FROM users WHERE id=?", id, (error, results, fields)=>{
-        //connection.end();
-        if(error){
-            return done(null, error);
-        }
-        done(null, results[0]);
-    });
+    axios.get(`http://localhost:8080/api/users/${id}`).then(results=>{
+        //console.log(results.data[0]);
+        results = JSON.stringify(results.data[0]);
+        done(null, results);
+    }).catch(error => done(error, false));
 });
 
 //configure our session-store in the database
