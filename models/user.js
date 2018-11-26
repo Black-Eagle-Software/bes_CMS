@@ -3,6 +3,7 @@ const crypto = require('crypto');
 class User{
     constructor(props){
         let inputs = JSON.parse(props)[0];
+        this.id = inputs.id;
         this.name = inputs.name;
         this.email = inputs.email;
         this.password = inputs.password;
