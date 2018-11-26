@@ -3,12 +3,17 @@ const crypto = require('crypto');
 class User{
     constructor(props){
         let inputs = JSON.parse(props)[0];
+        if(!inputs) inputs = JSON.parse(props);
+        if(!inputs) throw error(`Can not initialize User object from given props: ${props}`);
+        //console.log(inputs);
+        //console.log(JSON.parse(props));
         this.id = inputs.id;
         this.name = inputs.name;
         this.email = inputs.email;
         this.password = inputs.password;
         this.salt = inputs.salt;
         this.requiresPasswordReset = inputs.requiresPasswordReset;
+        //console.log(`ID: ${this.id} name: ${this.name} email: ${this.email} password: ${this.password} salt: ${this.salt}`);
     }
     verifyPassword(input){
         if(this.password === null || this.password === "" || this.salt === null || this.salt === ""
