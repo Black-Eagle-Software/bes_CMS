@@ -36,21 +36,15 @@ passport.use(new localStrategy(
         passwordField: 'password',
         passReqToCallback: true
     },
-    (req, email, password, done)=>{        
-        connection.query("SELECT * FROM users WHERE email=?", email, (error, results, fields)=>{
-            //connection.end();
-            if(error) return done(error);            
-            if(results.length === 0){
-                return done(null, false, req.flash('loginMessage', 'No user found'));
-            }else{
-                //email exists in the database, so now check the password
-                let user = new User(JSON.stringify(results));
-                let allowed = user.verifyPassword(password);
-                if(!allowed){
-                    return done(null, false, req.flash('loginMessage', 'Wrong or invalid password specified'));
-                } else {            
-                    return done(null, user);            
-                }
+    (req, email, password, done)=>{
+        fetch(`/api/users?email=${email}`).then(data=>data.json()).then(results=>{
+            //email exists in the database, so now check the password
+            let user = new User(results);
+            let allowed = user.verifyPassword(password);
+            if(!allowed){
+                return done(null, false, req.flash('loginMessage', 'Wrong or invalid password specified'));
+            } else {            
+                return done(null, user);            
             }
         });
     }
