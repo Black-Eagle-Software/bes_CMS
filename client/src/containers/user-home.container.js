@@ -6,7 +6,7 @@ import MediaZoom from '../components/media-zoom.component';
 import UploadMedia from '../components/upload.component';
 import Tags from '../components/tags.component';
 
-export default class AppContainer extends React.Component{
+export default class UserHomeContainer extends React.Component{
     constructor(props){
         super(props);
 
@@ -34,8 +34,6 @@ export default class AppContainer extends React.Component{
         });
 
         //get our tags list
-        //this needs to change to the user-specific version
-        //fetch("/api/u/#/t")
         fetch("/api/t")
         .then(data=>data.json())
         .then(res=>this.setState({tags: res}));
@@ -69,9 +67,11 @@ export default class AppContainer extends React.Component{
     render(){
         const contStyle = {
             display: "flex",
-            flexFlow: "row wrap"
+            flexFlow: "row wrap",
+            alignItems: "flex-start"
         };
         const pageStyle = {
+            height: "100%",
             marginLeft: "1em",
             marginRight: "1em"
         };
@@ -81,7 +81,7 @@ export default class AppContainer extends React.Component{
                 {this.state.is_image_focused &&
                     <MediaZoom image_source={this.state.zoomed_image} onCloseClick={()=>this.handleCloseClick()}/>
                 }                
-                <Header onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
+                <Header isAuthenticated={this.props.isAuthenticated} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
                 {this.state.show_tags && 
                     <Tags tags={this.state.tags}/>
                 }

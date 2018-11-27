@@ -1,5 +1,4 @@
-module.exports = (req, res)=>{
-    console.log(req.isAuthenticated());
+module.exports = (req, res)=>{    
     let limit = req.query.limit * 1;
     if(req.isAuthenticated()){        
         if(limit){

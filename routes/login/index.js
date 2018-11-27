@@ -45,7 +45,7 @@ login.post('/', (req, res, next)=>{
             }
             console.log(`req.session.passport ${JSON.stringify(req.session.passport)}`);
             console.log(`req.user ${JSON.stringify(req.user)}`);
-            return res.send('Logged in');
+            return res.status(200).send('Logged in');
         });
     })(req, res, next);    
 });

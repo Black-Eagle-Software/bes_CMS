@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 var env = process.env;
 
 var port = env.PORT || 8080;    //set our port
+
 //configure mysql connection to database
 let config = env.IS_PRODUCTION === "true" ? {   //.env variables are always string
     host: env.DBASE_HOST_PROD,

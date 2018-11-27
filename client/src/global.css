@@ -68,3 +68,8 @@ html, body{
     background: #ebebeb;
     border: 2px solid #1f1f1f;
 }
+
+.bad_input{
+    background: #fce7e6;
+    border: 2px solid #e30f01;
+}

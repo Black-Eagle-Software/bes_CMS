@@ -9,6 +9,20 @@ routes.get('/api', (req, res)=>{
     res.status(200).json({ message: "Connected!" });
 });
 
+routes.get('/credentials/check', (req, res)=>{
+    console.log(req.isAuthenticated());
+    req.isAuthenticated() ? res.status(200).send() : res.status(403).send();
+});
+
+routes.get('/home', (req, res)=>{
+    console.log(`Can see user home: ${req.isAuthenticated()}`);
+    if(req.isAuthenticated()){
+        res.status(200);
+    }else{
+        res.redirect('/');
+    }
+});
+
 routes.use('/api/albums', albums);
 routes.use('/api/a', albums);
 
