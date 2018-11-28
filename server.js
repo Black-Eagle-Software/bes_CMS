@@ -27,14 +27,16 @@ let config = env.IS_PRODUCTION === "true" ? {   //.env variables are always stri
     host: env.DBASE_HOST_PROD,
     user: env.DBASE_USER_PROD,
     password: env.DBASE_PASSWORD_PROD,
-    database: env.DBASE_DATABASE_PROD
+    database: env.DBASE_DATABASE_PROD,
+    connectionLimit: 100
 } : {
     host: env.DBASE_HOST_DEV,
     user: env.DBASE_USER_DEV,
     password: env.DBASE_PASSWORD_DEV,
-    database: env.DBASE_DATABASE_DEV
+    database: env.DBASE_DATABASE_DEV,
+    connectionLimit: 100
 };
-var connection = mysql.createConnection(config);    //single connection object for all dbase interactions
+var connection = mysql.createPool(config);    //connection pool for all dbase interactions
 
 //configure passport to use our local strategy
 passport.use(new localStrategy(
@@ -92,8 +94,20 @@ app.use(passport.session());
 
 //configure the database connection
 app.use((req, res, next)=>{
+    //from here: https://github.com/mysqljs/mysql#pooling-connections
+    //every result gets a reference to the dbase connection pool
+    //res.locals.connection.query("",(error, results, fields)=>{});
+    //if need multiple serial queries, do things by hand:
+    //res.locals.connection.getConnection((err, connection)=>{
+    //  if(err) throw err;
+    //  connection.query("", (error, results, fields)=>{
+    //      //make additional queries here    
+    //      connection.release();   //release connection when done
+    //      if(error) throw error;
+    //      //do any remaining tasks  
+    //  })        
+    //})
     res.locals.connection = connection;
-    //res.locals.connection.connect();
     next();
 });
 
