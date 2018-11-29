@@ -1,6 +1,6 @@
 {
     "name": "bes_cms-api",
-    "main": "server.js",
+    "main": "./src/server.js",
     "dependencies": {
         "axios": "^0.18.0",
         "body-parser": "^1.18.3",
@@ -16,7 +16,7 @@
         "uuid": "^3.3.2"
     },
     "scripts": {
-        "start": "nodemon server.js",
-        "start_reloading": "nodemon -L server.js"
+        "start": "nodemon ./src/server.js",
+        "start_reloading": "nodemon -L ./src/server.js"
     }
 }
