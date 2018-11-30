@@ -3,7 +3,7 @@ import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 import axios from 'axios';
 //import AuthRoute from './components/authRoute.component';
 import Landing from './containers/landing.container';
-//import UserHomeContainer from './containers/user-home.container';
+import UserHomeContainer from './containers/user-home.container';
 
 class App extends React.Component {
   constructor(props){
@@ -18,7 +18,7 @@ class App extends React.Component {
     this.verifyAuthentication();    
   }
   verifyAuthentication(){
-    axios.get('/credentials/check').then(res=>{
+    axios.get('/api/credentials/check').then(res=>{
       console.log(res.status);
       let auth = this.state.isAuthenticated;
       if(res.status === 200){
@@ -35,7 +35,7 @@ class App extends React.Component {
     });
   }
   componentDidMount(){
-    this.verifyAuthentication();
+    //this.verifyAuthentication();
   }
   render(){
     return(
@@ -47,6 +47,7 @@ class App extends React.Component {
         )} />*/}
         {/*<AuthRoute path='/home' component={UserHomeContainer}/>*/}
         {/*<AuthRoute path='/home' isAuthenticated={this.state.isAuthenticated} render={(props)=>(<UserHomeContainer isAuthenticated={this.state.isAuthenticated} {...props}/>)}/>*/}
+        <Route path='/home' render={(props)=>(<UserHomeContainer isAuthenticated={this.state.isAuthenticated} {...props}/>)}/>
         <Route path='/admin' render={()=>(<div>This is the Admin page</div>)} />
         {/*<Route render={()=>(<div>Sorry, this page does not exist.</div>)} />*/}
       </Switch>      

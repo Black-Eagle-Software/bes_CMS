@@ -9,7 +9,7 @@ app_routes.get('/', (req, res)=>{
     //var html = "<h1>I hate this at times.</h1>";
     //console.log(App);
     const html = ReactDOMServer.renderToString(
-    <ReactRouterDOM.StaticRouter location={req.url}>
+    <ReactRouterDOM.StaticRouter location={req.url} context={{}}>
         <App />
     </ReactRouterDOM.StaticRouter>
     );

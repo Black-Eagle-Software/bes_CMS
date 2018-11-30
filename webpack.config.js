@@ -8,11 +8,11 @@ var browserConfig = {
     path: path.resolve(__dirname, 'public'),
     filename: 'bundle.js',
     publicPath: '/',
-    libraryTarget: 'commonjs2'
   },
+  devtool: 'source-map',
   module: {
     rules: [
-      { test: /\.(js)$/, use: 'babel-loader' }
+      { test: /\.(js)$/, exclude: /node_modules/, use: 'babel-loader' }
     ]
   },
   plugins: [
@@ -34,9 +34,10 @@ var serverConfig = {
     filename: 'server.js',
     publicPath: '/'
   },
+  devtool: 'source-map',
   module: {
     rules: [
-      { test: /\.(js)$/, use: 'babel-loader' }
+      { test: /\.(js)$/, exclude: /node_modules/, use: 'babel-loader' }
     ]
   },
   plugins: [
