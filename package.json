@@ -1,6 +1,17 @@
 {
     "name": "bes_cms-api",
     "main": "./src/server.js",
+    "devDependencies": {
+        "@babel/cli": "^7.0.0",
+        "@babel/core": "^7.0.1",
+        "@babel/polyfill": "^7.0.0",
+        "@babel/preset-env": "^7.0.0",
+        "@babel/preset-react": "^7.0.0",
+        "babel-loader": "^8.0.4",
+        "nodemon": "^1.18.6",
+        "webpack": "^3.10.0",
+        "webpack-node-externals": "^1.6.0"
+    },
     "dependencies": {
         "axios": "^0.18.0",
         "body-parser": "^1.18.3",
@@ -10,13 +21,16 @@
         "express-mysql-session": "^2.0.1",
         "express-session": "^1.15.6",
         "mysql": "^2.16.0",
-        "nodemon": "^1.18.6",
         "passport": "^0.4.0",
         "passport-local": "^1.0.0",
+        "react": "^16.5.1",
+        "react-dom": "^16.5.1",
+        "react-router-dom": "^4.3.1",
         "uuid": "^3.3.2"
     },
     "scripts": {
-        "start": "nodemon ./src/server.js",
-        "start_reloading": "nodemon -L ./src/server.js"
+        "start": "nodemon server.js",
+        "start_reloading": "nodemon -L ./src/server.js",
+        "start_webpack": "webpack -w"
     }
 }

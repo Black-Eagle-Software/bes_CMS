@@ -3,7 +3,8 @@
     It is incredibly informative and useful.
 */
 
-const app = require('express')();
+const express = require('express');
+const app = express();
 const bodyParser = require('body-parser');
 const routes = require('./routes');
 const mysql = require('mysql');
@@ -123,6 +124,8 @@ app.use((req, res, next)=>{
     });
     next();
 });
+
+app.use(express.static("public"));
 
 app.use('/', routes);
 
