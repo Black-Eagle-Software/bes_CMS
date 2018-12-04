@@ -1,7 +1,26 @@
 import React from 'react';
+import axios from 'axios';
+import WindowNavigation from '../../helpers/windowNavigation';
+import HeaderMenu from './header-menu.component';
 
 export default class Header extends React.Component{
+    constructor(props){
+        super(props);
+
+        this.state = {
+            show_profile_menu: false
+        };
+    }
     handleBtnClick(name){
+        /*if(name === 'profile'){
+            this.setState(prevState=>({show_profile_menu: !prevState.show_profile_menu}));
+            return;
+        }*/
+        if(name === 'logout'){
+            axios.get('/api/auth/logout').then(()=>{
+                WindowNavigation.goToLocation('/');                
+            });
+        }
         this.props.onBtnClick(name);
     }
     
@@ -41,8 +60,25 @@ export default class Header extends React.Component{
                     <div className={"headerBtn"} onClick={()=>this.handleBtnClick('upload')}>Upload</div>
                 }
                 {this.props.isAuthenticated &&
-                    <div className={"headerBtn"} onClick={()=>this.handleBtnClick('profile')}>Username</div>
+                    <HeaderMenu headerName={this.props.username} menuChildren={[
+                        {
+                            id: 0,
+                            header: "Profile",
+                            onClick: ()=>this.handleBtnClick('profile')
+                        },
+                        {
+                            id: 1,
+                            header: "Logout",
+                            onClick: ()=>this.handleBtnClick('logout')
+                        }
+                    ]}/>
+                    /*<div className={"headerBtn"} onClick={()=>this.handleBtnClick('profile')}>{this.props.username}</div>*/
                 }
+                {/*this.state.show_profile_menu &&
+                    <div>
+                        <div className={"headerBtn"} onClick={()=>this.handleBtnClick('logout')}>Log out</div>
+                    </div>
+                */}
                 {!this.props.isAuthenticated &&
                     <div className={"headerBtn"} onClick={()=>this.handleBtnClick('login')}>Login</div>
                 }

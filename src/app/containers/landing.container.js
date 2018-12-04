@@ -23,7 +23,7 @@ export default class Landing extends React.Component{
     }
     handleLogin(){
         this.props.onLogin();   //go to the user's home page
-    }    
+    }  
     
     render(){
         const contStyle = {

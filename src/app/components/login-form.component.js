@@ -35,10 +35,11 @@ export default class LoginForm extends React.Component{
         }
         let data = {email: this.state.email, password: this.state.password};
         console.log(data);
-        axios.post("/api/login", data).then(res=>{
+        axios.post("/api/auth/login", data).then(res=>{
             if(res.status === 200){
-                this.setState({redirectTo: '/home'});
+                //this.setState({redirectTo: '/home'});
                 this.props.onLogin();
+                //res.redirect('/home');
             }
         });
         event.preventDefault();
@@ -46,7 +47,7 @@ export default class LoginForm extends React.Component{
 
     render(){
         if(this.state.redirectTo){
-            return <Redirect to={{pathname: this.state.redirectTo}}/>
+            return <Redirect push to={{pathname: this.state.redirectTo}}/>
         } else {
             const formStyle = {
                 display: "flex",

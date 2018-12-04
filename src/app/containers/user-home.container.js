@@ -81,7 +81,7 @@ export default class UserHomeContainer extends React.Component{
                 {this.state.is_image_focused &&
                     <MediaZoom image_source={this.state.zoomed_image} onCloseClick={()=>this.handleCloseClick()}/>
                 }                
-                <Header isAuthenticated={this.props.isAuthenticated} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
+                <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
                 {this.state.show_tags && 
                     <Tags tags={this.state.tags}/>
                 }

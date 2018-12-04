@@ -1,14 +1,22 @@
 const User = require('../../models/user');
-const login = require('express').Router();
+const auth = require('express').Router();
 const passport = require('passport');
 
 
-login.get('/', (req, res)=>{
+auth.get('/', (req, res)=>{
     console.log(req.sessionID);
-    res.send('Login page')
+    res.send('Login page');
+});
+auth.get('/check', (req, res)=>{
+    //console.log(req.isAuthenticated());
+    req.isAuthenticated() ? res.status(200).send() : res.status(403).send();
+});
+auth.get('/logout', (req, res)=>{
+    req.logout();
+    res.status(200).redirect('/');
 });
 
-login.post('/', (req, res, next)=>{
+auth.post('/login', (req, res, next)=>{
     //attempted login.  check if they're a valid user from here.
     //console.log(req.body);
     /*res.locals.connection.query("SELECT * FROM users WHERE email=?", [req.body.email], (error, results, fields)=>{
@@ -35,7 +43,8 @@ login.post('/', (req, res, next)=>{
             return next(err);
         }
         if(!user){
-            return res.redirect('/');   //questionable
+            //return res.redirect('/');   //questionable
+            return res.status(304).send('Not autheticated or authorized');
         }
         console.log(`req.session.passport ${JSON.stringify(req.session.passport)}`);
         console.log(`req.user ${JSON.stringify(req.user)}`);
@@ -46,8 +55,9 @@ login.post('/', (req, res, next)=>{
             console.log(`req.session.passport ${JSON.stringify(req.session.passport)}`);
             console.log(`req.user ${JSON.stringify(req.user)}`);
             return res.status(200).send('Logged in');
+            //return res.status(200).redirect('/home');
         });
     })(req, res, next);    
 });
 
-module.exports = login;
+module.exports = auth;

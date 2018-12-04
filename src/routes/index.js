@@ -17,14 +17,14 @@ routes.get('/credentials/check', (req, res)=>{
     req.isAuthenticated() ? res.status(200).send() : res.status(403).send();
 });*/
 
-routes.get('/home', (req, res)=>{
+/*routes.get('/home', (req, res)=>{
     console.log(`Can see user home: ${req.isAuthenticated()}`);
     if(req.isAuthenticated()){
         res.status(200);
     }else{
         res.redirect('/');
     }
-});
+});*/
 
 /*routes.use('/api/albums', albums);
 routes.use('/api/a', albums);
