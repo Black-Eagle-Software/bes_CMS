@@ -12,6 +12,9 @@ export default class HeaderMenu extends React.Component{
         this.setState(prevState=>({show_menu: !prevState.show_menu}));
     }
     render(){
+        const outerContStyle={
+            position: "relative"
+        };
         const contStyle={
             background: "#ebebeb",
             zIndex: "500"
@@ -28,7 +31,7 @@ export default class HeaderMenu extends React.Component{
 
         //this needs some work, but is fine for now
         return(
-            <div>
+            <div style={outerContStyle}>
                 <div className={"headerBtn"} onClick={()=>this.handleMenuClick()}>{this.props.headerName}</div>
                 {this.state.show_menu &&
                     <div style={contStyle}>
