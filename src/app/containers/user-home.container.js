@@ -1,5 +1,5 @@
 import React from 'react';
-//import axios from 'axios';
+import axios from 'axios';
 import Header from '../components/header.component';
 import ImageTilesList from '../components/image-tiles-list.component';
 import MediaZoom from '../components/media-zoom.component';
@@ -23,10 +23,10 @@ export default class UserHomeContainer extends React.Component{
 
     componentDidMount(){
         //read our media from the dbase
-        fetch("/api/m")
-        .then(data=>data.json())
-        .then(res=>{
+        axios.get("/api/m")
+        .then(response=>{
             let temp_media = [];
+            let res = response.data;
             for(let i = 0; i < res.length; i++){
                 temp_media.push({file: res[i], src_file: `${res[i].filePath}/${res[i].hashFilename}`, thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
             }
@@ -34,9 +34,8 @@ export default class UserHomeContainer extends React.Component{
         });
 
         //get our tags list
-        fetch("/api/t")
-        .then(data=>data.json())
-        .then(res=>this.setState({tags: res}));
+        axios.get("/api/t")
+        .then(res=>this.setState({tags: res.data}));
     }
 
     handleHeaderBtnClick(name){
