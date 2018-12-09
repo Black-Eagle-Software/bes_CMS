@@ -62,7 +62,7 @@ export default class Landing extends React.Component{
                 <Header isAuthenticated={false} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
                 <div style={pageStyle}>
                     <img style={logoStyle} src="Logo 3a_resized.png" />
-                    {!this.props.show_login && !this.state.show_register && 
+                    {!this.props.show_login && !this.props.show_register && 
                         <div style={introStyle}>
                             Welcome to the Black Eagle Software CMS.  
                             <br/>

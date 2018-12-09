@@ -41,10 +41,16 @@ class App extends React.Component {
                     WindowNavigation.goToLocation('/'); 
                     break;
         case 'login': 
-                    this.setState({show_login: true});
+                    this.setState({
+                        show_login: true,
+                        show_register: false
+                    });
                     break;
         case 'register': 
-                    this.setState({show_register: true});
+                    this.setState({
+                        show_register: true,
+                        show_login: false
+                    });
                     break;        
         case 'tags': 
                     this.setState(prevState=>({show_tags: !prevState.show_tags}));
