@@ -34,7 +34,8 @@ export default class Header extends React.Component{
             lineHeight: "2em",
             fontSize: "1.25em",
             paddingLeft: "0.5em",
-            paddingRight: "0.5em"
+            paddingRight: "0.5em",
+            zIndex: "500"
         };
         const titleStyle = {
             paddingRight: "1em"

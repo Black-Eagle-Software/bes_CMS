@@ -20,7 +20,7 @@ export default class MediaZoom extends React.Component{
             right: "0px",
             background: "rgba(15, 15, 15, 0.98)",
             color: "#f5f5f5",
-            zIndex: "500",
+            zIndex: "1000",
             padding: "70px"
         };
 
