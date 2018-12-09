@@ -2,3 +2,7 @@ node_modules
 .vscode
 .env
 /public/media
+server.js
+server.js.map
+public/bundle.js
+public/bundle.js.map
