@@ -3,7 +3,7 @@ import axios from 'axios';
 import Header from '../components/header.component';
 import ImageTilesList from '../components/image-tiles-list.component';
 import MediaZoom from '../components/media-zoom.component';
-import UploadMedia from '../components/upload.component';
+//import UploadMedia from '../components/upload.component';
 import Tags from '../components/tags.component';
 
 export default class UserHomeContainer extends React.Component{
@@ -39,7 +39,8 @@ export default class UserHomeContainer extends React.Component{
     }
 
     handleHeaderBtnClick(name){
-        switch (name){
+        this.props.onHeaderBtnClick(name);
+        /*switch (name){
             case 'ablums': break;
             case 'tags': this.setState(prevState=>({show_tags: !prevState.show_tags}));
                             break;
@@ -48,7 +49,7 @@ export default class UserHomeContainer extends React.Component{
                                 show_upload: !prevState.show_upload
                             }));
                             break;
-        }
+        }*/
     }
     handleCloseClick(){
         this.setState(prevState=>({
@@ -81,19 +82,19 @@ export default class UserHomeContainer extends React.Component{
                     <MediaZoom image_source={this.state.zoomed_image} onCloseClick={()=>this.handleCloseClick()}/>
                 }                
                 <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
-                {this.state.show_tags && 
+                {this.props.show_tags && 
                     <Tags tags={this.state.tags}/>
                 }
-                {this.state.media && !this.state.show_upload &&
+                {this.state.media &&
                     <div style={pageStyle}>
                         <h2>Recent Media</h2>
                         <ImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)}/>
                     </div>
                 }
                 
-                {this.state.show_upload &&
+                {/*this.state.show_upload &&
                     <UploadMedia tags={this.state.tags}/>
-                }
+                */}
             </div>
         );
     }

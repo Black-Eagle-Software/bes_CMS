@@ -6,6 +6,7 @@ import WindowNavigation from '../helpers/windowNavigation';
 //import Header from './components/header.component';
 import Landing from './containers/landing.container';
 import UserHomeContainer from './containers/user-home.container';
+import UploadMedia from './containers/upload.container';
 
 class App extends React.Component {
   constructor(props){
@@ -26,8 +27,26 @@ class App extends React.Component {
 
     this.state = {
       isAuthenticated: is_authorized,
-      username: username
+      username: username,
+      show_albums: false,
+      show_login: false,
+      show_tags: false
     };
+  }
+  handleHeaderBtnClick(name){
+    switch (name){
+        case 'ablums': break;
+        case 'home': break;
+        case 'login': 
+                    this.setState({show_login: true});
+                    break;
+        case 'register': break;        
+        case 'tags': this.setState(prevState=>({show_tags: !prevState.show_tags}));
+                        break;
+        case 'upload': WindowNavigation.goToLocation('/upload');
+                        break;
+        case 'default': break;
+    }
   }
   handleLogin(){
     //return <Redirect to='/home'/>
@@ -61,16 +80,33 @@ class App extends React.Component {
             {/*<Header isAuthenticated={this.state.isAuthenticated} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
 
             <Switch>
-                <Route exact path='/' render={(props, routeProps)=>(<Landing {...props} {...routeProps} onLogin={()=>this.handleLogin()}/>)} />
+                <Route exact path='/' render={(props, routeProps)=>(<Landing 
+                                                                        {...props} 
+                                                                        {...routeProps} 
+                                                                        onLogin={()=>this.handleLogin()} 
+                                                                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
+                                                                        show_login={this.state.show_login}/>)} />
                 {/*<Route path='/home' component={UserHomeContainer} />*/}
                 {/*<Route path='/home' render={(props)=>(
                 this.state.isAuthenticated ? <UserHomeContainer {...props}/> : <Redirect to='/'/>
                 )} />*/}
                 {/*<AuthRoute path='/home' component={UserHomeContainer}/>*/}
                 {/*<AuthRoute path='/home' isAuthenticated={this.state.isAuthenticated} render={(props)=>(<UserHomeContainer isAuthenticated={this.state.isAuthenticated} {...props}/>)}/>*/}
-                <Route path='/home' render={(props)=>(<UserHomeContainer isAuthenticated={this.state.isAuthenticated} username={this.state.username} {...props}/>)}/>
+                <Route path='/home' render={(props)=>(<UserHomeContainer 
+                                                        isAuthenticated={this.state.isAuthenticated} 
+                                                        username={this.state.username} 
+                                                        {...props} 
+                                                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
+                                                        show_albums={this.state.show_albums}
+                                                        show_tags={this.state.show_tags}/>)}/>
+                <Route path='/upload' render={(props)=>(<UploadMedia 
+                                                            isAuthenticated={this.state.isAuthenticated}
+                                                            username={this.state.username}
+                                                            {...props}
+                                                            onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>)}/>
                 <Route path='/admin' render={()=>(<div>This is the Admin page</div>)} />
                 {/*<Route render={()=>(<div>Sorry, this page does not exist.</div>)} />*/}
+                <Route render={(props)=><div>Page not found.</div>}/>
             </Switch>
         </div>            
     );

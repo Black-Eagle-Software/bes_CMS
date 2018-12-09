@@ -18,6 +18,10 @@ const routes = [
     {
         path: '/admin',
         req_authorization: true
+    },
+    {
+        path: '/upload',
+        req_authorization: true
     }
 ];
 
@@ -40,6 +44,11 @@ app_routes.get('*', (req, res, next)=>{
             res.status(304).redirect('/');
             next();
         }
+    }
+
+    //special case for when we're going to / but we're already authenticated
+    if(req.url === '/' && req.isAuthenticated()){
+        res.status(200).redirect('/home');
     }
 
     if(can_proceed) {
