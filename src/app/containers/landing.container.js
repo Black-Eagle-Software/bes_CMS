@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../components/header.component';
 import LoginForm from '../components/login-form.component';
+import RegisterForm from '../components/register-form.component';
 
 export default class Landing extends React.Component{
     constructor(props){
@@ -24,6 +25,9 @@ export default class Landing extends React.Component{
     }
     handleLogin(){
         this.props.onLogin();   //go to the user's home page
+    }
+    handleRegister(){
+        this.props.onRegister();
     }  
     
     render(){
@@ -67,6 +71,9 @@ export default class Landing extends React.Component{
                     }
                     {this.props.show_login &&
                         <LoginForm onLogin={()=>this.handleLogin()}/>
+                    }
+                    {this.props.show_register &&
+                        <RegisterForm onRegister={()=>this.handleRegister()}/>
                     }
                 </div>
             </div>

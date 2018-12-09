@@ -30,21 +30,28 @@ class App extends React.Component {
       username: username,
       show_albums: false,
       show_login: false,
+      show_register: false,
       show_tags: false
     };
   }
   handleHeaderBtnClick(name){
     switch (name){
         case 'ablums': break;
-        case 'home': break;
+        case 'home':
+                    WindowNavigation.goToLocation('/'); 
+                    break;
         case 'login': 
                     this.setState({show_login: true});
                     break;
-        case 'register': break;        
-        case 'tags': this.setState(prevState=>({show_tags: !prevState.show_tags}));
-                        break;
-        case 'upload': WindowNavigation.goToLocation('/upload');
-                        break;
+        case 'register': 
+                    this.setState({show_register: true});
+                    break;        
+        case 'tags': 
+                    this.setState(prevState=>({show_tags: !prevState.show_tags}));
+                    break;
+        case 'upload': 
+                    WindowNavigation.goToLocation('/upload');
+                    break;
         case 'default': break;
     }
   }
@@ -85,7 +92,8 @@ class App extends React.Component {
                                                                         {...routeProps} 
                                                                         onLogin={()=>this.handleLogin()} 
                                                                         onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
-                                                                        show_login={this.state.show_login}/>)} />
+                                                                        show_login={this.state.show_login}
+                                                                        show_register={this.state.show_register}/>)} />
                 {/*<Route path='/home' component={UserHomeContainer} />*/}
                 {/*<Route path='/home' render={(props)=>(
                 this.state.isAuthenticated ? <UserHomeContainer {...props}/> : <Redirect to='/'/>
