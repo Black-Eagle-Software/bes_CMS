@@ -26,7 +26,7 @@ export default class UploadImageTile extends React.PureComponent{
         }
         //nope!        
         return(            
-            <div style={contStyle} onClick={()=>this.handleImageClick()}>
+            <div style={contStyle} className={"tile-bg"} onClick={()=>this.handleImageClick()}>
                 {/*<img ref={this.imgRef} style={imgStyle} src={"data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={this.props.filename} />*/}
                 <img style={imgStyle} src={this.props.imgSrc} alt={this.props.filename} />
             </div>        
