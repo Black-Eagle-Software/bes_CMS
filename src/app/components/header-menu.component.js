@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 export default class HeaderMenu extends React.Component{
     constructor(props){
@@ -7,6 +8,24 @@ export default class HeaderMenu extends React.Component{
         this.state={
             show_menu: false
         };
+    }
+    componentWillMount(){
+        if(typeof window !== 'undefined'){
+            document.addEventListener('click', this.handleGlobalClick.bind(this));
+        }
+    }
+    componentWillUnmount(){
+        if(typeof window !== 'undefined'){
+            document.removeEventListener('click', this.handleGlobalClick);
+        }
+    }
+    handleGlobalClick(e){
+        if(this.state.show_menu){
+            const elmt = ReactDOM.findDOMNode(this);
+            if(!elmt.contains(e.target)){
+                this.setState(prevState=>({show_menu: !prevState.show_menu}));
+            }
+        }
     }
     handleMenuClick(){
         this.setState(prevState=>({show_menu: !prevState.show_menu}));
