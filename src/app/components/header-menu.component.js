@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+const uuid = require('uuid/v4');
+
 export default class HeaderMenu extends React.Component{
     constructor(props){
         super(props);
@@ -46,7 +48,7 @@ export default class HeaderMenu extends React.Component{
         const liStyle={
             display: "block",
             textAlign: "center"
-        }
+        };
 
         //this needs some work, but is fine for now
         return(
@@ -56,7 +58,7 @@ export default class HeaderMenu extends React.Component{
                     <div style={contStyle}>
                         <ul style={listStyle}>
                             {this.props.menuChildren.map(child=>{
-                                return <li style={liStyle} key={child.id} className={"headerBtn"} onClick={()=>child.onClick()}>
+                                return <li style={liStyle} key={uuid()} className={"headerBtn"} onClick={()=>child.onClick()}>
                                     <div>{child.header}</div>
                                     </li>
                             })}

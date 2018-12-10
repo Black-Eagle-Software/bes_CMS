@@ -51,7 +51,7 @@ export default class UploadImageTilesList extends React.Component{
                                             key={uuid()} 
                                             imgSrc={media.url} 
                                             filename={media.file.name} 
-                                            onImageClick={()=>this.handleImageClick({media: media, src: media.url})}/>
+                                            onImageClick={()=>this.handleImageClick(media)}/>
                                     )
                                 }
                                 return(

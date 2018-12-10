@@ -12,7 +12,8 @@ export default class UploadMedia extends React.Component{
         this.state = {
             media: [],
             img_selected: null,
-            tags: []
+            tags: [],
+            global_tags: []
         };
 
         this.handleUploadInputChange = this.handleUploadInputChange.bind(this);
@@ -20,10 +21,65 @@ export default class UploadMedia extends React.Component{
     componentDidMount(){
         //get our tags list
         axios.get("/api/t")
-        .then(res=>this.setState({tags: res.data}));
+        .then(res=>{
+            let tag_bools = this.initTagBoolArray(res.data.length);
+            this.setState({
+                tags: res.data,
+                global_tags: tag_bools
+            });
+        });
+    }
+    initTagBoolArray(length = 0){
+        if(length === 0) return [];
+        let output = [];
+        for(let i = 0; i < length; i++){
+            output[i] = false;
+        }
+        return [].concat(output);
     }
     handleCloseClick(){
         this.setState({img_selected: null});
+    }
+    handleDetailsTagClick(tag, index, value){
+        if(!tag || index === -1 || this.state.media.length === 0) return;
+        let temp_media = this.state.media;
+        let selected_media = this.state.img_selected;
+        let tag_index = index;
+        let media_index = temp_media.indexOf(selected_media);
+        /*if(temp_media[media_index].tags[tag_index] !== tag){
+            //need to find the tag since the index doesn't match
+            tag_index = temp_media[media_index].tags.indexOf(tag);
+        }*/
+        //let val = temp_media[i].tags[tag_index];
+        temp_media[media_index].tags[tag_index] = value;
+        //selected_media = media_index && media_index !== -1 ? temp_media[media_index] : null;
+        this.setState({
+            media: temp_media,
+            img_selected: selected_media
+        });
+    }
+    handleGlobalTagClick(tag, index, value){
+        if(!tag || index === -1 || this.state.media.length === 0) return;
+        let temp_media = this.state.media;
+        let global_tags = this.state.global_tags;
+        let selected_media = this.state.img_selected;
+        let tag_index = index;
+        let media_index = temp_media.indexOf(selected_media);
+        /*if(temp_media[0].tags[tag_index] !== tag){
+            //need to find the tag since the index doesn't match
+            tag_index = temp_media[0].tags.indexOf(tag);
+        }*/
+        for(let i = 0; i < temp_media.length; i++){
+            //let val = temp_media[i].tags[tag_index];
+            temp_media[i].tags[tag_index] = value;
+        }
+        global_tags[tag_index] = value;
+        //selected_media = media_index && media_index !== -1 ? temp_media[media_index] : null;
+        this.setState({
+            media: temp_media,
+            img_selected: selected_media,
+            global_tags: global_tags
+        });
     }
     handleHeaderBtnClick(name){
         this.props.onHeaderBtnClick(name);
@@ -33,11 +89,21 @@ export default class UploadMedia extends React.Component{
     }
     handleUploadInputChange(e){
         let files = e.target.files;
+        let tags = this.state.tags;
         let temp_media = [];
-        for(let i = 0; i < files.length; i++){
-            temp_media.push({file: files[i], url: URL.createObjectURL(files[i])});
+        let tag_inputs = [];
+        for(let j = 0; j < tags.length; j++){
+            //this will be how we track tags for each upload
+            tag_inputs[j] = false;
         }
-        this.setState({media: temp_media});
+        for(let i = 0; i < files.length; i++){
+            temp_media.push({file: files[i], url: URL.createObjectURL(files[i]), tags: [].concat(tag_inputs)});
+        }
+        let tag_bools = this.initTagBoolArray(tags.length);
+        this.setState({
+            media: temp_media,
+            global_tags: tag_bools
+        });
     }
     render(){
         /*const contStyle = {
@@ -83,15 +149,19 @@ export default class UploadMedia extends React.Component{
                                     <br/><input type="file" id="upload" name="upload[]" multiple onChange={this.handleUploadInputChange}/>
                                 </label>
                             </div>
-                            <h3>Tags:</h3>
-                            <TagsSelectableList tags={this.state.tags}/>
+                            {this.state.media.length > 0 &&
+                                <div>
+                                    <h3>Tags:</h3>                            
+                                    <TagsSelectableList tags={this.state.tags} selected_tags={this.state.global_tags} onTagClick={(tag, index, value)=>this.handleGlobalTagClick(tag, index, value)}/>
+                                </div>
+                            }
                         </form>                
                     </div>
                     <div style={uploadImageTilesDivStyle}>
                         <UploadImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)}/>
                     </div>
                     {this.state.img_selected && 
-                        <UploadImageDetails media={this.state.img_selected} tags={this.state.tags} onCloseClick={()=>this.handleCloseClick()}/>                
+                        <UploadImageDetails media={this.state.img_selected} tags={this.state.tags} onCloseClick={()=>this.handleCloseClick()} onTagClick={(tag, index, value)=>this.handleDetailsTagClick(tag, index, value)}/>                
                     }
                 </div>                
             </div>
