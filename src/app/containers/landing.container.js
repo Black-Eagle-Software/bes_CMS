@@ -48,7 +48,7 @@ export default class Landing extends React.Component{
 
         const logoStyle = {
             display: "block",
-            width: "10em",
+            width: "15em",
             margin: "0 auto 1em"
         };        
 
@@ -61,7 +61,7 @@ export default class Landing extends React.Component{
             <div id={"content"} style={contStyle}>
                 <Header isAuthenticated={false} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
                 <div style={pageStyle}>
-                    <img style={logoStyle} src="Logo 3a_resized.png" />
+                    <img style={logoStyle} src="Logo-4a.png" />
                     {!this.props.show_login && !this.props.show_register && 
                         <div style={introStyle}>
                             Welcome to the Black Eagle Software CMS.  
