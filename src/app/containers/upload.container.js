@@ -87,6 +87,21 @@ export default class UploadMedia extends React.Component{
     handleImageClick(image){
         this.setState({img_selected: image});
     }
+    handleUploadClick(media){
+
+    }
+    handleRemoveClick(media){
+        //need to remove media item from media array in state
+        let temp_media = this.state.media;
+        let selected_media = this.state.img_selected;
+        let media_index = temp_media.indexOf(media);
+        temp_media.splice(media_index, 1);
+        if(selected_media === media) selected_media = null;
+        this.setState({
+            media: temp_media,
+            img_selected: selected_media
+        });
+    }
     handleUploadInputChange(e){
         let files = e.target.files;
         let tags = this.state.tags;
@@ -158,7 +173,10 @@ export default class UploadMedia extends React.Component{
                         </form>                
                     </div>
                     <div style={uploadImageTilesDivStyle}>
-                        <UploadImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)}/>
+                        <UploadImageTilesList media={this.state.media} 
+                                                onImageClick={(image)=>this.handleImageClick(image)}
+                                                onUploadClick={(media)=>this.handleUploadClick(media)}
+                                                onRemoveClick={(media)=>this.handleRemoveClick(media)}/>
                     </div>
                     {this.state.img_selected && 
                         <UploadImageDetails media={this.state.img_selected} tags={this.state.tags} onCloseClick={()=>this.handleCloseClick()} onTagClick={(tag, index, value)=>this.handleDetailsTagClick(tag, index, value)}/>                

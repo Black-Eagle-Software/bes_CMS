@@ -63,6 +63,7 @@ html, body{
 
 .tile-bg{
     background: #f5f5f5;
+    border: 2px solid #f5f5f5;
 }
 .tile-bg:hover{
     background: #ebebeb;

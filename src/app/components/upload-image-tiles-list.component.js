@@ -9,6 +9,12 @@ export default class UploadImageTilesList extends React.Component{
     handleImageClick(media){
         this.props.onImageClick(media);
     }
+    handleRemoveClick(media){
+        this.props.onRemoveClick(media);
+    }
+    handleUploadClick(media){
+        this.props.onUploadClick(media);
+    }
     
     render(){        
         const items_count = this.props.media.length;
@@ -51,7 +57,9 @@ export default class UploadImageTilesList extends React.Component{
                                             key={uuid()} 
                                             imgSrc={media.url} 
                                             filename={media.file.name} 
-                                            onImageClick={()=>this.handleImageClick(media)}/>
+                                            onImageClick={()=>this.handleImageClick(media)}
+                                            onUploadClick={()=>this.handleUploadClick(media)}
+                                            onRemoveClick={()=>this.handleRemoveClick(media)}/>
                                     )
                                 }
                                 return(
