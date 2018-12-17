@@ -20,7 +20,7 @@ export default class UploadMedia extends React.Component{
     }
     componentDidMount(){
         //get our tags list
-        axios.get("/api/t")
+        axios.get(`/api/u/${this.props.id}/t`)
         .then(res=>{
             let tag_bools = this.initTagBoolArray(res.data.length);
             this.setState({

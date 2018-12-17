@@ -57,7 +57,8 @@ app_routes.get('*', (req, res, next)=>{
             ok: can_proceed,
             needs_auth: activeRoute.req_authorization,
             is_authorized: is_authorized,
-            username: req.user ? JSON.parse(req.user).email : ""
+            username: req.user ? JSON.parse(req.user).email : "",
+            user_id: req.user ? JSON.parse(req.user).id : ""
         };
         const html = ReactDOMServer.renderToString(
             <ReactRouterDOM.StaticRouter location={req.url} context={context}>

@@ -12,22 +12,25 @@ class App extends React.Component {
   constructor(props){
     super(props);
 
-    let is_authorized, username;
+    let is_authorized, username, id;
     if(__isBrowser__){
         //console.log(window.__INITIAL_DATA__);
         //console.log(window.__INITIAL_DATA__.is_authorized);
         is_authorized = window.__INITIAL_DATA__.is_authorized;
         username = window.__INITIAL_DATA__.username;
+        id = window.__INITIAL_DATA__.user_id;
         delete window.__INITIAL_DATA__;
     }else{
         //console.log(props.staticContext);
         is_authorized = props.staticContext.data.is_authorized;
         username = props.staticContext.data.username;
+        id = props.staticContext.data.user_id;
     }
 
     this.state = {
       isAuthenticated: is_authorized,
       username: username,
+      id: id,
       show_albums: false,
       show_login: false,
       show_register: false,
@@ -116,6 +119,7 @@ class App extends React.Component {
                 <Route path='/upload' render={(props)=>(<UploadMedia 
                                                             isAuthenticated={this.state.isAuthenticated}
                                                             username={this.state.username}
+                                                            id={this.state.id}
                                                             {...props}
                                                             onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>)}/>
                 <Route path='/admin' render={()=>(<div>This is the Admin page</div>)} />
