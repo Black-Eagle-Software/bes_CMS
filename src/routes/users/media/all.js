@@ -1,5 +1,5 @@
 module.exports = (req, res)=>{
-    res.locals.connection.query("SELECT * FROM media WHERE owner=?", [req.params.id], (error, results, fields)=>{
+    res.locals.connection.query("SELECT * FROM media WHERE owner=? ORDER BY id DESC", [req.params.id], (error, results, fields)=>{
         if(error) throw error;
         if(results.length === 0){
             res.status(404).send("Invalid user ID specified or no media exists");

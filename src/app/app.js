@@ -111,7 +111,8 @@ class App extends React.Component {
                 {/*<AuthRoute path='/home' isAuthenticated={this.state.isAuthenticated} render={(props)=>(<UserHomeContainer isAuthenticated={this.state.isAuthenticated} {...props}/>)}/>*/}
                 <Route path='/home' render={(props)=>(<UserHomeContainer 
                                                         isAuthenticated={this.state.isAuthenticated} 
-                                                        username={this.state.username} 
+                                                        username={this.state.username}
+                                                        id={this.state.id} 
                                                         {...props} 
                                                         onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
                                                         show_albums={this.state.show_albums}

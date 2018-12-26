@@ -12,9 +12,11 @@ export default class UserHomeContainer extends React.Component{
 
         this.state = {
             media: [],
+            public_media: [],
             tags: [],
             is_image_focused: false,
             zoomed_image: {},
+            zoomed_image_tags: [],
             show_albums: false,
             show_tags: false,
             show_upload: false
@@ -23,19 +25,29 @@ export default class UserHomeContainer extends React.Component{
 
     componentDidMount(){
         //read our media from the dbase
-        axios.get("/api/m")
+        axios.get("/api/m?limit=10")
         .then(response=>{
             let temp_media = [];
             let res = response.data;
             for(let i = 0; i < res.length; i++){
                 temp_media.push({file: res[i], src_file: `${res[i].filePath}/${res[i].hashFilename}`, thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
             }
-            this.setState({media: temp_media});
+            this.setState({public_media: temp_media});
         });
 
-        //get our tags list
+        axios.get(`/api/u/${this.props.id}/m`)
+            .then(response=>{
+                let temp_media = [];
+                let res = response.data;
+                for(let i = 0; i < res.length; i++){
+                    temp_media.push({file: res[i], src_file: `${res[i].filePath}/${res[i].hashFilename}`, thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
+                }
+                this.setState({media: temp_media});
+            });
+
+        /*//get our tags list
         axios.get("/api/t")
-        .then(res=>this.setState({tags: res.data}));
+        .then(res=>this.setState({tags: res.data}));*/
     }
 
     handleHeaderBtnClick(name){
@@ -54,6 +66,7 @@ export default class UserHomeContainer extends React.Component{
     handleCloseClick(){
         this.setState(prevState=>({
             zoomed_image: {},
+            zoomed_image_tags: [],
             is_image_focused: !prevState.is_image_focused
         }));
     }
@@ -62,6 +75,10 @@ export default class UserHomeContainer extends React.Component{
             zoomed_image: image,
             is_image_focused: !prevState.is_image_focused
         }));
+        axios.get(`/api/m/${image.file.id}/t`)
+            .then(res=>{
+                this.setState({zoomed_image_tags: res.data});
+            });
     }
     
     render(){
@@ -79,18 +96,26 @@ export default class UserHomeContainer extends React.Component{
         return(
             <div id={"content"} style={contStyle}>
                 {this.state.is_image_focused &&
-                    <MediaZoom image_source={this.state.zoomed_image} onCloseClick={()=>this.handleCloseClick()}/>
+                    <MediaZoom image_source={this.state.zoomed_image} media_tags={this.state.zoomed_image_tags} onCloseClick={()=>this.handleCloseClick()}/>
                 }                
                 <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
-                {this.props.show_tags && 
+                {/*this.props.show_tags && 
                     <Tags tags={this.state.tags}/>
-                }
-                {this.state.media &&
-                    <div style={pageStyle}>
-                        <h2>Recent Media</h2>
-                        <ImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)}/>
-                    </div>
-                }
+                */}
+                <div style={pageStyle}>
+                    {this.state.media &&
+                        <div>
+                            <h2>Recent Media</h2>
+                            <ImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)}/>
+                        </div>
+                    }
+                    {this.state.public_media &&
+                        <div>
+                            <h2>Recent Public Media</h2>
+                            <ImageTilesList media={this.state.public_media} onImageClick={(image)=>this.handleImageClick(image)}/>
+                        </div>
+                    }
+                </div>
                 
                 {/*this.state.show_upload &&
                     <UploadMedia tags={this.state.tags}/>
