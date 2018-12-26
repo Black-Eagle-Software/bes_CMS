@@ -13,7 +13,18 @@ export default class ImageTilesList extends React.Component{
             display: "flex",
             flexFlow: "row wrap",
             justifyContent: "flex-start"
-        }       
+        };
+        const showAllStyle = {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: "1em",
+            marginBottom: "1em",
+            width: "12.5em",
+            height: "12.5em",
+            fontSize: "1em",
+            cursor: "default"
+        };       
 
         return(
             <div style={contStyle}>
@@ -22,6 +33,13 @@ export default class ImageTilesList extends React.Component{
                     
                     return <ImageTile key={uuid()} media={media} onImageClick={(image)=>this.handleImageClick(image)}/>
                 })}
+                {/*
+                    add a button that will allow for showing all media items
+                    this could eventually become a tile collage of other items
+                */}
+                <div style={showAllStyle} className={"tile-bg"}>
+                    Show all... (NYI)
+                </div>
             </div>
         );
     }
