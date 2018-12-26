@@ -32,9 +32,10 @@ export default class UploadImageTile extends React.PureComponent{
             //background: "#ebebeb"
         };
         const imgStyle = {
-            flex: "0 1 auto",
-            maxWidth: "12.5em",
-            maxHeight: "12.5em"
+            flex: "1 1 auto",
+            /*maxWidth: "12.5em",*/
+            maxHeight: "75%",
+            objectFit: "contain"
         };
         const nameStyle = {
             /*position: "absolute",
