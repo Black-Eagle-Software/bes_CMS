@@ -1,8 +1,10 @@
 import React from 'react';
+const uuid = require('uuid/v4');
 
 //get image_source, onCloseClick
 
 export default class MediaZoom extends React.Component{
+    
     handleCloseClick(){
         this.props.onCloseClick();
     }
@@ -40,6 +42,20 @@ export default class MediaZoom extends React.Component{
             fontSize: "1.5em"
         };
 
+        const spanTagStyle = {
+            minWidth: "1em",
+            padding: ".25em .5em",
+            margin: "0.5em",
+            fontSize: ".75em",
+            fontWeight: "500",
+            lineHeight: "1",
+            textAlign: "center",
+            verticalAlign: "middle",
+            background: "#cbcbcb",
+            color: "#1f1f1f",
+            borderRadius: "0.5em"
+        };
+
         console.log(this.props.image_source);
         //this gets in a type as props.image_source.file.type
         //type is either "image" or "video"
@@ -61,6 +77,11 @@ export default class MediaZoom extends React.Component{
                     </video>
                 }
                 <span style={spanStyle}>{filename}</span>
+                <span> 
+                    {this.props.media_tags.map(tag=>{
+                        return <span key={uuid()} style={spanTagStyle}>{tag.description}</span>
+                    })}
+                </span>
             </div>
         );
     }
