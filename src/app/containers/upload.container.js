@@ -88,7 +88,7 @@ export default class UploadMedia extends React.Component{
         this.setState({img_selected: image});
     }
     handleUploadClick(media){
-
+        this.uploadMedia([media]);
     }
     handleRemoveClick(media){
         //need to remove media item from media array in state
@@ -119,6 +119,15 @@ export default class UploadMedia extends React.Component{
             media: temp_media,
             global_tags: tag_bools
         });
+    }
+    mapTagSelectionsForMediaToTagIndex(media){
+        let tags = [];
+        for(let i = 0; i < this.state.tags.length; i++){
+            if(media.tags[i]){
+                tags.push(this.state.tags[i]);
+            }
+        }
+        return tags;
     }
     render(){
         /*const contStyle = {
@@ -184,5 +193,24 @@ export default class UploadMedia extends React.Component{
                 </div>                
             </div>
         );
+    }
+    uploadMedia(mediaArr){
+        let formData = new FormData();
+        for(let i = 0; i < mediaArr.length; i++){
+            let file = mediaArr[i].file;            
+            formData.append("files", file, file.name);
+            //formData.append("index", ) //not used?
+            formData.append("fileDate", file.lastModified);
+            formData.append("extension", file.name.slice((Math.max(0, file.name.lastIndexOf(".")) || Infinity) + 1));
+            formData.append("tags", JSON.stringify(this.mapTagSelectionsForMediaToTagIndex(mediaArr[i])));
+            formData.append("owner", this.props.id);
+        }        
+        axios.post('/api/media', formData)
+        .then(res=>{
+            //this needs to remove items from the upload list
+            console.log(res.status);
+            
+        })
+        .catch(err=>{console.log(err)});
     }
 }
