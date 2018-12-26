@@ -16,6 +16,9 @@ const localStrategy = require('passport-local').Strategy;
 const axios = require('axios');
 const User = require('./models/user');
 
+const path = require('path');
+global.__basedir = path.resolve();
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
