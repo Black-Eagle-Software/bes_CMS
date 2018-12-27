@@ -50,6 +50,13 @@ module.exports = (req, res)=>{
                 });
             },
             //3. place files in the public/media folder
+            //3a. create file paths
+            //3b. create time-based upload folder
+            //3c. create thumbnails folder
+            //3d. read in our file for later writing (work around copy issues)
+            //3e. write file to upload folder
+            //3f. delete temporary file
+            //3g. create thumbnail & write thumbnail to thumbnails folder
             (data, callback)=>{
                 let basePath = path.join('media', body.owner.toString(), time.toString());
                 let fullPath = path.join(__basedir, 'public', basePath);
@@ -58,17 +65,104 @@ module.exports = (req, res)=>{
                 let fullFilename = path.join(fullPath, filename);
                 let thumbFilename = `${data}_thumb.${body.extension}`;
                 let thumbFullFilename = path.join(thumb_path, thumbFilename);
-                /*console.log(file.path);
-                console.log(file.filename);
-                console.log(file.destination);
-                console.log(data);
-                console.log(file.originalname);
-                console.log(fullPath);
-                console.log(thumb_path);
-                console.log(filename);
-                console.log(fullFilename);
-                console.log(thumbFilename);
-                console.log(thumbFullFilename);*/
+                callback(null, { 
+                    basePath: basePath,
+                    fullPath: fullPath,
+                    thumb_path: thumb_path,
+                    filename: filename,
+                    fullFilename: fullFilename,
+                    thumbFilename: thumbFilename,
+                    thumbFullFilename: thumbFullFilename
+                });
+            },
+            (data, callback)=>{
+                fs.mkdir(data.fullPath, (err)=>{
+                    if(err && err.code !== 'EEXIST') {  //ignore if the directory exists
+                        callback(err); 
+                        return;
+                    }
+                    callback(null, data);
+                });
+            },
+            (data, callback)=>{
+                fs.mkdir(data.thumb_path, (err)=>{
+                    if(err && err.code !== 'EEXIST') {  //ignore if the directory exists
+                        callback(err); 
+                        return;
+                    }
+                    callback(null, data);
+                });
+            },
+            (data, callback)=>{
+                fs.readFile(file.path, (err, fileData)=>{
+                    if(err) {
+                        callback(err);
+                        return;
+                    }
+                    callback(null, {pathData: data, fileData: fileData});
+                });
+            },
+            (data, callback)=>{
+                fs.writeFile(data.pathData.fullFilename, data.fileData, (err)=>{
+                    if(err) {
+                        callback(err);
+                        return;
+                    }
+                    callback(null, data.pathData);
+                });
+            },
+            (data, callback)=>{
+                fs.unlink(path.join(file.destination, file.filename), (err)=>{
+                    if(err){
+                        callback(err);
+                        return;
+                    }
+                    callback(null, data);
+                });
+            },
+            (data, callback)=>{
+                gm(data.fullFilename)
+                    .background('rgb(64, 64, 64)')
+                    .compress('JPEG')
+                    .resize(160, 160)
+                    .write(data.thumbFullFilename, (err)=>{
+                        if(err) {
+                            callback(err);
+                            return;
+                        }
+                        let medType = file.mimetype.includes('image') ? 'image' : file.mimetype.includes('video') ? 'video' : '';
+                        callback(null, {
+                            type: medType,
+                            dateAdded: time, 
+                            fileDate: body.fileDate, 
+                            filePath: data.basePath,
+                            originalFilename: file.originalname,
+                            hashFilename: data.filename,
+                            thumbnailFilename: data.thumbFilename,
+                            owner: body.owner,
+                            tags: body.tags 
+                        });
+                    });
+            },
+            /*(data, callback)=>{
+                let basePath = path.join('media', body.owner.toString(), time.toString());
+                let fullPath = path.join(__basedir, 'public', basePath);
+                let thumb_path = path.join(fullPath, 'thumbnails');
+                let filename = `${data}.${body.extension}`;
+                let fullFilename = path.join(fullPath, filename);
+                let thumbFilename = `${data}_thumb.${body.extension}`;
+                let thumbFullFilename = path.join(thumb_path, thumbFilename);
+                // console.log(file.path);
+                // console.log(file.filename);
+                // console.log(file.destination);
+                // console.log(data);
+                // console.log(file.originalname);
+                // console.log(fullPath);
+                // console.log(thumb_path);
+                // console.log(filename);
+                // console.log(fullFilename);
+                // console.log(thumbFilename);
+                // console.log(thumbFullFilename);
                 //check for existing files/folders and move
                 //uploads into position
                 fs.mkdir(fullPath, (err)=>{
@@ -123,7 +217,7 @@ module.exports = (req, res)=>{
                         });
                     });
                 });
-            },
+            },*/
             //4. insert media into the database
             (data, callback)=>{
                 //now that we've got our files on disk, we need to add them
