@@ -1,6 +1,11 @@
 import React from 'react';
+import ImageTileDeleteButton from './image-tile-delete-button.component';
 
 export default class ImageTile extends React.PureComponent{
+    handleDeleteButtonClick(media){
+        this.props.onDeleteButtonClick(media);
+    }
+
     handleImageClick(media){
         this.props.onImageClick(media);
     }
@@ -13,6 +18,7 @@ export default class ImageTile extends React.PureComponent{
         };*/
         const contStyle = {
             display: "flex",
+            position: "relative",
             alignItems: "center",
             justifyContent: "center",
             marginRight: "1em",
@@ -27,7 +33,7 @@ export default class ImageTile extends React.PureComponent{
             maxWidth: "12.5em",
             maxHeight: "12.5em",
             objectFit: "contain"    //necessary?
-        }
+        };
 
         const imgSrc = this.props.media.thumb;
         const filename = this.props.media.file.originalFilename;
@@ -35,6 +41,9 @@ export default class ImageTile extends React.PureComponent{
         return(
             <div style={contStyle} className={"tile-bg"} onClick={()=>this.handleImageClick(this.props.media)}>
                 <img style={imgStyle} src={imgSrc} alt={filename} />
+                {this.props.can_delete &&
+                    <ImageTileDeleteButton onDeleteButtonClick={()=>this.handleDeleteButtonClick(this.props.media)}/>
+                }                
             </div>
         );
     }

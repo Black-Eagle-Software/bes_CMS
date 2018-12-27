@@ -4,6 +4,10 @@ import ImageTile from './image-tile.component';
 const uuid = require('uuid/v4');
 
 export default class ImageTilesList extends React.Component{
+    handleDeleteButtonClick(media){
+        this.props.onDeleteButtonClick(media);
+    }
+
     handleImageClick(media){
         this.props.onImageClick(media);
     }
@@ -31,7 +35,7 @@ export default class ImageTilesList extends React.Component{
                 {this.props.media.map(media=>{
                     //const imgSrc = `${media.filePath}/thumbnails/${media.thumbnailFilename}`
                     
-                    return <ImageTile key={uuid()} media={media} onImageClick={(image)=>this.handleImageClick(image)}/>
+                    return <ImageTile key={uuid()} media={media} onImageClick={(image)=>this.handleImageClick(image)} can_delete={this.props.can_delete} onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)}/>
                 })}
                 {/*
                     add a button that will allow for showing all media items

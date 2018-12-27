@@ -70,6 +70,17 @@ html, body{
     border: 2px solid #1f1f1f;
 }
 
+.tile_deleteBtn{
+    background: #fce7e6;
+    color: #e30f01;
+    border: 2px solid #f7bcb8;
+}
+.tile_deleteBtn:hover{
+    background: #e30f01;
+    color: #fef3f2;
+    border: 2px solid #e30f01;
+}
+
 .bad_input{
     background: #fce7e6;
     border: 2px solid #e30f01;

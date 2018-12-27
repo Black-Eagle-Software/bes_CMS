@@ -70,6 +70,12 @@ export default class UserHomeContainer extends React.Component{
             is_image_focused: !prevState.is_image_focused
         }));
     }
+
+    handleDeleteButtonClick(media){
+        //need to tell the server to delete the image
+        //confirm?
+        console.log(`Trying to delete: ${media.file.originalFilename}`);
+    }
     handleImageClick(image){
         this.setState(prevState=>({
             zoomed_image: image,
@@ -106,13 +112,13 @@ export default class UserHomeContainer extends React.Component{
                     {this.state.media &&
                         <div>
                             <h2>Recent Media</h2>
-                            <ImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)}/>
+                            <ImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)} can_delete={true} onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)}/>
                         </div>
                     }
                     {this.state.public_media &&
                         <div>
                             <h2>Recent Public Media</h2>
-                            <ImageTilesList media={this.state.public_media} onImageClick={(image)=>this.handleImageClick(image)}/>
+                            <ImageTilesList media={this.state.public_media} onImageClick={(image)=>this.handleImageClick(image)} can_delete={false}/>
                         </div>
                     }
                 </div>
