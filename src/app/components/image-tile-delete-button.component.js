@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class ImageTileDeleteButton extends React.Component{
+export default class ImageTileDeleteButton extends React.PureComponent{
     handleButtonClick(e){
         e.preventDefault();
         e.stopPropagation();
