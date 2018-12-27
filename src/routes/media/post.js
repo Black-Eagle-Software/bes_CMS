@@ -34,18 +34,23 @@ module.exports = (req, res)=>{
             //2. check if the media duplicates an existing database entry
             (data, callback)=>{
                 //check if the hash exists in the database already
-                res.locals.connection.query("SELECT * FROM media WHERE hashFilename = ?", [data], (error, results, fields)=>{
-                    if(error) throw error;
+                let hashFilename = `${data}.${body.extension}`;
+                res.locals.connection.query("SELECT * FROM media WHERE hashFilename = ?", [hashFilename], (error, results, fields)=>{
+                    if(error) {
+                        callback(error);
+                        return;
+                    }
                     console.log(JSON.stringify(results));
                     if(results.length > 0){
-                        res.status(403).send("Media duplicates an item already in the database");
+                        //res.status(403).send("Media duplicates an item already in the database");
+                        callback(new Error("Media duplicates an item already in the database"));
                     }else{
                         callback(null, data);
                     }                    
                 });
             },
             //3. place files in the public/media folder
-            (data, callback)=>{                
+            (data, callback)=>{
                 let basePath = path.join('media', body.owner.toString(), time.toString());
                 let fullPath = path.join(__basedir, 'public', basePath);
                 let thumb_path = path.join(fullPath, 'thumbnails');
@@ -67,14 +72,26 @@ module.exports = (req, res)=>{
                 //check for existing files/folders and move
                 //uploads into position
                 fs.mkdir(fullPath, (err)=>{
-                    if(err && err.code !== 'EEXIST') throw err; //ignore if the directory exists
+                    if(err && err.code !== 'EEXIST') {  //ignore if the directory exists
+                        callback(err); 
+                        return;
+                    }
                     fs.mkdir(thumb_path, (err)=>{
-                        if(err && err.code !== 'EEXIST') throw err; //ignore if the directory exists
+                        if(err && err.code !== 'EEXIST') {  //ignore if the directory exists
+                            callback(err); 
+                            return;
+                        }
                         //folders are made, so now we write our files
                         fs.readFile(file.path, (err, fileData)=>{
-                            if(err) throw err;
+                            if(err) {
+                                callback(err);
+                                return;
+                            }
                             fs.writeFile(fullFilename, fileData, (err)=>{
-                                if(err) throw err;
+                                if(err) {
+                                    callback(err);
+                                    return;
+                                }
                                 //get rid of our temporary file
                                 fs.unlink(path.join(file.destination, file.filename), (err)=>{
                                     //now we need to create our thumbnail file
@@ -84,7 +101,10 @@ module.exports = (req, res)=>{
                                     .compress('JPEG')
                                     .resize(160, 160)
                                     .write(thumbFullFilename, (err)=>{
-                                        if(err) throw err;
+                                        if(err) {
+                                            callback(err);
+                                            return;
+                                        }
                                         let medType = file.mimetype.includes('image') ? 'image' : file.mimetype.includes('video') ? 'video' : '';
                                         callback(null, {
                                             type: medType,
@@ -123,7 +143,10 @@ module.exports = (req, res)=>{
                         data.owner
                     ],
                     (error, results, fields)=>{
-                        if(error) throw error;
+                        if(error) {
+                            callback(error);
+                            return;
+                        }
                         callback(null, { mediaId: results.insertId, tags: JSON.parse(data.tags)});
                     }
                 );
@@ -140,11 +163,19 @@ module.exports = (req, res)=>{
                 console.log(temp);
                 let query = "INSERT INTO tagsToMediaMap (media, tag) VALUES ?";
                 res.locals.connection.query(query, [temp], (error, results, fields)=>{
-                    if(error) throw error;
+                    if(error) {
+                        callback(error);
+                        return;
+                    }
                     callback(null);
                 });
             }
-        ]);
-    });
-    res.status(200).send({'message':'Media successfully uploaded'});    
+        ], (err)=>{
+            if(err){
+                res.status(403).send({'message': err.message});                
+            } else {
+                res.status(200).send({'message':'Media successfully uploaded'});
+            }
+        });
+    });        
 };
