@@ -9,6 +9,8 @@ module.exports = (req, res)=>{
     //should expect the file, albumIndex, fileDate, extension, an array of tags, and owner
     //actual media is in req.files
     //metadata is in req.body
+    //TODO: this should confirm that a file is either an image or a video prior to commencing
+    //TODO: this should also not break all uploads if one upload has an error
     console.log(req.body);
     console.log(req.files);
     //each item in the req.body object can be an array if we've multiple uploads
@@ -17,6 +19,11 @@ module.exports = (req, res)=>{
     let filesArr = req.files;
     let contents = [];
     for(let i = 0; i < filesArr.length; i++){
+        if(!filesArr[i].mimetype.includes('image') && !filesArr[i].mimetype.includes('video')){
+            //this is neither an image nor a video,
+            //so just ignore it and keep going
+            continue;
+        }
         if(filesArr.length === 1){
             contents.push({
                 file: filesArr[i], 
@@ -48,6 +55,10 @@ module.exports = (req, res)=>{
     async.each(contents, (item, eachCallback)=>{
         async.waterfall([
             //1. hash the media's first 10 MB
+            //it turns out, perceptual hashing instead of cryptographic
+            //is actually better for finding image duplicates
+            //this should be broken out into a separate hashing helper
+            //so that videos can do something else, for instance
             (callback)=>{
                 let shasum = crypto.createHash('sha1');
                 let s = fs.ReadStream(item.file.path);

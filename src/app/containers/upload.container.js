@@ -122,6 +122,7 @@ export default class UploadMedia extends React.Component{
             tag_inputs[j] = false;
         }
         for(let i = 0; i < files.length; i++){
+            if(!files[i].type.includes('image') && !files[i].type.includes('video')) continue;
             temp_media.push({file: files[i], url: URL.createObjectURL(files[i]), tags: [].concat(tag_inputs)});
         }
         let tag_bools = this.initTagBoolArray(tags.length);
