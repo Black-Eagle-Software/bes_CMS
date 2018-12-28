@@ -29,7 +29,7 @@ export default class MediaDeleteConfirmation extends React.PureComponent{
         };
         const btnStyle={
             margin: "0em 0.25em"
-        }
+        };
 
         return(
             <DialogOverlay>
