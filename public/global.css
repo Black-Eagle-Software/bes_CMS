@@ -28,7 +28,7 @@ html, body{
 }
 
 /*stealing this from bootstrap for now*/
-button, input[type=submit]{
+button, input[type=submit], .btn{
     padding: 6px 12px;
     margin-bottom: 0;
     font-size: 0.875em;
@@ -39,7 +39,7 @@ button, input[type=submit]{
     vertical-align: middle;
     -ms-touch-action: manipulation;
     touch-action: manipulation;
-    cursor: pointer;
+    cursor: default;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;  
@@ -55,75 +55,81 @@ button, input[type=submit]{
     background-color: #fff;
     border-color: #ccc;
 }
-button, input[type=submit]:hover{
+button, input[type=submit], .btn:hover{
     color: #333;
     background-color: #e6e6e6;
     border-color: #adadad;
 }
-button, input[type=submit]:focus{
+button, input[type=submit], .btn:focus{
     color: #333;
     background-color: #e6e6e6;
     border-color: #8c8c8c;
 }
-button, input[type=submit]:active{
+button, input[type=submit], .btn:active{
     color: #333;
     background-color: #e6e6e6;
     border-color: #adadad;
 }
-button, input[type=submit]:active:hover{
+button, input[type=submit], .btn:active:hover{
     color: #333;
     background-color: #d4d4d4;
     border-color: #8c8c8c;
 }
 .btn-primary{
-    color: #fff;
-    background-color: #337ab7;
-    border-color: #2e6da4;
+    color: #fff !important;
+    background-color: #337ab7 !important;
+    border-color: #2e6da4 !important;
 }
 .btn-primary:hover{
-    color: #fff;
-    background-color: #286090;    
-    border-color: #204d74;
+    color: #fff !important;
+    background-color: #286090 !important;    
+    border-color: #204d74 !important;
 }
 .btn-primary:focus{
-    color: #fff;
-    background-color: #286090;
-    border-color: #122b40;
+    color: #fff !important;
+    background-color: #286090 !important;
+    border-color: #122b40 !important;
 }
 .btn-primary:active{
-    color: #fff;
-    background-color: #286090;
-    border-color: #204d74;
+    color: #fff !important;
+    background-color: #286090 !important;
+    border-color: #204d74 !important;
 }
 .btn-primary:active:hover{
-    color: #fff;
-    background-color: #204d74;
-    border-color: #122b40;
+    color: #fff !important;
+    background-color: #204d74 !important;
+    border-color: #122b40 !important;
 }
 .btn-danger{
-    color: #fff;
-    background-color: #d9534f;
-    border-color: #d43f3a;
+    color: #fff !important;
+    background-color: #d9534f !important;
+    border-color: #d43f3a !important;
 }
 .btn-danger:hover{
-    color: #fff;
-    background-color: #c9302c;
-    border-color: #ac2925;
+    color: #fff !important;
+    background-color: #c9302c !important;
+    border-color: #ac2925 !important;
 }
 .btn-danger:focus{
-    color: #fff;
-    background-color: #c9302c;
-    border-color: #761c19;
+    color: #fff !important;
+    background-color: #c9302c !important;
+    border-color: #761c19 !important;
 }
 .btn-danger:active{
-    color: #fff;
-    background-color: #c9302c;
-    border-color: #ac2925;
+    color: #fff !important;
+    background-color: #c9302c !important;
+    border-color: #ac2925 !important;
 }
 .btn-danger:active:hover{
-    color: #fff;
-    background-color: #ac2925;
-    border-color: #761c19;
+    color: #fff !important;
+    background-color: #ac2925 !important;
+    border-color: #761c19 !important;
+}
+.btn-xs{
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
 }
 
 .expand_close {
