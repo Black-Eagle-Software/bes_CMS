@@ -84,7 +84,7 @@ module.exports = (req, res)=>{
         },
         (data, callback)=>{
             fs.rmdir(data.thumb_path, (err)=>{
-                if(err){
+                if(err && err.code !== 'ENOTEMPTY'){    //ignore if the directory isn't empty
                     callback(err);
                     return;
                 }
@@ -93,7 +93,7 @@ module.exports = (req, res)=>{
         },
         (data, callback)=>{
             fs.rmdir(data.fullPath, (err)=>{
-                if(err){
+                if(err && err.code !== 'ENOTEMPTY'){    //ignore if the directory isn't empty
                     callback(err);
                     return;
                 }
