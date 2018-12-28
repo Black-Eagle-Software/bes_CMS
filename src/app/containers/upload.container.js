@@ -17,6 +17,9 @@ export default class UploadMedia extends React.Component{
         };
 
         this.handleUploadInputChange = this.handleUploadInputChange.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
+
+        this.uploadRef = React.createRef();
     }
     componentDidMount(){
         //get our tags list
@@ -57,6 +60,10 @@ export default class UploadMedia extends React.Component{
             media: temp_media,
             img_selected: selected_media
         });
+    }
+    handleFormSubmit(event){
+        this.uploadMedia(this.state.media);
+        event.preventDefault();
     }
     handleGlobalTagClick(tag, index, value){
         if(!tag || index === -1 || this.state.media.length === 0) return;
@@ -101,6 +108,9 @@ export default class UploadMedia extends React.Component{
             media: temp_media,
             img_selected: selected_media
         });
+        if(temp_media.length === 0){
+            this.uploadRef.current.value = "";
+        }
     }
     handleUploadInputChange(e){
         let files = e.target.files;
@@ -152,13 +162,25 @@ export default class UploadMedia extends React.Component{
             color: "#f5f5f5", 
             height: "100%", 
             maxWidth: "15em", 
-            paddingLeft: "1em"
+            paddingLeft: "1em",
+            paddingRight: "1em"
         };
         const uploadImageTilesDivStyle = {
             flex: "1 1 auto", 
             margin: "0em 0em 2.5em 1em", 
             overflow: "hidden", 
             paddingTop: "1em"
+        };
+        const uploadInputStyle={
+            width: "0.1px",
+            height: "0.1px",
+            opacity: "0",
+            overflow: "hidden",
+            position: "absolute",
+            zIndex: "-1"
+        };
+        const uploadAllStyle={
+            width: "100%"
         };
 
         return(
@@ -167,18 +189,21 @@ export default class UploadMedia extends React.Component{
                 <div style={pageStyle}>
                     <div style={uploadColStyle}>
                         <h2>Upload Media</h2>
-                        <form id="upload-form" encType="multipart/form-data">
+                        <form id="upload-form" encType="multipart/form-data" onSubmit={this.handleFormSubmit}>
                             <div>
-                                <label>Select files to upload:
-                                    <br/><input type="file" id="upload" name="upload[]" multiple onChange={this.handleUploadInputChange}/>
+                                <label className={"btn"}>Select files to upload...
+                                    <input type="file" style={uploadInputStyle} ref={this.uploadRef} id="upload" name="upload[]" multiple onChange={this.handleUploadInputChange}/>                                    
                                 </label>
                             </div>
                             {this.state.media.length > 0 &&
                                 <div>
                                     <h3>Tags:</h3>                            
                                     <TagsSelectableList tags={this.state.tags} selected_tags={this.state.global_tags} onTagClick={(tag, index, value)=>this.handleGlobalTagClick(tag, index, value)}/>
+                                    <br/>
+                                    <input type="submit" className={"btn-primary"} style={uploadAllStyle} value="Upload all files"/>
                                 </div>
                             }
+                            
                         </form>                
                     </div>
                     <div style={uploadImageTilesDivStyle}>
@@ -195,21 +220,27 @@ export default class UploadMedia extends React.Component{
         );
     }
     uploadMedia(mediaArr){
+        //make a copy of our array so that we can delete
+        //items if this.state.media changes
+        let arr = [].concat(mediaArr);  
         let formData = new FormData();
-        for(let i = 0; i < mediaArr.length; i++){
-            let file = mediaArr[i].file;            
+        for(let i = 0; i < arr.length; i++){
+            let file = arr[i].file;            
             formData.append("files", file, file.name);
             //formData.append("index", ) //not used?
             formData.append("fileDate", file.lastModified);
             formData.append("extension", file.name.slice((Math.max(0, file.name.lastIndexOf(".")) || Infinity) + 1));
-            formData.append("tags", JSON.stringify(this.mapTagSelectionsForMediaToTagIndex(mediaArr[i])));
+            formData.append("tags", JSON.stringify(this.mapTagSelectionsForMediaToTagIndex(arr[i])));
             formData.append("owner", this.props.id);
         }        
         axios.post('/api/media', formData)
         .then(res=>{
             //this needs to remove items from the upload list
             console.log(res.status);
-            
+            if(res.status !== 200) return;  //more details?
+            for(let i=0; i < arr.length; i++){
+                this.handleRemoveClick(arr[i]);
+            }            
         })
         .catch(err=>{console.log(err)});
     }

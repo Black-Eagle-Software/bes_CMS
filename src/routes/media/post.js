@@ -11,16 +11,47 @@ module.exports = (req, res)=>{
     //metadata is in req.body
     console.log(req.body);
     console.log(req.files);
+    //each item in the req.body object can be an array if we've multiple uploads
+    //need to turn them each into arrays to make things easier?
     let body = req.body;
     let filesArr = req.files;
+    let contents = [];
+    for(let i = 0; i < filesArr.length; i++){
+        if(filesArr.length === 1){
+            contents.push({
+                file: filesArr[i], 
+                body: {
+                    fileDate: body.fileDate,
+                    extension: body.extension,
+                    tags: body.tags,
+                    owner: body.owner
+                }
+            });
+            break;
+        }else{
+            contents.push({
+                file: filesArr[i], 
+                body: {
+                    fileDate: body.fileDate[i],
+                    extension: body.extension[i],
+                    tags: body.tags[i],
+                    owner: body.owner[i]
+                }
+            });
+        }
+    }
+    console.log(contents);
+    /*console.log(contents[0].body.extension);
+    res.status(500).send();
+    return;*/
     let time = Math.floor(new Date()/1000); //want this to be a common time/folder for a bank of uploads
-    async.each(filesArr, (file)=>{
+    async.each(contents, (item, eachCallback)=>{
         async.waterfall([
             //1. hash the media's first 10 MB
             (callback)=>{
                 let shasum = crypto.createHash('sha1');
-                let s = fs.ReadStream(file.path);
-                let size = file.size > 10000000 ? 10000000 : file.size;
+                let s = fs.ReadStream(item.file.path);
+                let size = item.file.size > 10000000 ? 10000000 : item.file.size;
                 s.on('readable', ()=>{
                     s.read(size);                    
                 });
@@ -34,7 +65,7 @@ module.exports = (req, res)=>{
             //2. check if the media duplicates an existing database entry
             (data, callback)=>{
                 //check if the hash exists in the database already
-                let hashFilename = `${data}.${body.extension}`;
+                let hashFilename = `${data}.${item.body.extension}`;
                 res.locals.connection.query("SELECT * FROM media WHERE hashFilename = ?", [hashFilename], (error, results, fields)=>{
                     if(error) {
                         callback(error);
@@ -58,12 +89,12 @@ module.exports = (req, res)=>{
             //3f. delete temporary file
             //3g. create thumbnail & write thumbnail to thumbnails folder
             (data, callback)=>{
-                let basePath = path.join('media', body.owner.toString(), time.toString());
+                let basePath = path.join('media', item.body.owner.toString(), time.toString());
                 let fullPath = path.join(__basedir, 'public', basePath);
                 let thumb_path = path.join(fullPath, 'thumbnails');
-                let filename = `${data}.${body.extension}`;
+                let filename = `${data}.${item.body.extension}`;
                 let fullFilename = path.join(fullPath, filename);
-                let thumbFilename = `${data}_thumb.${body.extension}`;
+                let thumbFilename = `${data}_thumb.${item.body.extension}`;
                 let thumbFullFilename = path.join(thumb_path, thumbFilename);
                 callback(null, { 
                     basePath: basePath,
@@ -94,7 +125,7 @@ module.exports = (req, res)=>{
                 });
             },
             (data, callback)=>{
-                fs.readFile(file.path, (err, fileData)=>{
+                fs.readFile(item.file.path, (err, fileData)=>{
                     if(err) {
                         callback(err);
                         return;
@@ -112,7 +143,7 @@ module.exports = (req, res)=>{
                 });
             },
             (data, callback)=>{
-                fs.unlink(path.join(file.destination, file.filename), (err)=>{
+                fs.unlink(path.join(item.file.destination, item.file.filename), (err)=>{
                     if(err){
                         callback(err);
                         return;
@@ -130,17 +161,17 @@ module.exports = (req, res)=>{
                             callback(err);
                             return;
                         }
-                        let medType = file.mimetype.includes('image') ? 'image' : file.mimetype.includes('video') ? 'video' : '';
+                        let medType = item.file.mimetype.includes('image') ? 'image' : item.file.mimetype.includes('video') ? 'video' : '';
                         callback(null, {
                             type: medType,
                             dateAdded: time, 
-                            fileDate: body.fileDate, 
+                            fileDate: item.body.fileDate, 
                             filePath: data.basePath,
-                            originalFilename: file.originalname,
+                            originalFilename: item.file.originalname,
                             hashFilename: data.filename,
                             thumbnailFilename: data.thumbFilename,
-                            owner: body.owner,
-                            tags: body.tags 
+                            owner: item.body.owner,
+                            tags: item.body.tags 
                         });
                     });
             },
@@ -255,6 +286,10 @@ module.exports = (req, res)=>{
                     temp.push([data.mediaId, data.tags[i].id]);
                 }
                 console.log(temp);
+                if(temp.length === 0) {
+                    callback(null);   //no tags selected for media, that's fine, i guess
+                    return;
+                }
                 let query = "INSERT INTO tagsToMediaMap (media, tag) VALUES ?";
                 res.locals.connection.query(query, [temp], (error, results, fields)=>{
                     if(error) {
@@ -266,10 +301,16 @@ module.exports = (req, res)=>{
             }
         ], (err)=>{
             if(err){
-                res.status(403).send({'message': err.message});                
+                eachCallback(err);                
             } else {
-                res.status(200).send({'message':'Media successfully uploaded'});
+                eachCallback(null);
             }
         });
+    }, (err)=>{
+        if(err){
+            res.status(403).send({'message': err.message});                
+        } else {
+            res.status(200).send({'message':'Media successfully uploaded'});
+        }
     });        
 };
