@@ -183,6 +183,14 @@ export default class UploadMedia extends React.Component{
         const uploadAllStyle={
             width: "100%"
         };
+        const queueDivStyle={
+            marginTop: "1em"
+        };
+        const queueCountStyle={
+            padding: "0.25em 0.5em",
+            fontSize: "1.25em",
+            color: "#ffc801"
+        };
 
         return(
             <div id={"content"} style={contStyle}>
@@ -198,6 +206,7 @@ export default class UploadMedia extends React.Component{
                             </div>
                             {this.state.media.length > 0 &&
                                 <div>
+                                    <div style={queueDivStyle}>Files in queue: <span style={queueCountStyle}>{this.state.media.length}</span></div>
                                     <h3>Tags:</h3>                            
                                     <TagsSelectableList tags={this.state.tags} selected_tags={this.state.global_tags} onTagClick={(tag, index, value)=>this.handleGlobalTagClick(tag, index, value)}/>
                                     <br/>
