@@ -22,6 +22,14 @@ const routes = [
     {
         path: '/upload',
         req_authorization: true
+    },
+    {
+        path: '/users',
+        req_authorization: true
+    },
+    {
+        path: '/media_details',
+        req_authorization: true //shut it down!
     }
 ];
 
@@ -74,7 +82,7 @@ app_routes.get('*', (req, res, next)=>{
                 <title>Black Eagle Software CMS</title>
                 <link rel="shortcut icon" href="favicon-16x16.png">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                <link rel="stylesheet" href="global.css">
+                <link rel="stylesheet" href="/global.css">
                 <script src="/bundle.js" defer></script>
                 <script>window.__INITIAL_DATA__ = ${JSON.stringify(context.data)}</script>            
             </head>

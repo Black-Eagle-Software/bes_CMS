@@ -7,6 +7,7 @@ import WindowNavigation from '../helpers/windowNavigation';
 import Landing from './containers/landing.container';
 import UserHomeContainer from './containers/user-home.container';
 import UploadMedia from './containers/upload.container';
+import MediaDetails from './containers/media-details.container';
 
 class App extends React.Component {
   constructor(props){
@@ -88,12 +89,12 @@ class App extends React.Component {
   }
   componentDidMount(){
     //this.verifyAuthentication();
-    console.log(this.state.isAuthenticated);
+    //console.log(this.state.isAuthenticated);
   }
   render(){
     return(
         <div>
-            {/*<Header isAuthenticated={this.state.isAuthenticated} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
+            {/*<Header isAuthenticated={this.state.isAuthenticated} username={this.state.username} id={this.state.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
 
             <Switch>
                 <Route exact path='/' render={(props, routeProps)=>(<Landing 
@@ -124,6 +125,13 @@ class App extends React.Component {
                                                             {...props}
                                                             onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>)}/>
                 <Route path='/admin' render={()=>(<div>This is the Admin page</div>)} />
+                <Route path='/users/:id' render={(props)=>(<div>User Profile for: {props.match.params.id}</div>)}/>
+                <Route path='/media_details/:id' render={(props)=>(<MediaDetails 
+                                                                    user_id={this.state.id} 
+                                                                    {...props}
+                                                                    isAuthenticated={this.state.isAuthenticated}
+                                                                    username={this.state.username}
+                                                                    onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>)}/>
                 {/*<Route render={()=>(<div>Sorry, this page does not exist.</div>)} />*/}
                 <Route render={(props)=><div>Page not found.</div>}/>
             </Switch>
