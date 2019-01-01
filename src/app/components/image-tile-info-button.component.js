@@ -2,9 +2,8 @@ import React from 'react';
 
 export default class ImageTileInfoButton extends React.PureComponent{
     handleButtonClick(e){
-        e.preventDefault();
+        //e.preventDefault();
         e.stopPropagation();
-        this.props.onInfoButtonClick();
     }
 
     render(){
@@ -20,7 +19,7 @@ export default class ImageTileInfoButton extends React.PureComponent{
             textDecoration: "none"
         };
         return(
-            <a style={buttonStyle} className={"tile_infoBtn"} href={`/media_details/${this.props.media.id}`} title={"Details"}>
+            <a style={buttonStyle} className={"tile_infoBtn"} href={`/media_details/${this.props.media.id}`} title={"Details"} onClick={(e)=>this.handleButtonClick(e)}>
                 i
             </a>            
         );
