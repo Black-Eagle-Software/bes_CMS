@@ -13,6 +13,7 @@ class User{
         this.password = inputs.password;
         this.salt = inputs.salt;
         this.requiresPasswordReset = inputs.requiresPasswordReset;
+        this.role = "User";
         //console.log(`ID: ${this.id} name: ${this.name} email: ${this.email} password: ${this.password} salt: ${this.salt}`);
     }
     verifyPassword(input){

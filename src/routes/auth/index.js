@@ -15,6 +15,21 @@ auth.get('/logout', (req, res)=>{
     req.logout();
     res.status(200).redirect('/');
 });
+auth.get('/role', (req, res)=>{
+    //check a user's role
+    console.log(req.query.user);
+    let user = JSON.parse(req.query.user) //error check?
+    let queryString = "SELECT userRoleId FROM userRolesToUsersMap ur INNER JOIN users u ON u.id = ur.userId WHERE u.id=?";
+    res.locals.connection.query(queryString, [user], (error, results, fields)=>{
+        if(error) throw error;
+        //console.log(results[0].userRoleId);
+        if(results.count > 0 && results[0].userRoleId === 'Administrator'){
+            res.status(200).send({'role': 'Administrator'});
+        }else{
+            res.status(200).send({'role': 'User'});
+        }
+    });
+});
 
 auth.post('/login', (req, res, next)=>{
     //attempted login.  check if they're a valid user from here.

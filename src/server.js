@@ -58,8 +58,21 @@ passport.use(new localStrategy(
             let allowed = user.verifyPassword(password);
             if(!allowed){
                 return done(null, false, {message: 'Wrong or invalid password specified'});
-            } else {            
-                return done(null, user);
+            } else {
+                //confirm user role for use later
+                /*let queryString = "SELECT userRoleId FROM userRolesToUsersMap ur INNER JOIN users u ON u.id = ur.userId WHERE u.email=?";
+                connection.query(queryString, [email], (error, results, fields)=>{
+                    //if(error) throw error;
+                    //console.log(results[0].userRoleId);
+                    results[0].userRoleId === 'Administrator' ? user.role = 'Administrator' : user.role = 'User';
+                    return done(null, user);
+                });*/
+                axios.get(`http://localhost:8080/api/auth/role?user=${user.id}`).then(results=>{
+                    //console.log(results.data);    
+                    user.role = results.data.role;
+                    return done(null, user);
+                });         
+                //return done(null, user);
             }
         }).catch(error => done(error));
     }
@@ -70,8 +83,15 @@ passport.serializeUser((user, done)=>{
 passport.deserializeUser((id, done)=>{
     axios.get(`http://localhost:8080/api/users/${id}`).then(results=>{
         //console.log(results.data[0]);
-        results = JSON.stringify(results.data[0]);
-        done(null, results);
+        //results = JSON.stringify(results.data[0]);
+        //console.log(results);
+        //done(null, results);
+        axios.get(`http://localhost:8080/api/auth/role?user=${id}`).then(results2=>{
+            //console.log(results.data);    
+            results.data[0].role = results2.data.role;
+            results = JSON.stringify(results.data[0]);
+            return done(null, results);
+        });
     }).catch(error => done(error, false));
 });
 
