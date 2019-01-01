@@ -100,6 +100,7 @@ CREATE TABLE `media` (
   `id` int(10) UNSIGNED NOT NULL,
   `type` enum('image','video') NOT NULL,
   `dateAdded` bigint(20) UNSIGNED DEFAULT NULL,
+  `phash` varchar(16) NOT NULL,
   `fileDate` bigint(20) UNSIGNED DEFAULT NULL,
   `filePath` varchar(255) NOT NULL,
   `originalFilename` varchar(255) DEFAULT NULL,

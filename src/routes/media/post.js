@@ -3,6 +3,7 @@ const path = require('path');
 const crypto = require('crypto');
 const async = require('async');
 const gm = require('gm').subClass({imageMagick: true});
+const pHash = require('../../helpers/perceptualHashing');
 
 module.exports = (req, res)=>{
     //we will be posting media data via formdata
@@ -61,7 +62,7 @@ module.exports = (req, res)=>{
             //so that videos can do something else, for instance
             (callback)=>{
                 let shasum = crypto.createHash('sha1');
-                let s = fs.ReadStream(item.file.path);
+                let s = fs.ReadStream(item.file.path);                
                 let size = item.file.size > 10000000 ? 10000000 : item.file.size;
                 s.on('readable', ()=>{
                     s.read(size);                    
@@ -70,22 +71,70 @@ module.exports = (req, res)=>{
                 s.on('end', ()=>{ 
                     let d = shasum.digest('hex');
                     console.log(d);
+                    s.destroy();
                     callback(null, d);
                 });
+            },
+            //1a. create the perceptual hash of the media (if an image)
+            (data, callback)=>{
+                if(item.file.mimetype.includes('image')){
+                    let s = fs.ReadStream(item.file.path);
+                    pHash.pHashImageStream(s, (err, phash)=>{
+                        if(err) {
+                            callback(err);
+                            return;
+                        }
+                        s.destroy();
+                        callback(null, {fileHash: data, pHash: phash});
+                    });
+                }else{
+                    //TODO: this is a video, so do *something*
+                    callback(null, {fileHash: data, pHash: ""});
+                }
             },
             //2. check if the media duplicates an existing database entry
             (data, callback)=>{
                 //check if the hash exists in the database already
-                let hashFilename = `${data}.${item.body.extension}`;
-                res.locals.connection.query("SELECT * FROM media WHERE hashFilename = ?", [hashFilename], (error, results, fields)=>{
+                //let hashFilename = `${data.fileHash}.${item.body.extension}`;
+                //let query = "SELECT * FROM media WHERE hashFilename = ?";
+                let query = "SELECT *, BIT_COUNT(CONV(pHash, 16, 10) ^ CONV(?, 16, 10)) as hamming_distance FROM media HAVING hamming_distance < 10 ORDER BY hamming_distance ASC";
+                res.locals.connection.query(query, [data.pHash], (error, results, fields)=>{
                     if(error) {
                         callback(error);
                         return;
                     }
-                    console.log(JSON.stringify(results));
+                    console.log(`pHash hamming distance calculation results: ${JSON.stringify(results)}`);
                     if(results.length > 0){
                         //res.status(403).send("Media duplicates an item already in the database");
-                        callback(new Error("Media duplicates an item already in the database"));
+                        console.log(results);                        
+                        let message = `Could not upload media item ${item.file.originalname}: Media duplicates an item already in the database`;
+                        if(results[0].owner !== item.body.owner * 1){
+                            res.locals.connection.query("SELECT name FROM users WHERE id=?", results[0].owner, (error, results2, fields)=>{
+                                if(error){
+                                    callback(error);
+                                    return;
+                                }
+                                let url = `/users/${results[0].owner}`; //TODO: this will need to be created as a profile page of some sort
+                                let obj = {
+                                    src: url,
+                                    name: results2[0].name,
+                                    upload_filename: item.file.originalname
+                                }
+                                //message += `.  You currently do not have access to the existing file.  Perhaps make friends with [url${url} ${results2[0].name}/url]`;
+                                message += `.  You currently do not have access to the existing file.  Perhaps make friends with ${JSON.stringify(obj)}`;
+                                callback(new Error(message)); 
+                            });                              
+                        }else{
+                            //let url = `${results[0].filePath}/${results[0].hashFilename}`;
+                            let url = `/media_details/${results[0].id}`;    //TODO: this will need to be created as a details page showing tags, where used, etc.
+                            let obj = {
+                                src: url,
+                                name: results[0].originalFilename,
+                                upload_filename: item.file.originalname
+                            }
+                            message += `: ${JSON.stringify(obj)}`;
+                            callback(new Error(message));
+                        }
                     }else{
                         callback(null, data);
                     }                    
@@ -103,9 +152,9 @@ module.exports = (req, res)=>{
                 let basePath = path.join('media', item.body.owner.toString(), time.toString());
                 let fullPath = path.join(__basedir, 'public', basePath);
                 let thumb_path = path.join(fullPath, 'thumbnails');
-                let filename = `${data}.${item.body.extension}`;
+                let filename = `${data.fileHash}.${item.body.extension}`;
                 let fullFilename = path.join(fullPath, filename);
-                let thumbFilename = `${data}_thumb.${item.body.extension}`;
+                let thumbFilename = `${data.fileHash}_thumb.${item.body.extension}`;
                 let thumbFullFilename = path.join(thumb_path, thumbFilename);
                 callback(null, { 
                     basePath: basePath,
@@ -114,7 +163,8 @@ module.exports = (req, res)=>{
                     filename: filename,
                     fullFilename: fullFilename,
                     thumbFilename: thumbFilename,
-                    thumbFullFilename: thumbFullFilename
+                    thumbFullFilename: thumbFullFilename,
+                    pHash: data.pHash
                 });
             },
             (data, callback)=>{
@@ -175,7 +225,8 @@ module.exports = (req, res)=>{
                         let medType = item.file.mimetype.includes('image') ? 'image' : item.file.mimetype.includes('video') ? 'video' : '';
                         callback(null, {
                             type: medType,
-                            dateAdded: time, 
+                            dateAdded: time,
+                            pHash: data.pHash, 
                             fileDate: item.body.fileDate, 
                             filePath: data.basePath,
                             originalFilename: item.file.originalname,
@@ -186,91 +237,18 @@ module.exports = (req, res)=>{
                         });
                     });
             },
-            /*(data, callback)=>{
-                let basePath = path.join('media', body.owner.toString(), time.toString());
-                let fullPath = path.join(__basedir, 'public', basePath);
-                let thumb_path = path.join(fullPath, 'thumbnails');
-                let filename = `${data}.${body.extension}`;
-                let fullFilename = path.join(fullPath, filename);
-                let thumbFilename = `${data}_thumb.${body.extension}`;
-                let thumbFullFilename = path.join(thumb_path, thumbFilename);
-                // console.log(file.path);
-                // console.log(file.filename);
-                // console.log(file.destination);
-                // console.log(data);
-                // console.log(file.originalname);
-                // console.log(fullPath);
-                // console.log(thumb_path);
-                // console.log(filename);
-                // console.log(fullFilename);
-                // console.log(thumbFilename);
-                // console.log(thumbFullFilename);
-                //check for existing files/folders and move
-                //uploads into position
-                fs.mkdir(fullPath, (err)=>{
-                    if(err && err.code !== 'EEXIST') {  //ignore if the directory exists
-                        callback(err); 
-                        return;
-                    }
-                    fs.mkdir(thumb_path, (err)=>{
-                        if(err && err.code !== 'EEXIST') {  //ignore if the directory exists
-                            callback(err); 
-                            return;
-                        }
-                        //folders are made, so now we write our files
-                        fs.readFile(file.path, (err, fileData)=>{
-                            if(err) {
-                                callback(err);
-                                return;
-                            }
-                            fs.writeFile(fullFilename, fileData, (err)=>{
-                                if(err) {
-                                    callback(err);
-                                    return;
-                                }
-                                //get rid of our temporary file
-                                fs.unlink(path.join(file.destination, file.filename), (err)=>{
-                                    //now we need to create our thumbnail file
-                                    //first figure out our aspect ratio
-                                    gm(fullFilename)
-                                    .background('rgb(64, 64, 64)')
-                                    .compress('JPEG')
-                                    .resize(160, 160)
-                                    .write(thumbFullFilename, (err)=>{
-                                        if(err) {
-                                            callback(err);
-                                            return;
-                                        }
-                                        let medType = file.mimetype.includes('image') ? 'image' : file.mimetype.includes('video') ? 'video' : '';
-                                        callback(null, {
-                                            type: medType,
-                                            dateAdded: time, 
-                                            fileDate: body.fileDate, 
-                                            filePath: basePath,
-                                            originalFilename: file.originalname,
-                                            hashFilename: filename,
-                                            thumbnailFilename: thumbFilename,
-                                            owner: body.owner,
-                                            tags: body.tags 
-                                        });
-                                    });
-                                });                            
-                            });
-                        });
-                    });
-                });
-            },*/
             //4. insert media into the database
             (data, callback)=>{
                 //now that we've got our files on disk, we need to add them
                 //into the database
                 console.log(data);
-                let query = "INSERT INTO media SET type=?, dateAdded=?, fileDate=?, filePath=?, originalFilename=?, hashFilename=?, thumbnailFilename=?, owner=?";
+                let query = "INSERT INTO media SET type=?, dateAdded=?, pHash=?, fileDate=?, filePath=?, originalFilename=?, hashFilename=?, thumbnailFilename=?, owner=?";
                 res.locals.connection.query(
                     query, 
                     [
                         data.type, 
-                        data.dateAdded, 
+                        data.dateAdded,
+                        data.pHash, 
                         data.fileDate, 
                         data.filePath, 
                         data.originalFilename, 
