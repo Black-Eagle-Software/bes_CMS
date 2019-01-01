@@ -13,7 +13,10 @@ export default class UploadMedia extends React.Component{
             media: [],
             img_selected: null,
             tags: [],
-            global_tags: []
+            global_tags: [],
+            has_upload_error: false,
+            upload_error: "",
+            upload_error_dupe: {}
         };
 
         this.handleUploadInputChange = this.handleUploadInputChange.bind(this);
@@ -104,6 +107,9 @@ export default class UploadMedia extends React.Component{
         let media_index = temp_media.indexOf(media);
         temp_media.splice(media_index, 1);
         if(selected_media === media) selected_media = null;
+        if(media.file.name === this.state.upload_error_dupe.upload_filename){
+            this.resetErrorBar();
+        }
         this.setState({
             media: temp_media,
             img_selected: selected_media
@@ -113,6 +119,7 @@ export default class UploadMedia extends React.Component{
         }
     }
     handleUploadInputChange(e){
+        this.resetErrorBar();
         let files = e.target.files;
         let tags = this.state.tags;
         let temp_media = [];
@@ -184,17 +191,35 @@ export default class UploadMedia extends React.Component{
             width: "100%"
         };
         const queueDivStyle={
-            marginTop: "1em"
+            marginTop: "1em",
+            display: "flex",
+            flexFlow: "row nowrap",
+            alignItems: "baseline",
+            justifyContent: "flex-start"
         };
         const queueCountStyle={
-            padding: "0.25em 0.5em",
-            fontSize: "1.25em",
+            //padding: "0.25em 0.5em",
+            fontSize: "1.35em",
             color: "#ffc801"
+        };
+        const queueCountLabelStyle = {
+            flex: "1 1 auto"
+        };
+        const errorBarStyle = {
+            background: "#f7bcb8",
+            color: "#880901",
+            width: "100%",
+            padding: "0.5em 1em"
         };
 
         return(
             <div id={"content"} style={contStyle}>
-                <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
+                <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} id={this.props.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
+                {this.state.has_upload_error &&
+                    <div style={errorBarStyle}>
+                        {this.state.upload_error} <a href={this.state.upload_error_dupe.src} title={this.state.upload_error_dupe.name}>{this.state.upload_error_dupe.name}</a>
+                    </div>
+                }
                 <div style={pageStyle}>
                     <div style={uploadColStyle}>
                         <h2>Upload Media</h2>
@@ -206,7 +231,10 @@ export default class UploadMedia extends React.Component{
                             </div>
                             {this.state.media.length > 0 &&
                                 <div>
-                                    <div style={queueDivStyle}>Files in queue: <span style={queueCountStyle}>{this.state.media.length}</span></div>
+                                    <div style={queueDivStyle}>
+                                        <span style={queueCountLabelStyle}>Files in queue: </span>
+                                        <span style={queueCountStyle}>{this.state.media.length}</span>
+                                    </div>
                                     <h3>Tags:</h3>                            
                                     <TagsSelectableList tags={this.state.tags} selected_tags={this.state.global_tags} onTagClick={(tag, index, value)=>this.handleGlobalTagClick(tag, index, value)}/>
                                     <br/>
@@ -216,7 +244,8 @@ export default class UploadMedia extends React.Component{
                             
                         </form>                
                     </div>
-                    <div style={uploadImageTilesDivStyle}>
+                    
+                    <div style={uploadImageTilesDivStyle}>                    
                         <UploadImageTilesList media={this.state.media} 
                                                 onImageClick={(image)=>this.handleImageClick(image)}
                                                 onUploadClick={(media)=>this.handleUploadClick(media)}
@@ -229,7 +258,16 @@ export default class UploadMedia extends React.Component{
             </div>
         );
     }
+    resetErrorBar(){
+        //reset our error bar
+        this.setState({
+            has_upload_error: false,
+            upload_error: "",
+            upload_error_dupe: {}
+        });
+    }
     uploadMedia(mediaArr){
+        this.resetErrorBar();
         //make a copy of our array so that we can delete
         //items if this.state.media changes
         let arr = [].concat(mediaArr);  
@@ -252,6 +290,42 @@ export default class UploadMedia extends React.Component{
                 this.handleRemoveClick(arr[i]);
             }            
         })
-        .catch(err=>{console.log(err)});
+        .catch(err=>{
+            //console.log(`${err.message} - ${err.response.data.message}`);
+            //our error message will come in with a URL attached at the end
+            //to any duplicate database entries
+            //will want to parse message for [url /url] tags
+            //there's a space between the url and the filename
+            let message = err.response.data.message;
+            let dupe = {src: "", name: "", upload_filename: ""};
+            /*console.log(message.includes("[url"));
+            if(message.includes("[url")){
+                let start = message.indexOf("[url");
+                let url = message.substr(start);
+                message = message.slice(0, start);
+                url = url.substr(4);    //remove the opening tag
+                url = url.substr(0, url.length - 5);   //remove the closing tag
+                console.log(url);
+                let spcIndx = url.indexOf(" ");                
+                let name = url.substr(spcIndx + 1);
+                url = url.slice(0, spcIndx);
+                console.log(name);
+                console.log(url);
+                dupe = {src: url, name: name};
+            }else*/ if(message.includes("{")){
+                //serialized object included
+                let start = message.indexOf("{");
+                let objString = message.substr(start);
+                message = message.slice(0, start);
+                let obj = JSON.parse(objString);
+                console.log(obj);
+                dupe = obj;
+            }
+            this.setState({
+                has_upload_error: true,
+                upload_error: `ERROR: ${err.response.status} - ${message}`,
+                upload_error_dupe: dupe
+            });
+        });
     }
 }
