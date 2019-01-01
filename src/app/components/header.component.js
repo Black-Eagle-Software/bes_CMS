@@ -12,10 +12,9 @@ export default class Header extends React.Component{
         };
     }
     handleBtnClick(name){
-        /*if(name === 'profile'){
-            this.setState(prevState=>({show_profile_menu: !prevState.show_profile_menu}));
-            return;
-        }*/
+        if(name === 'profile'){
+            WindowNavigation.goToLocation(`/users/${this.props.id}`);
+        }
         if(name === 'logout'){
             axios.get('/api/auth/logout').then(()=>{
                 WindowNavigation.goToLocation('/');                

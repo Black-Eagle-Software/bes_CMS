@@ -112,7 +112,7 @@ export default class UserHomeContainer extends React.Component{
                 {this.state.show_delete_dialog && 
                     <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
                 }                
-                <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
+                <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} id={this.props.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
                 {/*this.props.show_tags && 
                     <Tags tags={this.state.tags}/>
                 */}
@@ -120,13 +120,13 @@ export default class UserHomeContainer extends React.Component{
                     {this.state.media &&
                         <div>
                             <h2>Recent Media</h2>
-                            <ImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)} can_delete={true} onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)}/>
+                            <ImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)} can_delete={true} onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)} />
                         </div>
                     }
                     {this.state.public_media &&
                         <div>
                             <h2>Recent Public Media</h2>
-                            <ImageTilesList media={this.state.public_media} onImageClick={(image)=>this.handleImageClick(image)} can_delete={false}/>
+                            <ImageTilesList media={this.state.public_media} onImageClick={(image)=>this.handleImageClick(image)} can_delete={false} />
                         </div>
                     }
                 </div>
