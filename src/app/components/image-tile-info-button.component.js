@@ -1,10 +1,10 @@
 import React from 'react';
 
-export default class ImageTileDeleteButton extends React.PureComponent{
+export default class ImageTileInfoButton extends React.PureComponent{
     handleButtonClick(e){
         e.preventDefault();
         e.stopPropagation();
-        this.props.onDeleteButtonClick();
+        this.props.onInfoButtonClick();
     }
 
     render(){
@@ -16,12 +16,13 @@ export default class ImageTileDeleteButton extends React.PureComponent{
             height: "1.5em",
             borderRadius: "0.75em",            
             cursor: "default",
-            marginLeft: "0.25em"
-        }
+            fontStyle: "italic",
+            textDecoration: "none"
+        };
         return(
-            <div style={buttonStyle} className={"tile_deleteBtn"} onClick={(e)=>this.handleButtonClick(e)} title={"Delete media"}>
-                &#x2716;
-            </div>            
+            <a style={buttonStyle} className={"tile_infoBtn"} href={`/media_details/${this.props.media.id}`} title={"Details"}>
+                i
+            </a>            
         );
     }
 }

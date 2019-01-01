@@ -1,11 +1,12 @@
 import React from 'react';
+import ImageTileButtonGroup from './image-tile-button-group.component';
+import ImageTileInfoButton from './image-tile-info-button.component';
 import ImageTileDeleteButton from './image-tile-delete-button.component';
 
 export default class ImageTile extends React.PureComponent{
     handleDeleteButtonClick(media){
         this.props.onDeleteButtonClick(media);
     }
-
     handleImageClick(media){
         this.props.onImageClick(media);
     }
@@ -41,9 +42,12 @@ export default class ImageTile extends React.PureComponent{
         return(
             <div style={contStyle} className={"tile-bg"} onClick={()=>this.handleImageClick(this.props.media)}>
                 <img style={imgStyle} src={imgSrc} alt={filename} />
-                {this.props.can_delete &&
-                    <ImageTileDeleteButton onDeleteButtonClick={()=>this.handleDeleteButtonClick(this.props.media)}/>
-                }                
+                <ImageTileButtonGroup>
+                    <ImageTileInfoButton media={this.props.media.file}/>
+                    {this.props.can_delete &&
+                        <ImageTileDeleteButton onDeleteButtonClick={()=>this.handleDeleteButtonClick(this.props.media)}/>
+                    }
+                </ImageTileButtonGroup>                                
             </div>
         );
     }
