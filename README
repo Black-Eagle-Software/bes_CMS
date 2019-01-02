@@ -39,3 +39,8 @@
 /media/<id>             /m/<id>         DELETE          Deletes the media with an id of <id>
 /tag/<id>               /t/<id>         DELETE          Deletes the tag with an id of <id>
 /albums/<id>            /a/<id>         DELETE          Deletes the album with an id of <id>
+
+#Search additions
+/search?t=x+y+z         /s?t=x+y+z      GET             Search for media with tag x, y, and z
+/search?s=abcd          /s?s=abcd       GET             Search for media, albums, tags with any property (i.e.: name) that includes string abcd
+/search?m=<id>          /s?m=<id>       GET             Search for all albums that include media with the id of <id> (for media details?)
