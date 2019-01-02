@@ -52,7 +52,8 @@ module.exports = (req, res)=>{
     /*console.log(contents[0].body.extension);
     res.status(500).send();
     return;*/
-    let time = Math.floor(new Date()/1000); //want this to be a common time/folder for a bank of uploads
+    //let time = Math.floor(new Date()/1000); //want this to be a common time/folder for a bank of uploads
+    let time = Date.now();
     async.each(contents, (item, eachCallback)=>{
         async.waterfall([
             //1. hash the media's first 10 MB
@@ -222,7 +223,7 @@ module.exports = (req, res)=>{
                             callback(err);
                             return;
                         }
-                        let medType = item.file.mimetype.includes('image') ? 'image' : item.file.mimetype.includes('video') ? 'video' : '';
+                        let medType = item.file.mimetype.includes('image') ? 'image' : item.file.mimetype.includes('video') ? 'video' : '';                        
                         callback(null, {
                             type: medType,
                             dateAdded: time,
