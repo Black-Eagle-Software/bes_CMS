@@ -11,7 +11,7 @@ export default class MediaZoom extends React.Component{
 
     render(){
         const contStyle = {
-            position: "absolute",
+            position: "fixed",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
