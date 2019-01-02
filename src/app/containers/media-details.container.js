@@ -3,12 +3,15 @@ import axios from 'axios';
 import ImageFingerprintGraphic from '../components/image-fingerprint-graphic.component';
 import Header from '../components/header.component';
 
+const uuid = require('uuid/v4');
+
 export default class MediaDetails extends React.Component{
     constructor(props){
         super(props);
 
         this.state = {
-            image_source: null
+            image_source: null,
+            tags: []
         };
     }
     componentDidMount(){
@@ -17,6 +20,12 @@ export default class MediaDetails extends React.Component{
             //console.log(res);
             if(res){
                 this.setState({image_source: res.data});
+            }
+        });
+        axios.get(`/api/m/${this.props.match.params.id}/t`)
+        .then(res=>{
+            if(res){
+                this.setState({tags: res.data});
             }
         });
     }
@@ -76,6 +85,16 @@ export default class MediaDetails extends React.Component{
             flex: "1 1 auto",
             color: "#666666"
         };
+        const tagSpanStyle = {
+            background: "#006cb7",
+            color: "#f5f5f5",
+            borderRadius: "1em",
+            padding: "0.25em 1em",
+            fontSize: "0.75em",
+            height: "2em",
+            margin: "0 0.25em",
+            cursor: "default"
+        }
 
         return(
             <div>
@@ -99,10 +118,21 @@ export default class MediaDetails extends React.Component{
                                         <li style={liStyle}><span style={liLabelStyle}>Hashed filename: </span><span style={liItemStyle}>{this.state.image_source.hashFilename}</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Thumbnail filename: </span><span style={liItemStyle}>{this.state.image_source.thumbnailFilename}</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Owner: </span><span style={liItemStyle}>{this.state.image_source.owner}</span></li>
-                                        <li style={liStyle}><span style={liLabelStyle}>Tags: </span><span style={liItemStyle}>This space intentionally left blank</span></li>
+                                        <li style={liStyle}>
+                                            <span style={liLabelStyle}>Tags: </span>
+                                            {this.state.tags.map(tag=>{
+                                                return <span key={uuid()} style={tagSpanStyle}>{tag.description}</span>
+                                            })}
+                                            
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+                    }
+                    {!this.state.image_source &&
+                        <div>
+                            You currently do not have access right to this media item.
                         </div>
                     }                
                 </div>
