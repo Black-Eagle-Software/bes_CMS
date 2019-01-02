@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import WindowNavigation from '../../helpers/windowNavigation';
 import HeaderMenu from './header-menu.component';
+import HeaderSearchBar from './header-search-bar.component';
 
 export default class Header extends React.Component{
     constructor(props){
@@ -34,7 +35,8 @@ export default class Header extends React.Component{
             fontSize: "1.25em",
             paddingLeft: "0.5em",
             paddingRight: "0.5em",
-            zIndex: "500"
+            zIndex: "500",
+            boxShadow: "rgba(0, 0, 0, 0.2) 0px 2px 4px 0px"
         };
         const titleStyle = {
             paddingRight: "1em"
@@ -55,6 +57,9 @@ export default class Header extends React.Component{
                         this is our spacer to separate things from the left and right of the header
                         ...because flex is awesome
                     */}
+                    {this.props.isAuthenticated &&
+                        <HeaderSearchBar />
+                    }
                 </div>
                 {this.props.isAuthenticated &&
                     <div className={"headerBtn"} onClick={()=>this.handleBtnClick('upload')}>Upload</div>
