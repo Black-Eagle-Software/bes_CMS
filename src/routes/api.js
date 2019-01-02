@@ -4,6 +4,7 @@ const auth = require('./auth');
 const media = require('./media');
 const tags = require('./tags');
 const users = require('./users');
+const search = require('./search');
 
 api.get('/', (req, res)=>{
     res.status(200).json({ message: "Connected!" });
@@ -22,5 +23,8 @@ api.use('/t', tags);
 
 api.use('/users', users);
 api.use('/u', users);
+
+api.use('/search', search);
+api.use('/s', search);
 
 module.exports = api;
