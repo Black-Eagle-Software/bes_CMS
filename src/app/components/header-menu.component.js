@@ -37,6 +37,8 @@ export default class HeaderMenu extends React.Component{
             position: "relative"
         };
         const contStyle={
+            position: "absolute",
+            width: "100%",
             background: "#ebebeb",
             zIndex: "500"
         };
