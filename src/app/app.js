@@ -107,7 +107,6 @@ class App extends React.Component {
                         {...props} 
                         {...routeProps} 
                         onLogin={()=>this.handleLogin()} 
-                        //onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
                         show_login={this.state.show_login}
                         show_register={this.state.show_register}/>)} />                    
                   </Layout>
@@ -123,12 +122,9 @@ class App extends React.Component {
                         username={this.state.username}
                         id={this.state.id}
                         onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
-                          <UserHomeContainer 
-                              //isAuthenticated={this.state.isAuthenticated} 
-                              //username={this.state.username}
+                          <UserHomeContainer
                               id={this.state.id} 
-                              {...props} 
-                              //onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
+                              {...props}
                               show_albums={this.state.show_albums}
                               show_tags={this.state.show_tags}/>
                   </Layout>
@@ -138,13 +134,7 @@ class App extends React.Component {
                         username={this.state.username}
                         id={this.state.id}
                         onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
-                          <UploadMedia 
-                              //isAuthenticated={this.state.isAuthenticated}
-                              //username={this.state.username}
-                              id={this.state.id}
-                              {...props}
-                              //onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>)}
-                              />
+                          <UploadMedia id={this.state.id} {...props}/>
                   </Layout>
                 )}/>                
                 <Route path='/admin' render={()=>(
@@ -168,13 +158,7 @@ class App extends React.Component {
                         username={this.state.username}
                         id={this.state.id}
                         onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
-                          <MediaDetails 
-                              user_id={this.state.id} 
-                              {...props}
-                              //isAuthenticated={this.state.isAuthenticated}
-                              //username={this.state.username}
-                              //onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
-                              />
+                          <MediaDetails user_id={this.state.id} {...props}/>
                   </Layout>
                 )}/>
                 {/*<Route render={()=>(<div>Sorry, this page does not exist.</div>)} />*/}

@@ -12,17 +12,6 @@ export default class Landing extends React.Component{
             show_register: false
         };        
     }
-    handleHeaderBtnClick(name){
-        this.props.onHeaderBtnClick(name);
-        /*switch (name){
-            case 'home': break;
-            case 'login': 
-                        this.setState({show_login: true});
-                        break;
-            case 'register': break;
-            case 'default': break;
-        }*/
-    }
     handleLogin(){
         this.props.onLogin();   //go to the user's home page
     }
@@ -61,7 +50,6 @@ export default class Landing extends React.Component{
 
         return(
             <div style={contStyle}>
-                {/*<Header isAuthenticated={false} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
                 <div style={pageStyle}>
                     <img style={logoStyle} src="Logo-4a.png" />
                     {!this.props.show_login && !this.props.show_register && 

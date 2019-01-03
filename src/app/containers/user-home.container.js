@@ -93,9 +93,6 @@ export default class UserHomeContainer extends React.Component{
     
     render(){
         const contStyle = {
-            /*display: "flex",
-            flexFlow: "row wrap",
-            alignItems: "flex-start"*/
             height: "100%",
             width: "100%"
         };
@@ -105,7 +102,7 @@ export default class UserHomeContainer extends React.Component{
             marginRight: "1em"
         };
         //redo this a bit to separate out our page content
-        //but keep the overlays here
+        //but keep the overlays here?
         return(
             <div style={contStyle}>
                 {this.state.is_image_focused &&
@@ -114,7 +111,6 @@ export default class UserHomeContainer extends React.Component{
                 {this.state.show_delete_dialog && 
                     <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
                 }                
-                {/*<Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} id={this.props.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
                 {/*this.props.show_tags && 
                     <Tags tags={this.state.tags}/>
                 */}

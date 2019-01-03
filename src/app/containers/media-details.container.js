@@ -33,24 +33,9 @@ export default class MediaDetails extends React.Component{
         let date = new Date(msDate);
         let output = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         return output;
-    }
-    handleHeaderBtnClick(name){
-        this.props.onHeaderBtnClick(name);
-    }    
+    }   
     render(){
         const contStyle = {
-            /*position: "absolute",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            top: "0px", 
-            left: "0px",
-            bottom: "0px",
-            right: "0px",*/
-            /*background: "rgba(15, 15, 15, 0.98)",
-            color: "#f5f5f5",
-            zIndex: "1000",*/
             padding: "70px",
             height: "100%",
             width: "100%"

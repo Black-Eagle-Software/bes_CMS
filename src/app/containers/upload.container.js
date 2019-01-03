@@ -91,9 +91,6 @@ export default class UploadMedia extends React.Component{
             global_tags: global_tags
         });
     }
-    handleHeaderBtnClick(name){
-        this.props.onHeaderBtnClick(name);
-    }
     handleImageClick(image){
         this.setState({img_selected: image});
     }
@@ -148,15 +145,7 @@ export default class UploadMedia extends React.Component{
         return tags;
     }
     render(){
-        /*const contStyle = {
-            display: "flex",
-            width: "100%",
-            height: "100%"
-        };*/
         const contStyle = {
-            /*display: "flex",
-            flexFlow: "row wrap",
-            alignItems: "flex-start"*/
             height: "100%",
             width: "100%"
         };
@@ -216,7 +205,6 @@ export default class UploadMedia extends React.Component{
 
         return(
             <div style={contStyle}>
-                {/*<Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} id={this.props.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
                 {this.state.has_upload_error &&
                     <div style={errorBarStyle}>
                         {this.state.upload_error} <a href={this.state.upload_error_dupe.src} title={this.state.upload_error_dupe.name}>{this.state.upload_error_dupe.name}</a>
