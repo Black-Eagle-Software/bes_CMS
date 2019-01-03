@@ -51,7 +51,9 @@ export default class MediaDetails extends React.Component{
             /*background: "rgba(15, 15, 15, 0.98)",
             color: "#f5f5f5",
             zIndex: "1000",*/
-            padding: "70px"
+            padding: "70px",
+            height: "100%",
+            width: "100%"
         };
         const contentStyle = {
             display: "flex",
@@ -97,10 +99,7 @@ export default class MediaDetails extends React.Component{
         }
 
         return(
-            <div>
-                <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} id={this.props.user_id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
-            
-                <div style={contStyle}>                
+            <div style={contStyle}>                
                     {this.state.image_source &&
                         <div> 
                             Media details for: {this.props.match.params.id}
@@ -136,7 +135,6 @@ export default class MediaDetails extends React.Component{
                         </div>
                     }                
                 </div>
-            </div>
         );
     }
 }

@@ -93,9 +93,11 @@ export default class UserHomeContainer extends React.Component{
     
     render(){
         const contStyle = {
-            display: "flex",
+            /*display: "flex",
             flexFlow: "row wrap",
-            alignItems: "flex-start"
+            alignItems: "flex-start"*/
+            height: "100%",
+            width: "100%"
         };
         const pageStyle = {
             height: "100%",
@@ -105,14 +107,14 @@ export default class UserHomeContainer extends React.Component{
         //redo this a bit to separate out our page content
         //but keep the overlays here
         return(
-            <div id={"content"} style={contStyle}>
+            <div style={contStyle}>
                 {this.state.is_image_focused &&
                     <MediaZoom image_source={this.state.zoomed_image} media_tags={this.state.zoomed_image_tags} onCloseClick={()=>this.handleCloseClick()}/>
                 }
                 {this.state.show_delete_dialog && 
                     <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
                 }                
-                <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} id={this.props.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
+                {/*<Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} id={this.props.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
                 {/*this.props.show_tags && 
                     <Tags tags={this.state.tags}/>
                 */}

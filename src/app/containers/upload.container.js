@@ -154,9 +154,11 @@ export default class UploadMedia extends React.Component{
             height: "100%"
         };*/
         const contStyle = {
-            display: "flex",
+            /*display: "flex",
             flexFlow: "row wrap",
-            alignItems: "flex-start"
+            alignItems: "flex-start"*/
+            height: "100%",
+            width: "100%"
         };
         const pageStyle = {
             display: "flex",
@@ -213,8 +215,8 @@ export default class UploadMedia extends React.Component{
         };
 
         return(
-            <div id={"content"} style={contStyle}>
-                <Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} id={this.props.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
+            <div style={contStyle}>
+                {/*<Header isAuthenticated={this.props.isAuthenticated} username={this.props.username} id={this.props.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
                 {this.state.has_upload_error &&
                     <div style={errorBarStyle}>
                         {this.state.upload_error} <a href={this.state.upload_error_dupe.src} title={this.state.upload_error_dupe.name}>{this.state.upload_error_dupe.name}</a>

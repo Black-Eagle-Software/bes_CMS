@@ -8,6 +8,7 @@ import Landing from './containers/landing.container';
 import UserHomeContainer from './containers/user-home.container';
 import UploadMedia from './containers/upload.container';
 import MediaDetails from './containers/media-details.container';
+import Layout from './containers/layout.container';
 
 class App extends React.Component {
   constructor(props){
@@ -97,41 +98,85 @@ class App extends React.Component {
             {/*<Header isAuthenticated={this.state.isAuthenticated} username={this.state.username} id={this.state.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
 
             <Switch>
-                <Route exact path='/' render={(props, routeProps)=>(<Landing 
-                                                                        {...props} 
-                                                                        {...routeProps} 
-                                                                        onLogin={()=>this.handleLogin()} 
-                                                                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
-                                                                        show_login={this.state.show_login}
-                                                                        show_register={this.state.show_register}/>)} />
+                <Route exact path='/' render={(props, routeProps)=>(
+                  <Layout isAuthenticated={this.state.isAuthenticated} 
+                      username={this.state.username}
+                      id={this.state.id}
+                      onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
+                    <Landing 
+                        {...props} 
+                        {...routeProps} 
+                        onLogin={()=>this.handleLogin()} 
+                        //onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
+                        show_login={this.state.show_login}
+                        show_register={this.state.show_register}/>)} />                    
+                  </Layout>
+                )}/>
                 {/*<Route path='/home' component={UserHomeContainer} />*/}
                 {/*<Route path='/home' render={(props)=>(
                 this.state.isAuthenticated ? <UserHomeContainer {...props}/> : <Redirect to='/'/>
                 )} />*/}
                 {/*<AuthRoute path='/home' component={UserHomeContainer}/>*/}
                 {/*<AuthRoute path='/home' isAuthenticated={this.state.isAuthenticated} render={(props)=>(<UserHomeContainer isAuthenticated={this.state.isAuthenticated} {...props}/>)}/>*/}
-                <Route path='/home' render={(props)=>(<UserHomeContainer 
-                                                        isAuthenticated={this.state.isAuthenticated} 
-                                                        username={this.state.username}
-                                                        id={this.state.id} 
-                                                        {...props} 
-                                                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
-                                                        show_albums={this.state.show_albums}
-                                                        show_tags={this.state.show_tags}/>)}/>
-                <Route path='/upload' render={(props)=>(<UploadMedia 
-                                                            isAuthenticated={this.state.isAuthenticated}
-                                                            username={this.state.username}
-                                                            id={this.state.id}
-                                                            {...props}
-                                                            onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>)}/>
-                <Route path='/admin' render={()=>(<div>This is the Admin page</div>)} />
-                <Route path='/users/:id' render={(props)=>(<div>User Profile for: {props.match.params.id}</div>)}/>
-                <Route path='/media_details/:id' render={(props)=>(<MediaDetails 
-                                                                    user_id={this.state.id} 
-                                                                    {...props}
-                                                                    isAuthenticated={this.state.isAuthenticated}
-                                                                    username={this.state.username}
-                                                                    onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>)}/>
+                <Route path='/home' render={(props)=>(
+                  <Layout isAuthenticated={this.state.isAuthenticated} 
+                        username={this.state.username}
+                        id={this.state.id}
+                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
+                          <UserHomeContainer 
+                              //isAuthenticated={this.state.isAuthenticated} 
+                              //username={this.state.username}
+                              id={this.state.id} 
+                              {...props} 
+                              //onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
+                              show_albums={this.state.show_albums}
+                              show_tags={this.state.show_tags}/>
+                  </Layout>
+                  )}/>
+                <Route path='/upload' render={(props)=>(
+                  <Layout isAuthenticated={this.state.isAuthenticated} 
+                        username={this.state.username}
+                        id={this.state.id}
+                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
+                          <UploadMedia 
+                              //isAuthenticated={this.state.isAuthenticated}
+                              //username={this.state.username}
+                              id={this.state.id}
+                              {...props}
+                              //onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>)}
+                              />
+                  </Layout>
+                )}/>                
+                <Route path='/admin' render={()=>(
+                  <Layout isAuthenticated={this.state.isAuthenticated} 
+                      username={this.state.username}
+                      id={this.state.id}
+                      onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
+                    <div>This is the Admin page</div>                    
+                  </Layout>
+                  )} />
+                <Route path='/users/:id' render={(props)=>(
+                  <Layout isAuthenticated={this.state.isAuthenticated} 
+                      username={this.state.username}
+                      id={this.state.id}
+                      onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
+                    <div>User Profile for: {props.match.params.id}</div>                    
+                  </Layout>
+                )}/>
+                <Route path='/media_details/:id' render={(props)=>(
+                  <Layout isAuthenticated={this.state.isAuthenticated} 
+                        username={this.state.username}
+                        id={this.state.id}
+                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
+                          <MediaDetails 
+                              user_id={this.state.id} 
+                              {...props}
+                              //isAuthenticated={this.state.isAuthenticated}
+                              //username={this.state.username}
+                              //onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
+                              />
+                  </Layout>
+                )}/>
                 {/*<Route render={()=>(<div>Sorry, this page does not exist.</div>)} />*/}
                 <Route render={(props)=><div>Page not found.</div>}/>
             </Switch>

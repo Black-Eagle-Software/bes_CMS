@@ -32,8 +32,10 @@ export default class Landing extends React.Component{
     
     render(){
         const contStyle = {
-            display: "flex",
-            flexFlow: "row wrap"
+            /*display: "flex",
+            flexFlow: "row wrap"*/
+            height: "100%",
+            width: "100%"
         };
         const pageStyle = {
             display: "flex",
@@ -58,8 +60,8 @@ export default class Landing extends React.Component{
         };
 
         return(
-            <div id={"content"} style={contStyle}>
-                <Header isAuthenticated={false} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>
+            <div style={contStyle}>
+                {/*<Header isAuthenticated={false} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
                 <div style={pageStyle}>
                     <img style={logoStyle} src="Logo-4a.png" />
                     {!this.props.show_login && !this.props.show_register && 
