@@ -160,12 +160,16 @@ button, input[type=submit], .btn:active:hover{
 .headerBtn{
     padding: 0em 0.5em;
     cursor: default;
+    color: #1f1f1f;
+    fill: #1f1f1f;
+    stroke: #1f1f1f;
     border: 0px solid transparent;
 }
 .headerBtn:hover{
     background: #333333;
     color: #f5f5f5;
     fill: #f5f5f5;
+    stroke: #f5f5f5;
 }
 
 .tile-bg{
@@ -215,3 +219,9 @@ button, input[type=submit], .btn:active:hover{
     color: #1f1f1f;
     fill: #1f1f1f;
 }
+
+/*svg classes for header logo*/
+.st0{stroke-width:120;stroke-miterlimit:10;fill-opacity:0;} 
+.st1{fill-rule:evenodd;clip-rule:evenodd;} 
+.st2{display:none;fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:10;} 
+.st3{stroke-width:40;stroke-linecap:round;stroke-miterlimit:10;}
