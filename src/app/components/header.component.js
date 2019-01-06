@@ -23,6 +23,12 @@ export default class Header extends React.Component{
         }
         this.props.onBtnClick(name);
     }
+    handleShowMoreButtonClick(query){
+        //throw this up a level to the app so that it can
+        //handle passing the query back to the header when
+        //we change window locations
+        this.props.onSearchShowMoreButtonClick(query);        
+    }
     
     render(){
         const headerStyle={
@@ -210,7 +216,7 @@ export default class Header extends React.Component{
                         ...because flex is awesome
                     */}
                     {this.props.isAuthenticated &&
-                        <HeaderSearchBar />
+                        <HeaderSearchBar query_value={this.props.query_value} onShowMoreButtonClick={(query)=>this.handleShowMoreButtonClick(query)}/>
                     }
                 </div>
                 {this.props.isAuthenticated &&

@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-
-const uuid = require('uuid/v4');
+import HeaderSearchBarSuggestions from './header-search-bar-suggestions.component';
 
 export default class HeaderSearchBar extends React.Component{
     constructor(props){
@@ -13,13 +12,19 @@ export default class HeaderSearchBar extends React.Component{
             query_results: {}
         }
     }
+    componentDidMount(){
+        this.resetSearchState();
+    }
+    handleImageClick(image){
+
+    }
     handleInputChange(e){
         //maybe this should offload this to a parent component
         //such that we can redirect to a dedicated search result page?
         let val = e.target.value;
         if(val.length >= 3){
             //fire the missiles!
-            axios.get(`/api/search?s=${val}`)
+            axios.get(`/api/search?s=${val}&limit=5`)
             .then(res=>{
                 //relevant bits are in res.data
                 console.log(res);
@@ -35,6 +40,12 @@ export default class HeaderSearchBar extends React.Component{
             });
         }
         this.setState({input_value: val});
+    }
+    handleLinkClick(){
+        this.resetSearchState();
+    }
+    handleShowMoreButtonClick(){
+        this.props.onShowMoreButtonClick(this.state.input_value);
     }
     render(){
         const contStyle = {
@@ -71,21 +82,26 @@ export default class HeaderSearchBar extends React.Component{
         const svgStyle = {
             width: "1em",
             height: "1em"
-        };
-        const resultsDivStyle = {
-            position: "absolute",
-            width: "100%",
-            background: "#ebebeb",
-            zIndex: "500",
-            top: "2em",
-            boxShadow: "0 4px 6px 0 rgba(0, 0, 0, 0.2)",
-            padding: "0.5em"
-        };
+        };        
+
+        /*
+            Search Bar Thoughts
+            Query results pane will be a jumping-off point to fuller results
+            Should be able to click a result in the query and go to its relevant page
+            +click media, go to details
+            ++details show where used?
+            +click album, go to details
+            +click tag, go to search for where used
+            ++create details page, show where used?
+            Should have a 'Show more...' button to redirect to the full search page
+            If click the search button, redirect to the full search page with the 
+            input search term
+        */
 
         return(
             <div style={contStyle}>
                 <form style={formStyle}>
-                    <input type='text' style={textInputStyle} ref={this.inputRef} value={this.state.input_value} onChange={e=>this.handleInputChange(e)}/>
+                    <input type='text' placeholder='Search...' style={textInputStyle} ref={this.inputRef} value={this.state.input_value} onChange={e=>this.handleInputChange(e)}/>                    
                     <div style={btnDivStyle}>
                         <button className={"headerBtn"} type='submit' style={srchBtnStyle}>
                             <svg style={svgStyle} viewBox={"0 0 24 24"}>
@@ -95,31 +111,18 @@ export default class HeaderSearchBar extends React.Component{
                     </div>
                 </form>
                 {this.state.show_query_results &&
-                    <div style={resultsDivStyle}>
-                        <div>Albums:
-                            <ul>
-                                {this.state.query_results.albums.length > 0 && this.state.query_results.albums.map(result=>{
-                                    return <li key={uuid()}>{result.name}</li>
-                                })}
-                            </ul>
-                        </div>
-                        <div>Media:
-                            <ul>
-                                {this.state.query_results.media.length > 0 && this.state.query_results.media.map(result=>{
-                                    return <li key={uuid()}>{result.originalFilename}</li>
-                                })}
-                            </ul>
-                        </div>
-                        <div>Tags:
-                            <ul>
-                                {this.state.query_results.tags.length > 0 && this.state.query_results.tags.map(result=>{
-                                    return <li key={uuid()}>{result.description}</li>
-                                })}
-                            </ul>
-                        </div>
-                    </div>
+                    <HeaderSearchBarSuggestions query_results={this.state.query_results} 
+                            onLinkClick={()=>this.handleLinkClick()} 
+                            onShowMoreButtonClick={()=>this.handleShowMoreButtonClick()}/>
                 }
             </div>
         );
+    }
+    resetSearchState(){
+        this.setState({
+            show_query_results: false,
+            query_results: {},
+            input_value: this.props.query_value ? this.props.query_value : ""
+        });
     }
 }

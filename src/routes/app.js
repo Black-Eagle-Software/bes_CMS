@@ -30,13 +30,22 @@ const routes = [
     {
         path: '/media_details',
         req_authorization: true //shut it down!
+    },
+    {
+        path: '/search',
+        req_authorization: true
     }
 ];
 
 app_routes.get('*', (req, res, next)=>{
-    const activeRoute = routes.find((route)=>ReactRouterDOM.matchPath(req.url, route)) || {};
+    let url = req.url;
+    //special handling for search url since it has query embedded
+    if(url.includes('?') && url.includes('=')){
+        url = url.substr(0, url.indexOf('?'));
+    }
+    const activeRoute = routes.find((route)=>ReactRouterDOM.matchPath(url, route)) || {};
 
-    console.log(`Attempting to go to URL: ${req.url}`);
+    console.log(`Attempting to go to URL: ${url}`);
     console.log(`Route requires authorization: ${activeRoute.req_authorization}`);
     //console.log(req.user);
     let can_proceed = true;

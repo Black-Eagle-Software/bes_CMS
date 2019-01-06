@@ -9,6 +9,7 @@ import UserHomeContainer from './containers/user-home.container';
 import UploadMedia from './containers/upload.container';
 import MediaDetails from './containers/media-details.container';
 import Layout from './containers/layout.container';
+import Search from './containers/search.container';
 
 class App extends React.Component {
   constructor(props){
@@ -36,7 +37,8 @@ class App extends React.Component {
       show_albums: false,
       show_login: false,
       show_register: false,
-      show_tags: false
+      show_tags: false,
+      search_query: ""
     };
   }
   handleHeaderBtnClick(name){
@@ -71,6 +73,14 @@ class App extends React.Component {
     //this.verifyAuthentication();
     WindowNavigation.goToLocation('/home');    
   }
+  handleSearchShowMoreButtonClick(query){
+    //when we change location, it's getting a new instance
+    //of app and losing state.
+    //we need to somehow get hte query value to the search bar
+    //cookie? parse it from the url?
+    WindowNavigation.goToLocation(`/search?s=${query}`);
+    this.setState({search_query: query});    
+  }
   verifyAuthentication(){
     axios.get('/api/auth/check').then(res=>{
       console.log(res.status);
@@ -94,22 +104,22 @@ class App extends React.Component {
   }
   render(){
     return(
-        <div>
+      <Layout isAuthenticated={this.state.isAuthenticated} 
+          username={this.state.username}
+          id={this.state.id}
+          onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
+          onSearchShowMoreButtonClick={(query)=>this.handleSearchShowMoreButtonClick(query)}
+          query_value={this.state.search_query}>
             {/*<Header isAuthenticated={this.state.isAuthenticated} username={this.state.username} id={this.state.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
 
             <Switch>
                 <Route exact path='/' render={(props, routeProps)=>(
-                  <Layout isAuthenticated={this.state.isAuthenticated} 
-                      username={this.state.username}
-                      id={this.state.id}
-                      onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
-                    <Landing 
-                        {...props} 
-                        {...routeProps} 
-                        onLogin={()=>this.handleLogin()} 
-                        show_login={this.state.show_login}
-                        show_register={this.state.show_register}/>)} />                    
-                  </Layout>
+                  <Landing 
+                  {...props} 
+                  {...routeProps} 
+                  onLogin={()=>this.handleLogin()} 
+                  show_login={this.state.show_login}
+                  show_register={this.state.show_register}/>)} />
                 )}/>
                 {/*<Route path='/home' component={UserHomeContainer} />*/}
                 {/*<Route path='/home' render={(props)=>(
@@ -118,16 +128,11 @@ class App extends React.Component {
                 {/*<AuthRoute path='/home' component={UserHomeContainer}/>*/}
                 {/*<AuthRoute path='/home' isAuthenticated={this.state.isAuthenticated} render={(props)=>(<UserHomeContainer isAuthenticated={this.state.isAuthenticated} {...props}/>)}/>*/}
                 <Route path='/home' render={(props)=>(
-                  <Layout isAuthenticated={this.state.isAuthenticated} 
-                        username={this.state.username}
-                        id={this.state.id}
-                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
-                          <UserHomeContainer
-                              id={this.state.id} 
-                              {...props}
-                              show_albums={this.state.show_albums}
-                              show_tags={this.state.show_tags}/>
-                  </Layout>
+                  <UserHomeContainer
+                  id={this.state.id} 
+                  {...props}
+                  show_albums={this.state.show_albums}
+                  show_tags={this.state.show_tags}/>
                   )}/>
                 <Route path='/upload' render={(props)=>(
                   <Layout isAuthenticated={this.state.isAuthenticated} 
@@ -138,33 +143,21 @@ class App extends React.Component {
                   </Layout>
                 )}/>                
                 <Route path='/admin' render={()=>(
-                  <Layout isAuthenticated={this.state.isAuthenticated} 
-                      username={this.state.username}
-                      id={this.state.id}
-                      onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
-                    <div>This is the Admin page</div>                    
-                  </Layout>
+                  <div>This is the Admin page</div>
                   )} />
                 <Route path='/users/:id' render={(props)=>(
-                  <Layout isAuthenticated={this.state.isAuthenticated} 
-                      username={this.state.username}
-                      id={this.state.id}
-                      onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
-                    <div>User Profile for: {props.match.params.id}</div>                    
-                  </Layout>
+                  <div>User Profile for: {props.match.params.id}</div>
                 )}/>
                 <Route path='/media_details/:id' render={(props)=>(
-                  <Layout isAuthenticated={this.state.isAuthenticated} 
-                        username={this.state.username}
-                        id={this.state.id}
-                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
-                          <MediaDetails user_id={this.state.id} {...props}/>
-                  </Layout>
+                  <MediaDetails user_id={this.state.id} {...props}/>
+                )}/>
+                <Route path='/search' render={(props)=>(
+                  <Search {...props} />
                 )}/>
                 {/*<Route render={()=>(<div>Sorry, this page does not exist.</div>)} />*/}
                 <Route render={(props)=><div>Page not found.</div>}/>
             </Switch>
-        </div>            
+        </Layout>            
     );
   }
 }
