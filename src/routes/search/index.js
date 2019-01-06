@@ -52,21 +52,33 @@ search.get('/', (req, res)=>{
     }else if(req.query.s){
         console.log(req.query.s);
         let inQuery = `%${req.query.s}%`;   //reformat for partial string matching
+        let limit = req.query.limit * 1;
         if(user.role === 'Administrator'){
             let queryString = "SELECT * FROM media m WHERE m.originalFilename LIKE ?";
-            res.locals.connection.query(queryString, [inQuery], (error, medResults, fields)=>{
+            let inputs = [inQuery];
+            if(limit) {
+                queryString += " LIMIT ?";
+                inputs.push(limit);
+            }            
+            res.locals.connection.query(queryString, inputs, (error, medResults, fields)=>{
                 if(error){
                     res.status(404).send({'message': error.message});
                     return;
                 }
                 queryString = "SELECT * FROM albums a WHERE a.name LIKE ?";
-                res.locals.connection.query(queryString, [inQuery], (error, albResults, fields)=>{
+                if(limit) {
+                    queryString += " LIMIT ?";
+                }
+                res.locals.connection.query(queryString, inputs, (error, albResults, fields)=>{
                     if(error){
                         res.status(404).send({'message': error.message});
                         return;
                     }
                     queryString = "SELECT * FROM tags t WHERE t.description LIKE ?";
-                    res.locals.connection.query(queryString, [inQuery], (error, tagResults, fields)=>{
+                    if(limit) {
+                        queryString += " LIMIT ?";
+                    }
+                    res.locals.connection.query(queryString, inputs, (error, tagResults, fields)=>{
                         if(error){
                             res.status(404).send({'message': error.message});
                             return;
@@ -91,7 +103,12 @@ search.get('/', (req, res)=>{
                                                     WHERE uuf.friendId = ?) 
                                     OR m.owner = (SELECT uuf.friendId FROM usersToUsersFriendMap uuf 
                                                     WHERE uuf.userId = ?))`;
-            res.locals.connection.query(queryString, [inQuery, user.id, user.id, user.id], (error, medResults, fields)=>{
+            let inputs = [inQuery, user.id, user.id, user.id];
+            if(limit) {
+                queryString += " LIMIT ?";
+                inputs.push(limit);
+            }
+            res.locals.connection.query(queryString, inputs, (error, medResults, fields)=>{
                 if(error){
                     res.status(404).send({'message': error.message});
                     return;
@@ -103,7 +120,10 @@ search.get('/', (req, res)=>{
                                                     WHERE uuf.friendId = ?) 
                                     OR a.owner = (SELECT uuf.friendId FROM usersToUsersFriendMap uuf 
                                                     WHERE uuf.userId = ?))`;
-                res.locals.connection.query(queryString, [inQuery, user.id, user.id, user.id], (error, albResults, fields)=>{
+                if(limit) {
+                    queryString += " LIMIT ?";
+                }
+                res.locals.connection.query(queryString, inputs, (error, albResults, fields)=>{
                     if(error){
                         res.status(404).send({'message': error.message});
                         return;
@@ -118,7 +138,10 @@ search.get('/', (req, res)=>{
                                                         WHERE uuf.friendId = ?) 
                                         OR t.owner = (SELECT uuf.friendId FROM usersToUsersFriendMap uuf 
                                                         WHERE uuf.userId = ?))`;
-                    res.locals.connection.query(queryString, [inQuery, user.id, user.id, user.id], (error, tagResults, fields)=>{
+                    if(limit) {
+                        queryString += " LIMIT ?";
+                    }
+                    res.locals.connection.query(queryString, inputs, (error, tagResults, fields)=>{
                         if(error){
                             res.status(404).send({'message': error.message});
                             return;
