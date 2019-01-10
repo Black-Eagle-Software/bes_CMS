@@ -6,9 +6,14 @@ search.get('/', (req, res)=>{
     let user = JSON.parse(req.user);
     if(req.query.t){
         //tags are submitted as multiple queries
-        console.log(req.query.t);
+        //console.log(req.query.t);
         let tags = req.query.t;
         console.log(tags);
+        if(!Array.isArray(tags)){
+            let t = [];
+            t.push(tags);
+            tags = t;
+        }
         if(user.role === 'Administrator'){
             let queryString = `SELECT * FROM media m 
                                 INNER JOIN tagsToMediaMap tmm 
