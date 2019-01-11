@@ -56,7 +56,8 @@ export default class UploadImageTilesList extends React.Component{
                                         <UploadImageTile 
                                             key={uuid()} 
                                             imgSrc={media.url} 
-                                            filename={media.file.name} 
+                                            filename={media.file.name}
+                                            media_type={media.file.type} 
                                             onImageClick={()=>this.handleImageClick(media)}
                                             onUploadClick={()=>this.handleUploadClick(media)}
                                             onRemoveClick={()=>this.handleRemoveClick(media)}/>

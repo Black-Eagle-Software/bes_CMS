@@ -1,6 +1,8 @@
 import React from 'react';
 import TagsSelectableList from './tags-selectable-list.component';
 
+const uuid = require('uuid/v4');
+
 export default class UploadImageDetails extends React.Component{
     constructor(props){
         super(props);
@@ -68,7 +70,14 @@ export default class UploadImageDetails extends React.Component{
         return(
             <div style={contStyle}>
                 <div className={"expand_close"} style={closeStyle} onClick={()=>this.handleCloseClick()}></div>
-                <img ref={this.imgRef} src={media.url} style={imgStyle} alt={media.file.name}/>
+                {media.file.type.includes('image') &&
+                    <img ref={this.imgRef} src={media.url} style={imgStyle} alt={media.file.name}/>
+                }
+                {media.file.type.includes('video') &&
+                    <video key={uuid()} ref={this.imgRef} style={imgStyle} muted={false} controls={true}>
+                        <source src={media.url} type={media.file.type}/>
+                    </video>
+                }
                 <div>
                     <span style={detailsHeaderStyle}>Filename:</span><span style={detailsStyle}>{media.file.name}</span>
                     <br/><span style={detailsHeaderStyle}>Dimensions:</span><span style={detailsStyle}>{this.state.width} x {this.state.height}</span>

@@ -19,7 +19,7 @@ export default class UploadImageTile extends React.PureComponent{
     
     render(){
         const contStyle = {
-            /*position: "relative",*/
+            position: "relative",
             display: "flex",
             flexFlow: "column",
             alignItems: "center",
@@ -57,7 +57,17 @@ export default class UploadImageTile extends React.PureComponent{
         return(            
             <div style={contStyle} className={"tile-bg"} onClick={()=>this.handleImageClick()}>
                 {/*<img ref={this.imgRef} style={imgStyle} src={"data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={this.props.filename} />*/}
-                <img style={imgStyle} src={this.props.imgSrc} alt={this.props.filename} />
+                {this.props.media_type.includes('image') &&
+                    <img style={imgStyle} src={this.props.imgSrc} alt={this.props.filename} />
+                }
+                {this.props.media_type.includes('video') &&                    
+                    <video style={imgStyle} muted={true} controls={false}>
+                        <source src={this.props.imgSrc} type={this.props.media_type}/>
+                    </video>
+                }
+                {this.props.media_type.includes('video') &&
+                    <span className={'video_badge'}>video</span>
+                }
                 <span style={nameStyle}>{this.props.filename}</span>
                 <ImageTileToolbar buttons={toolbar_buttons}/>
             </div>        
