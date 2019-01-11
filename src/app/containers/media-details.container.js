@@ -105,7 +105,9 @@ export default class MediaDetails extends React.Component{
                                         <li style={liStyle}>
                                             <span style={liLabelStyle}>Tags: </span>
                                             {this.state.tags.map(tag=>{
-                                                return <span key={uuid()} style={tagSpanStyle}>{tag.description}</span>
+                                                return <a key={uuid()} className={"tag"} href={`/search?t=${tag.description}`}>
+                                                            {tag.description}
+                                                        </a>
                                             })}
                                             
                                         </li>
