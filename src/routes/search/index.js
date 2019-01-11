@@ -26,7 +26,7 @@ search.get('/', (req, res)=>{
                     res.status(404).send({'message': error.message});
                     return;
                 }
-                res.status(200).send(JSON.stringify(results));
+                res.status(200).send(JSON.stringify({media: results}));
                 return;
             });
         }else{
@@ -49,7 +49,7 @@ search.get('/', (req, res)=>{
                     res.status(404).send({'message': error.message});
                     return;
                 }
-                res.status(200).send(JSON.stringify(results));
+                res.status(200).send(JSON.stringify({media: results}));
                 return;
             });
         }
@@ -166,7 +166,7 @@ search.get('/', (req, res)=>{
                     res.status(404).send({'message': error.message});
                     return;
                 }
-                res.status(200).send(JSON.stringify(results));
+                res.status(200).send(JSON.stringify({albums: results}));
                 return;
             });
         }else{
@@ -184,7 +184,7 @@ search.get('/', (req, res)=>{
                     res.status(404).send({'message': error.message});
                     return;
                 }
-                res.status(200).send(JSON.stringify(results));
+                res.status(200).send(JSON.stringify({albums: results}));
                 return;
             });                                    
         }
