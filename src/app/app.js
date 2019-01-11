@@ -135,12 +135,7 @@ class App extends React.Component {
                   show_tags={this.state.show_tags}/>
                   )}/>
                 <Route path='/upload' render={(props)=>(
-                  <Layout isAuthenticated={this.state.isAuthenticated} 
-                        username={this.state.username}
-                        id={this.state.id}
-                        onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}>
-                          <UploadMedia id={this.state.id} {...props}/>
-                  </Layout>
+                  <UploadMedia id={this.state.id} {...props}/>
                 )}/>                
                 <Route path='/admin' render={()=>(
                   <div>This is the Admin page</div>
