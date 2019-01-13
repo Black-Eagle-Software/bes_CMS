@@ -1,13 +1,22 @@
 import React from 'react';
 import UploadImageTile from './upload-image-tile.component';
+import UploadVideoTile from './upload-video-tile.component';
 const {AutoSizer, List} = require('react-virtualized');
 
 const uuid = require('uuid/v4');
+const item_size = 200;
 
 export default class UploadImageTilesList extends React.Component{
+    constructor(props){
+        super(props);
 
+        this.rowRenderer = this.rowRenderer.bind(this);
+    }
     handleImageClick(media){
         this.props.onImageClick(media);
+    }
+    handleMediaLoaded(media, data){
+        this.props.onMediaLoaded(media, data);
     }
     handleRemoveClick(media){
         this.props.onRemoveClick(media);
@@ -18,16 +27,7 @@ export default class UploadImageTilesList extends React.Component{
     
     render(){        
         const items_count = this.props.media.length;
-        const item_size = 200;
 
-        const contStyle = {
-            display: "flex",
-            flexFlow: "row wrap",
-            justifyContent: "flex-start",
-            paddingTop: "1em",
-            maxHeight: "100%",
-            overflowY: "auto"
-        };
         const listStyle = {
             outline: "none"
         };
@@ -35,7 +35,7 @@ export default class UploadImageTilesList extends React.Component{
         return(
             <AutoSizer>
                 {({height, width})=>{
-                    const itemsPerRow = Math.floor(width/item_size);
+                    const itemsPerRow = Math.floor(width/(item_size + 16));
                     const rowCount = Math.ceil(items_count/itemsPerRow);
 
                     return(
@@ -45,38 +45,48 @@ export default class UploadImageTilesList extends React.Component{
                             rowCount={rowCount}
                             rowHeight={item_size + 16}
                             style={listStyle}
-                            rowRenderer={({index, key, style})=>{
-                                const items = [];
-                                const fromIndex = index * itemsPerRow;
-                                const toIndex = Math.min(fromIndex + itemsPerRow, items_count);
-
-                                for(let i = fromIndex; i < toIndex; i++){
-                                    let media = this.props.media[i];
-                                    items.push(
-                                        <UploadImageTile 
-                                            key={uuid()} 
-                                            imgSrc={media.url} 
-                                            filename={media.file.name}
-                                            media_type={media.file.type} 
-                                            onImageClick={()=>this.handleImageClick(media)}
-                                            onUploadClick={()=>this.handleUploadClick(media)}
-                                            onRemoveClick={()=>this.handleRemoveClick(media)}/>
-                                    )
-                                }
-                                return(
-                                    <div key={key} style={Object.assign({}, style, {display: "flex"})}>{items}</div>
-                                )
-                            }}
+                            rowRenderer={this.rowRenderer}
+                            overscanRowCount={2}
                         />
                     )
                 }}
             </AutoSizer>
         );
+    }
+
+    rowRenderer({index, key, parent, style}){
+        const itemsPerRow = Math.floor(parent.props.width/(item_size + 16));
+        const fromIndex = index * itemsPerRow;
+        const toIndex = Math.min(fromIndex + itemsPerRow, this.props.media.length);
+        const divStyle = {
+            display: "flex"
+        };
+
         return(
-            <div style={contStyle} onScroll={()=>this.handleScroll()}>
-                {/*this.props.media.map(media=>{
-                    return <UploadImageTile key={uuid()} imgSrc={media.url} filename={media.file.name} onImageClick={()=>this.handleImageClick({media: media, src: media.url})} update={this.state.update_tiles}/>
-                })*/}
+            <div key={key} style={Object.assign({}, style, divStyle)}>
+                {this.props.media.map((item, index)=>{
+                    if(index >= fromIndex && index < toIndex){
+                        if(item.file.type.includes('image')){
+                            return <UploadImageTile 
+                                        key={uuid()}
+                                        media={item} 
+                                        imgSrc={item.url} 
+                                        filename={item.file.name}
+                                        onImageClick={()=>this.handleImageClick(item)}
+                                        onUploadClick={()=>this.handleUploadClick(item)}
+                                        onRemoveClick={()=>this.handleRemoveClick(item)}/>
+                        }else{
+                            return <UploadVideoTile 
+                                        key={uuid()}
+                                        media={item} 
+                                        imgSrc={item.url} 
+                                        filename={item.file.name}
+                                        onImageClick={()=>this.handleImageClick(item)}
+                                        onUploadClick={()=>this.handleUploadClick(item)}
+                                        onRemoveClick={()=>this.handleRemoveClick(item)}/>
+                        }
+                    }
+                })}
             </div>
         );
     }

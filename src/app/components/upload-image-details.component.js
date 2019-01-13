@@ -20,7 +20,7 @@ export default class UploadImageDetails extends React.Component{
             height: this.imgRef.current.naturalHeight
         });
     }
-    componentDidUpdate(){
+    /*componentDidUpdate(){
         const width = this.imgRef.current.naturalWidth;
         const height = this.imgRef.current.naturalHeight;
 
@@ -30,12 +30,34 @@ export default class UploadImageDetails extends React.Component{
                 height: this.imgRef.current.naturalHeight
             });
         }
-    }
+    }*/
     handleCloseClick(){
         this.props.onCloseClick();
     }
+    handleImageDidLoad(){
+        const img_width = this.imgRef.current.naturalWidth;
+        const img_height = this.imgRef.current.naturalHeight;
+
+        if(this.state.width !== img_width || this.state.height !== img_height){
+            this.setState({
+                width: img_width,
+                height: img_height
+            });
+        }
+    }
     handleTagClick(tag, index, value){
         this.props.onTagClick(tag, index, value);
+    }
+    handleVideoDidLoad(){
+        const vid_width = this.imgRef.current.videoWidth;
+        const vid_height = this.imgRef.current.videoHeight;
+
+        if(this.state.width !== vid_width || this.state.height !== vid_height){
+            this.setState({
+                width: vid_width,
+                height: vid_height
+            });
+        }
     }
     render(){
         const contStyle = {
@@ -64,6 +86,12 @@ export default class UploadImageDetails extends React.Component{
         const detailsStyle = {
             float: "right"
         };
+        const noteStyle = {
+            textAlign: "center",
+            fontStyle: "italic",
+            marginBottom: "0.5em",
+            color: "#c6c6c6"
+        };
 
         const {media} = this.props;
 
@@ -71,13 +99,16 @@ export default class UploadImageDetails extends React.Component{
             <div style={contStyle}>
                 <div className={"expand_close"} style={closeStyle} onClick={()=>this.handleCloseClick()}></div>
                 {media.file.type.includes('image') &&
-                    <img ref={this.imgRef} src={media.url} style={imgStyle} alt={media.file.name}/>
+                    <img ref={this.imgRef} src={media.url} style={imgStyle} alt={media.file.name} onLoad={()=>this.handleImageDidLoad()}/>
                 }
                 {media.file.type.includes('video') &&
-                    <video key={uuid()} ref={this.imgRef} style={imgStyle} muted={false} controls={true}>
-                        <source src={media.url} type={media.file.type}/>
-                    </video>
+                    <div style={noteStyle}>Note: Non-H264 videos (i.e.: WMV, ASF, AVI) may not preview properly.  All videos will be transcoded to .MP4 once successfully uploaded to the server.</div>
                 }
+                {media.file.type.includes('video') &&
+                    <video ref={this.imgRef} style={imgStyle} muted={false} controls={true} src={media.url} typeof={media.file.type} onLoadedData={()=>this.handleVideoDidLoad()}>
+                        {/*<source src={media.url} type={media.file.type}/>*/}
+                    </video>
+                }                
                 <div>
                     <span style={detailsHeaderStyle}>Filename:</span><span style={detailsStyle}>{media.file.name}</span>
                     <br/><span style={detailsHeaderStyle}>Dimensions:</span><span style={detailsStyle}>{this.state.width} x {this.state.height}</span>
