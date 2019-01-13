@@ -1,9 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import Header from '../components/header.component';
 import TagsSelectableList from '../components/tags-selectable-list.component';
 import UploadImageTilesList from '../components/upload-image-tiles-list.component';
 import UploadImageDetails from '../components/upload-image-details.component';
+import Media from '../../models/media';
 
 export default class UploadMedia extends React.Component{
     constructor(props){
@@ -127,7 +127,10 @@ export default class UploadMedia extends React.Component{
         }
         for(let i = 0; i < files.length; i++){
             if(!files[i].type.includes('image') && !files[i].type.includes('video')) continue;
-            temp_media.push({file: files[i], url: URL.createObjectURL(files[i]), tags: [].concat(tag_inputs)});
+            let url = URL.createObjectURL(files[i]);
+            //let media = {file: files[i], url: url, tags: [].concat(tag_inputs), data: null, index: i, updateData: (newData)=>{this.data = newData;}};
+            let media = new Media({file: files[i], url: url, tags: [].concat(tag_inputs), data: null});
+            temp_media.push(media);
         }
         let tag_bools = this.initTagBoolArray(tags.length);
         this.setState({
