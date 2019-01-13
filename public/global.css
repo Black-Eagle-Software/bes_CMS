@@ -255,3 +255,18 @@ button, input[type=submit], .btn:active:hover{
     margin: 0 0.25em;
     cursor: default;    
 }
+.warning_badge {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    background: rgba(227, 15, 1, 0.75);
+    color: #f5f5f5;
+    border-radius: 1em;
+    font-size: 0.75em;
+    height: 2em;
+    width: 2em;
+    text-align: center;
+    line-height: 2em;
+    margin: 0 0.25em;
+    cursor: default;
+}
