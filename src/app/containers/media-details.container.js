@@ -38,7 +38,8 @@ export default class MediaDetails extends React.Component{
         const contStyle = {
             padding: "70px",
             height: "100%",
-            width: "100%"
+            width: "100%",
+            overflow: "auto"
         };
         const contentStyle = {
             display: "flex",
