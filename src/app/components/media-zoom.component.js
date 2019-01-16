@@ -108,7 +108,10 @@ export default class MediaZoom extends React.Component{
                 </div>
                 <span> 
                     {this.props.media_tags.map(tag=>{
-                        return <span key={uuid()} style={spanTagStyle}>{tag.description}</span>
+                        /*return <span key={uuid()} style={spanTagStyle}>{tag.description}</span>*/
+                        return <a key={uuid()} className={"tag gray"} href={`/search?t=${tag.description}`}>
+                                    {tag.description}
+                                </a>
                     })}
                 </span>
             </div>
