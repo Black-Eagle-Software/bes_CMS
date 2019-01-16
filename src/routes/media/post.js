@@ -31,6 +31,8 @@ module.exports = (req, res)=>{
                 body: {
                     fileDate: body.fileDate,
                     extension: body.extension,
+                    width: body.width,
+                    height: body.height,
                     tags: body.tags,
                     owner: body.owner
                 }
@@ -42,6 +44,8 @@ module.exports = (req, res)=>{
                 body: {
                     fileDate: body.fileDate[i],
                     extension: body.extension[i],
+                    width: body.width[i],
+                    height: body.height[i],
                     tags: body.tags[i],
                     owner: body.owner[i]
                 }
@@ -217,7 +221,7 @@ module.exports = (req, res)=>{
                 gm(data.fullFilename)
                     .background('rgb(64, 64, 64)')
                     .compress('JPEG')
-                    .resize(160, 160)
+                    .resize(512, 512, '^>')
                     .write(data.thumbFullFilename, (err)=>{
                         if(err) {
                             callback(err);
@@ -228,7 +232,9 @@ module.exports = (req, res)=>{
                             type: medType,
                             dateAdded: time,
                             pHash: data.pHash, 
-                            fileDate: item.body.fileDate, 
+                            fileDate: item.body.fileDate,
+                            width: item.body.width,
+                            height: item.body.height,                             
                             filePath: data.basePath,
                             originalFilename: item.file.originalname,
                             hashFilename: data.filename,
@@ -243,14 +249,16 @@ module.exports = (req, res)=>{
                 //now that we've got our files on disk, we need to add them
                 //into the database
                 console.log(data);
-                let query = "INSERT INTO media SET type=?, dateAdded=?, pHash=?, fileDate=?, filePath=?, originalFilename=?, hashFilename=?, thumbnailFilename=?, owner=?";
+                let query = "INSERT INTO media SET type=?, dateAdded=?, pHash=?, fileDate=?, width=?, height=?, filePath=?, originalFilename=?, hashFilename=?, thumbnailFilename=?, owner=?";
                 res.locals.connection.query(
                     query, 
                     [
                         data.type, 
                         data.dateAdded,
                         data.pHash, 
-                        data.fileDate, 
+                        data.fileDate,
+                        data.width,
+                        data.height, 
                         data.filePath, 
                         data.originalFilename, 
                         data.hashFilename, 
