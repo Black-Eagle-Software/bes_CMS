@@ -10,6 +10,7 @@ import UploadMedia from './containers/upload.container';
 import MediaDetails from './containers/media-details.container';
 import Layout from './containers/layout.container';
 import Search from './containers/search.container';
+import Tags from './containers/tags.container';
 
 class App extends React.Component {
   constructor(props){
@@ -60,7 +61,7 @@ class App extends React.Component {
                     });
                     break;        
         case 'tags': 
-                    this.setState(prevState=>({show_tags: !prevState.show_tags}));
+                    WindowNavigation.goToLocation('/tags');
                     break;
         case 'upload': 
                     WindowNavigation.goToLocation('/upload');
@@ -148,6 +149,9 @@ class App extends React.Component {
                 )}/>
                 <Route path='/search' render={(props)=>(
                   <Search {...props} />
+                )}/>
+                <Route path='/tags' render={(props)=>(
+                  <Tags id={this.state.id} {...props}/>
                 )}/>
                 {/*<Route render={()=>(<div>Sorry, this page does not exist.</div>)} />*/}
                 <Route render={(props)=><div>Page not found.</div>}/>
