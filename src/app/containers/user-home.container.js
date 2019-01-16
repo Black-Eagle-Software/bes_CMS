@@ -1,11 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import Header from '../components/header.component';
 import ImageTilesList from '../components/image-tiles-list.component';
 import MediaZoom from '../components/media-zoom.component';
 import MediaDeleteConfirmation from '../components/media-delete-confirmation.component';
-//import UploadMedia from '../components/upload.component';
-import Tags from '../components/tags.component';
 
 export default class UserHomeContainer extends React.Component{
     constructor(props){
@@ -110,10 +107,7 @@ export default class UserHomeContainer extends React.Component{
                 }
                 {this.state.show_delete_dialog && 
                     <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
-                }                
-                {/*this.props.show_tags && 
-                    <Tags tags={this.state.tags}/>
-                */}
+                }
                 <div style={pageStyle}>
                     {this.state.media &&
                         <div>
