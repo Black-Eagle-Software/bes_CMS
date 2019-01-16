@@ -34,6 +34,10 @@ const routes = [
     {
         path: '/search',
         req_authorization: true
+    },
+    {
+        path: '/tags',
+        req_authorization: true
     }
 ];
 
