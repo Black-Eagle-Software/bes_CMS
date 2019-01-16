@@ -32,7 +32,7 @@ export default class MediaDetails extends React.Component{
         let date = new Date(msDate);
         let output = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         return output;
-    }   
+    }  
     render(){
         const contStyle = {
             padding: "70px",
@@ -72,16 +72,6 @@ export default class MediaDetails extends React.Component{
             flex: "1 1 auto",
             color: "#666666"
         };
-        const tagSpanStyle = {
-            background: "#006cb7",
-            color: "#f5f5f5",
-            borderRadius: "1em",
-            padding: "0.25em 1em",
-            fontSize: "0.75em",
-            height: "2em",
-            margin: "0 0.25em",
-            cursor: "default"
-        }
 
         return(
             <div style={contStyle}>                
@@ -90,11 +80,14 @@ export default class MediaDetails extends React.Component{
                             Media details for: {this.props.match.params.id}
                             <div style={contentStyle}>
                                 {this.state.image_source.type !== "video" && 
-                                    <img style={imgStyle} src={`../${this.state.image_source.filePath}/${this.state.image_source.hashFilename}`} alt={this.state.image_source.originalFilename}/>
+                                    <img ref={this.imgRef} style={imgStyle} src={`../${this.state.image_source.filePath}/${this.state.image_source.hashFilename}`} alt={this.state.image_source.originalFilename}/>
                                 }
                                 <div style={detailsDivStyle}>
                                     <ul style={ulStyle}>
                                         <li style={liStyle}><span style={liLabelStyle}>ID: </span><span style={liItemStyle}>{this.state.image_source.id}</span></li>
+                                        <li style={liStyle}><span style={liLabelStyle}>Dimensions:</span><span style={liItemStyle}>{this.state.image_source.width} x {this.state.image_source.height}</span></li>
+                                        <li style={liStyle}><span style={liLabelStyle}>Width:</span><span style={liItemStyle}>{this.state.image_source.width} pixels</span></li>
+                                        <li style={liStyle}><span style={liLabelStyle}>Height:</span><span style={liItemStyle}>{this.state.image_source.height} pixels</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>File date: </span><span style={liItemStyle}>{this.formatDateForMillisecondDate(this.state.image_source.fileDate)}</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Date added: </span><span style={liItemStyle}>{this.formatDateForMillisecondDate(this.state.image_source.dateAdded)}</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Perceptual hash (pHash): </span><span style={liItemStyle}><ImageFingerprintGraphic hash={this.state.image_source.pHash}/></span></li>
@@ -118,7 +111,7 @@ export default class MediaDetails extends React.Component{
                     }
                     {!this.state.image_source &&
                         <div>
-                            You currently do not have access right to this media item.
+                            You currently do not have access right to this media item or some other type of error occurred.
                         </div>
                     }                
                 </div>
