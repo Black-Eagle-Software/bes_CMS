@@ -94,6 +94,18 @@ export default class UploadMedia extends React.Component{
     handleImageClick(image){
         this.setState({img_selected: image});
     }
+    handleImageDimensionsChange(media, size){
+        //save the dimensions into the media item so we can send them during upload
+        let temp_media = this.state.media;
+        let media_index = temp_media.indexOf(media);
+        if(temp_media[media_index].width === size.width && temp_media[media_index].height === size.height){
+            return;
+        }
+        temp_media[media_index].width = size.width;
+        temp_media[media_index].height = size.height;
+        console.log(temp_media[media_index]);
+        this.setState({media: temp_media});
+    }
     handleUploadClick(media){
         this.uploadMedia([media]);
     }
@@ -242,7 +254,8 @@ export default class UploadMedia extends React.Component{
                         <UploadImageTilesList media={this.state.media} 
                                                 onImageClick={(image)=>this.handleImageClick(image)}
                                                 onUploadClick={(media)=>this.handleUploadClick(media)}
-                                                onRemoveClick={(media)=>this.handleRemoveClick(media)}/>
+                                                onRemoveClick={(media)=>this.handleRemoveClick(media)}
+                                                onImageDimensionsChange={(media, size)=>this.handleImageDimensionsChange(media, size)}/>
                     </div>
                     {this.state.img_selected && 
                         <UploadImageDetails media={this.state.img_selected} tags={this.state.tags} onCloseClick={()=>this.handleCloseClick()} onTagClick={(tag, index, value)=>this.handleDetailsTagClick(tag, index, value)}/>                
@@ -271,6 +284,8 @@ export default class UploadMedia extends React.Component{
             //formData.append("index", ) //not used?
             formData.append("fileDate", file.lastModified);
             formData.append("extension", file.name.slice((Math.max(0, file.name.lastIndexOf(".")) || Infinity) + 1));
+            formData.append("width", arr[i].width);
+            formData.append("height", arr[i].height);
             formData.append("tags", JSON.stringify(this.mapTagSelectionsForMediaToTagIndex(arr[i])));
             formData.append("owner", this.props.id);
         }        

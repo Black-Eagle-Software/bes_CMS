@@ -1,10 +1,14 @@
 import React from 'react';
 import ImageTileToolbar from './image-tile-toolbar.component';
+import ImageWithDimensions from './image-with-dimensions.component';
 //import ReactDOM from 'react-dom';
 
 export default class UploadImageTile extends React.PureComponent{
     handleImageClick(){
         this.props.onImageClick();
+    }
+    handleImageDimensionsChange(size){
+        this.props.onImageDimensionsChange(size);
     }
     handleUploadButtonClick(e){
         e.preventDefault();
@@ -58,7 +62,8 @@ export default class UploadImageTile extends React.PureComponent{
         return(            
             <div style={contStyle} className={"tile-bg"} onClick={()=>this.handleImageClick()}>
                 {/*<img ref={this.imgRef} style={imgStyle} src={"data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="} alt={this.props.filename} />*/}
-                <img style={imgStyle} src={this.props.imgSrc} alt={this.props.filename} />
+                {/*<img style={imgStyle} src={this.props.imgSrc} alt={this.props.filename} />*/}
+                <ImageWithDimensions style={imgStyle} src={this.props.imgSrc} alt={this.props.filename} onImgDimensionsChange={(size)=>this.handleImageDimensionsChange(size)}/>
                 <span style={nameStyle}>{this.props.filename}</span>
                 <ImageTileToolbar buttons={toolbar_buttons}/>
             </div>        

@@ -15,6 +15,9 @@ export default class UploadImageTilesList extends React.Component{
     handleImageClick(media){
         this.props.onImageClick(media);
     }
+    handleImageDimensionsChange(media, size){
+        this.props.onImageDimensionsChange(media, size);
+    }
     handleMediaLoaded(media, data){
         this.props.onMediaLoaded(media, data);
     }
@@ -74,7 +77,8 @@ export default class UploadImageTilesList extends React.Component{
                                         filename={item.file.name}
                                         onImageClick={()=>this.handleImageClick(item)}
                                         onUploadClick={()=>this.handleUploadClick(item)}
-                                        onRemoveClick={()=>this.handleRemoveClick(item)}/>
+                                        onRemoveClick={()=>this.handleRemoveClick(item)}
+                                        onImageDimensionsChange={(size)=>this.handleImageDimensionsChange(item, size)}/>
                         }else{
                             return <UploadVideoTile 
                                         key={uuid()}
