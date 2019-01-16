@@ -31,9 +31,11 @@ export default class ImageTile extends React.PureComponent{
 
         const imgStyle = {
             flex: "1 1 auto",
-            maxWidth: "12.5em",
-            maxHeight: "12.5em",
-            objectFit: "contain"    //necessary?
+            //maxWidth: "12.5em",
+            //maxHeight: "12.5em",
+            //objectFit: "contain"    //necessary?
+            objectFit: "cover",
+            height: "100%"
         };
 
         const imgSrc = this.props.media.thumb;
