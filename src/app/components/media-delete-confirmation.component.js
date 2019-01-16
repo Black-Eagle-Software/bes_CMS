@@ -17,7 +17,7 @@ export default class MediaDeleteConfirmation extends React.PureComponent{
             objectFit: "contain"
         };
         const imgStyle={
-            height: "100%",
+            maxHeight: "100%",
             maxWidth: "100%",
             boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 12px 40px 0 rgba(0, 0, 0, 0.2)"
         };
