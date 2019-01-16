@@ -9,6 +9,17 @@ const search = require('./search');
 api.get('/', (req, res)=>{
     res.status(200).json({ message: "Connected!" });
 });
+api.get('/access_levels', (req, res)=>{
+    //retreive access levels from the database
+    let queryString = "SELECT * FROM accessLevels";
+    res.locals.connection.query(queryString, (error, results, fields)=>{
+        if(error){
+            res.status(404).send({'message': error.message});
+            return;
+        }
+        res.status(200).send(JSON.stringify(results));
+    });
+});
 
 api.use('/albums', albums);
 api.use('/a', albums);
