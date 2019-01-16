@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import ImageFingerprintGraphic from '../components/image-fingerprint-graphic.component';
-import Header from '../components/header.component';
 
 const uuid = require('uuid/v4');
 
