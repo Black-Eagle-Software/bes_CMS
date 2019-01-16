@@ -15,7 +15,9 @@ search.get('/', (req, res)=>{
             tags = t;
         }
         if(user.role === 'Administrator'){
-            let queryString = `SELECT * FROM media m 
+            let queryString = `SELECT m.id, m.type, m.dateAdded, m.pHash, m.fileDate, m.width, m.height, 
+                                m.filePath, m.originalFilename, m.hashFilename, m.thumbnailFilename, m.owner, 
+                                t.id AS tagId, tam.accessLevel, t.description, t.owner FROM media m 
                                 INNER JOIN tagsToMediaMap tmm 
                                 ON tmm.media = m.id 
                                 INNER JOIN tags t 
@@ -30,7 +32,9 @@ search.get('/', (req, res)=>{
                 return;
             });
         }else{
-            let queryString = `SELECT * FROM media m 
+            let queryString = `SELECT m.id, m.type, m.dateAdded, m.pHash, m.fileDate, m.width, m.height, 
+                                m.filePath, m.originalFilename, m.hashFilename, m.thumbnailFilename, m.owner, 
+                                t.id AS tagId, tam.accessLevel, t.description, t.owner FROM media m 
                                 INNER JOIN tagsToMediaMap tmm 
                                 ON tmm.media = m.id 
                                 INNER JOIN tagsToAccessLevelMap tam 
@@ -94,7 +98,9 @@ search.get('/', (req, res)=>{
                 });                
             });
         }else{
-            let queryString = `SELECT * FROM media m 
+            let queryString = `SELECT m.id, m.type, m.dateAdded, m.pHash, m.fileDate, m.width, m.height, 
+                                m.filePath, m.originalFilename, m.hashFilename, m.thumbnailFilename, m.owner, 
+                                t.id AS tagId, tam.accessLevel, t.description, t.owner FROM media m 
                                 INNER JOIN tagsToMediaMap tmm 
                                 ON tmm.media = m.id 
                                 INNER JOIN tagsToAccessLevelMap tam 
