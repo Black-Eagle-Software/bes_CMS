@@ -1,5 +1,6 @@
 import React from 'react';
 import TagsSelectableList from './tags-selectable-list.component';
+import ImageWithDimensions from './image-with-dimensions.component';
 
 const uuid = require('uuid/v4');
 
@@ -11,39 +12,15 @@ export default class UploadImageDetails extends React.Component{
             width: 0,
             height: 0
         };
-
-        this.imgRef = React.createRef();
     }
-    componentDidMount(){
-        this.setState({
-            width: this.imgRef.current.naturalWidth,
-            height: this.imgRef.current.naturalHeight
-        });
-    }
-    /*componentDidUpdate(){
-        const width = this.imgRef.current.naturalWidth;
-        const height = this.imgRef.current.naturalHeight;
-
-        if(this.state.width !== width || this.state.height !== height){
-            this.setState({
-                width: this.imgRef.current.naturalWidth,
-                height: this.imgRef.current.naturalHeight
-            });
-        }
-    }*/
     handleCloseClick(){
         this.props.onCloseClick();
     }
-    handleImageDidLoad(){
-        const img_width = this.imgRef.current.naturalWidth;
-        const img_height = this.imgRef.current.naturalHeight;
-
-        if(this.state.width !== img_width || this.state.height !== img_height){
-            this.setState({
-                width: img_width,
-                height: img_height
-            });
-        }
+    handleImageDimensionsChange(size){
+        this.setState({
+            width: size.width,
+            height: size.height
+        });
     }
     handleTagClick(tag, index, value){
         this.props.onTagClick(tag, index, value);
@@ -99,7 +76,8 @@ export default class UploadImageDetails extends React.Component{
             <div style={contStyle}>
                 <div className={"expand_close"} style={closeStyle} onClick={()=>this.handleCloseClick()}></div>
                 {media.file.type.includes('image') &&
-                    <img ref={this.imgRef} src={media.url} style={imgStyle} alt={media.file.name} onLoad={()=>this.handleImageDidLoad()}/>
+                    //<img ref={this.imgRef} src={media.url} style={imgStyle} alt={media.file.name} onLoad={()=>this.handleImageDidLoad()}/>
+                    <ImageWithDimensions src={media.url} style={imgStyle} alt={media.file.name} onImgDimensionsChange={(size)=>this.handleImageDimensionsChange(size)}/>
                 }
                 {media.file.type.includes('video') &&
                     <div style={noteStyle}>Note: Non-H264 videos (i.e.: WMV, ASF, AVI) may not preview properly.  All videos will be transcoded to .MP4 once successfully uploaded to the server.</div>
