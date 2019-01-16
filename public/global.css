@@ -236,10 +236,43 @@ button, input[type=submit], .btn:active:hover{
     height: 2em;
     margin: 0 0.25em;
     cursor: default;
+    text-decoration: none;
 }
 .tag:hover {
     background: #4091c9;
     color: #f2f8fb;
+}
+.tag.gray{
+    background: #ebebeb;
+    color: #1f1f1f;
+}
+.tag.gray:hover{
+    background: #1f1f1f;
+    color: #f5f5f5;
+}
+.tag.Private{
+    background: #e30f01;
+    color: #fef3f2;
+}
+.tag.Private:hover{
+    background: #ea4b41;
+    color: #fef3f2;
+}
+.tag.Restricted{
+    background: #ffc801;
+    color: #1f1f1f;
+}
+.tag.Restricted:hover{
+    background: #ffd641;
+    color: #1f1f1f;
+}
+.tag.Public{
+    background: #007527;
+    color: #f2f8f4;
+}
+.tag.Public:hover{
+    background: #40985d;
+    color: #f2f8f4;
 }
 
 .video_badge {
@@ -269,4 +302,8 @@ button, input[type=submit], .btn:active:hover{
     line-height: 2em;
     margin: 0 0.25em;
     cursor: default;
+}
+
+input:invalid{
+    border-color: red;
 }
