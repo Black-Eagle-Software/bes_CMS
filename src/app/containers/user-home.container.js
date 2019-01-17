@@ -142,7 +142,7 @@ export default class UserHomeContainer extends React.Component{
             this.setState({public_media: temp_media});
         });
 
-        axios.get(`/api/u/${this.props.id}/m`)
+        axios.get(`/api/u/${this.props.id}/m?limit=10`)
         .then(response=>{
             let temp_media = [];
             let res = response.data;
