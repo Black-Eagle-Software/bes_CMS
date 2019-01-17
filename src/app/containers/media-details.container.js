@@ -85,7 +85,7 @@ export default class MediaDetails extends React.Component{
                                 <div style={detailsDivStyle}>
                                     <ul style={ulStyle}>
                                         <li style={liStyle}><span style={liLabelStyle}>ID: </span><span style={liItemStyle}>{this.state.image_source.id}</span></li>
-                                        <li style={liStyle}><spane style={liLabelStyle}>Filename: </spane><span style={liItemStyle}>{this.state.image_source.originalFilename}</span></li>
+                                        <li style={liStyle}><span style={liLabelStyle}>Filename: </span><span style={liItemStyle}>{this.state.image_source.originalFilename}</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Dimensions:</span><span style={liItemStyle}>{this.state.image_source.width} x {this.state.image_source.height}</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Width:</span><span style={liItemStyle}>{this.state.image_source.width} pixels</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Height:</span><span style={liItemStyle}>{this.state.image_source.height} pixels</span></li>
