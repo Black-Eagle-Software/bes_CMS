@@ -97,7 +97,8 @@ app_routes.get('*', (req, res, next)=>{
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
                 <link rel="stylesheet" href="/global.css">
                 <script src="/bundle.js" defer></script>
-                <script>window.__INITIAL_DATA__ = ${JSON.stringify(context.data)}</script>            
+                <script>window.__INITIAL_DATA__ = ${JSON.stringify(context.data)}</script>
+                <script src="/socket.io/socket.io.js"></script>                            
             </head>
             <body>
                 <div id="app">${html}</div>            
