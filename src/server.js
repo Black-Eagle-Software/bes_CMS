@@ -15,7 +15,7 @@ require('dotenv').config();
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const axios = require('axios');
-const io = require('socket.io').listen(server);
+//const io = require('socket.io').listen(server);
 const fs = require('fs');
 const { PerformanceObserver, performance } = require('perf_hooks');
 const User = require('./models/user');
@@ -156,8 +156,10 @@ app.use(express.static("public"));
 
 app.use('/', routes);
 
+let sockets = require('./sockets');
+sockets.socketServer(app, server, connection);
 //most of this is from here: https://code.tutsplus.com/tutorials/how-to-create-a-resumable-video-uploader-in-nodejs--net-25445
-let upload_files = {};
+/*let upload_files = {};
 let buffer = 10485760;
 let chunk = 524288;
 io.on('connection', (socket)=>{
@@ -166,9 +168,10 @@ io.on('connection', (socket)=>{
     socket.on('disconnect', ()=>{
         console.log(`Socket [${id}] disconnected`);
     });
-    socket.on('start', (data) => {
+    socket.on('start_upload', (data) => {
         let name = data.name;
         upload_files[name] = {
+            filename    : `/tmp/${name}`,
             fileSize    : data.size,
             data        : "",
             downloaded  : 0,
@@ -176,19 +179,19 @@ io.on('connection', (socket)=>{
         };
         let place = 0;
         try{
-            let stat = fs.statSync('/tmp/' + name);
+            let stat = fs.statSync(upload_files[name].filename);
             if(stat.isFile()){
                 upload_files[name].downloaded = stat.size;
                 place = stat.size / chunk;     //send file in .5 MB chunks
             }
         } catch(err){}  //new file
-        fs.open('/tmp/' + name, "a", "0755", (err, fd)=>{
+        fs.open(upload_files[name].filename, "a", "0755", (err, fd)=>{
             if(err){
                 console.log(err);
                 return;
             }
             upload_files[name].handler = fd;
-            socket.emit(`moreData_${name}`, {'place' : place, 'percent' : 0});
+            socket.emit(`next_upload_chunk_${name}`, {'place' : place, 'percent' : 0});
         });
     });
     socket.on('upload', (data) => {
@@ -201,22 +204,22 @@ io.on('connection', (socket)=>{
                 //do something
                 let time = (performance.now() - file.start) / 1000; //elapsed time in seconds
                 let speed = (file.fileSize / 1000000) / time            //transer speed in Mbps
-                socket.emit(`done_${name}`, {'elapsed_time' : time, 'transfer_speed' : speed});
+                socket.emit(`upload_done_${name}`, {'tmp_file' : file.filename, 'elapsed_time' : time, 'transfer_speed' : speed});
             });
         } else if(file.data.length > buffer){ //buffer is 10 MB and it's full
             fs.write(file.handler, file.data, null, 'Binary', (err, written) => {
                 file.data = "";
                 let place = file.downloaded / chunk;
                 let percent = (file.downloaded / file.fileSize) * 100;
-                socket.emit(`moreData_${name}`, {'place' : place, 'percent' : percent});
+                socket.emit(`next_upload_chunk_${name}`, {'place' : place, 'percent' : percent});
             });
         } else {
             let place = file.downloaded / chunk;
             let percent = (file.downloaded / file.fileSize) * 100;
-            socket.emit(`moreData_${name}`, {'place' : place, 'percent' : percent});
+            socket.emit(`next_upload_chunk_${name}`, {'place' : place, 'percent' : percent});
         }
     });
-});
+});*/
 
 server.listen(port, ()=>{
     console.log(`Server now running on port: ${port}`);
