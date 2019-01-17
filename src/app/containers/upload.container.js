@@ -72,7 +72,7 @@ export default class UploadMedia extends React.Component{
         //redo this to send each file separately :-\
         let temp = [].concat(this.state.media);
         for(let i = 0; i < temp.length; i++){
-            this.uploadMedia([temp[i]]);
+            this.uploadMediaViaSocket(temp[i]);
         }        
     }
     handleGlobalTagClick(tag, index, value){
@@ -366,15 +366,40 @@ export default class UploadMedia extends React.Component{
         reader.onload = (e) => {
             socket.emit('upload', {'name' : name, 'data' : e.target.result});
         };
-        socket.on(`moreData_${name}`, (data) => {
-            console.log(data.percent);
+        socket.on(`next_upload_chunk_${name}`, (data) => {
+            console.log(`Upload of "${media.file.name}" [${name}] : ${data.percent.toFixed(1)}%`);
             let place = data.place * chunk;
             let newChunk = media.file.slice(place, place + Math.min(chunk, (media.file.size - place)));
             reader.readAsBinaryString(newChunk);
         });
-        socket.on(`done_${name}`, (data)=>{
-            console.log(`File uploaded successfully in ${data.elapsed_time} s (${data.transfer_speed} Mbps)`);
+        socket.on(`upload_done_${name}`, (data)=>{
+            console.log(`${data.tmp_file} uploaded successfully in ${data.elapsed_time.toFixed(3)} s (${data.transfer_speed.toFixed(2)} Mbps)`);
+            let fileData = {
+                id          : name,
+                extension   : media.file.name.slice((Math.max(0, media.file.name.lastIndexOf(".")) || Infinity) + 1),
+                fileDate    : media.file.lastModified,
+                filename    : data.tmp_file,            
+                height      : media.height,
+                mimetype    : media.file.type,
+                originalName: media.file.name,
+                owner       : this.props.id,
+                size        : media.file.size,
+                tags        : JSON.stringify(this.mapTagSelectionsForMediaToTagIndex(media)),            
+                width       : media.width,
+            };
+            socket.on(`process_status_${name}`, (data)=>{
+                let message = `${data.step} - ${data.status}`;
+                if(data.elapsed_time) message += ` (${data.elapsed_time.toFixed(3)} s)`;
+                console.log(message);
+            });
+            socket.on(`process_done_${name}`, (data)=>{                
+                console.log(data.result);
+                if(data.message) console.log(data.message);
+                //socket.close();
+                this.handleRemoveClick(media);
+            });
+            socket.emit('start_process', fileData);
         });
-        socket.emit('start', {'name' : name, 'size' : media.file.size});
+        socket.emit('start_upload', {'name' : name, 'size' : media.file.size});
     }
 }
