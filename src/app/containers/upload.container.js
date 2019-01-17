@@ -394,9 +394,27 @@ export default class UploadMedia extends React.Component{
             });
             socket.on(`process_done_${name}`, (data)=>{                
                 console.log(data.result);
-                if(data.message) console.log(data.message);
-                //socket.close();
-                this.handleRemoveClick(media);
+                if(data.message) {
+                    console.log(data.message);
+                    let message = data.message;
+                    let dupe = {src: "", name: "", upload_filename: ""};
+                    if(message.includes("{")){
+                        //serialized object included
+                        let start = message.indexOf("{");
+                        let objString = message.substr(start);
+                        message = message.slice(0, start);
+                        let obj = JSON.parse(objString);
+                        console.log(obj);
+                        dupe = obj;
+                    }
+                    this.setState({
+                        has_upload_error: true,
+                        upload_error: `ERROR: ${message}`,
+                        upload_error_dupe: dupe
+                    });
+                }else{
+                    this.handleRemoveClick(media);
+                }
             });
             socket.emit('start_process', fileData);
         });
