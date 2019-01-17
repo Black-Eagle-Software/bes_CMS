@@ -65,8 +65,13 @@ export default class UploadMedia extends React.Component{
         });
     }
     handleFormSubmit(event){
-        this.uploadMedia(this.state.media);
         event.preventDefault();
+        //this.uploadMedia(this.state.media);
+        //redo this to send each file separately :-\
+        let temp = [].concat(this.state.media);
+        for(let i = 0; i < temp.length; i++){
+            this.uploadMedia([temp[i]]);
+        }        
     }
     handleGlobalTagClick(tag, index, value){
         if(!tag || index === -1 || this.state.media.length === 0) return;
@@ -289,7 +294,12 @@ export default class UploadMedia extends React.Component{
             formData.append("tags", JSON.stringify(this.mapTagSelectionsForMediaToTagIndex(arr[i])));
             formData.append("owner", this.props.id);
         }        
-        axios.post('/api/media', formData)
+        axios.post('/api/media', formData, { onUploadProgress: (e)=>{
+            if(e.loaded && e.total){
+                const progress = (e.loaded / e.total) * 100;
+                console.log(progress);
+            }
+        }})
         .then(res=>{
             //this needs to remove items from the upload list
             console.log(res.status);
