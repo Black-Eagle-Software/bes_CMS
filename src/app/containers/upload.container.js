@@ -5,6 +5,8 @@ import UploadImageTilesList from '../components/upload-image-tiles-list.componen
 import UploadImageDetails from '../components/upload-image-details.component';
 import Media from '../../models/media';
 
+const uuid = require('uuid/v4');
+
 export default class UploadMedia extends React.Component{
     constructor(props){
         super(props);
@@ -112,7 +114,8 @@ export default class UploadMedia extends React.Component{
         this.setState({media: temp_media});
     }
     handleUploadClick(media){
-        this.uploadMedia([media]);
+        //this.uploadMedia([media]);
+        this.uploadMediaViaSocket(media);
     }
     handleRemoveClick(media){
         //need to remove media item from media array in state
@@ -345,5 +348,33 @@ export default class UploadMedia extends React.Component{
                 upload_error_dupe: dupe
             });
         });
+    }
+
+    //upload file to server
+    //+generate hashes during upload?
+    //when finished, return the tmp file path
+    //+and hashes?
+    //fire off an ajax request with the required data
+    //that request will go thru the usual hoops and move the file if ok
+    //need to update tiles to have progress overlay
+    //need to throw progress back down the dom to the tiles' overlay
+    uploadMediaViaSocket(media){
+        let socket = io();
+        let reader = new FileReader();
+        let name = uuid();
+        let chunk = 524288;
+        reader.onload = (e) => {
+            socket.emit('upload', {'name' : name, 'data' : e.target.result});
+        };
+        socket.on(`moreData_${name}`, (data) => {
+            console.log(data.percent);
+            let place = data.place * chunk;
+            let newChunk = media.file.slice(place, place + Math.min(chunk, (media.file.size - place)));
+            reader.readAsBinaryString(newChunk);
+        });
+        socket.on(`done_${name}`, (data)=>{
+            console.log(`File uploaded successfully in ${data.elapsed_time} s (${data.transfer_speed} Mbps)`);
+        });
+        socket.emit('start', {'name' : name, 'size' : media.file.size});
     }
 }
