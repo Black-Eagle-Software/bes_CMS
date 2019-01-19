@@ -11,13 +11,9 @@ export default class UserHomeContainer extends React.Component{
         this.state = {
             media: [],
             public_media: [],
-            tags: [],
             is_image_focused: false,
             zoomed_image: {},
             zoomed_image_tags: [],
-            show_albums: false,
-            show_tags: false,
-            show_upload: false,
             show_delete_dialog: false,
             request_delete_media: {}
         };
@@ -25,24 +21,10 @@ export default class UserHomeContainer extends React.Component{
 
     componentDidMount(){
         this.updateMediaFromDatabase();
-
-        /*//get our tags list
-        axios.get("/api/t")
-        .then(res=>this.setState({tags: res.data}));*/
     }
 
     handleHeaderBtnClick(name){
         this.props.onHeaderBtnClick(name);
-        /*switch (name){
-            case 'ablums': break;
-            case 'tags': this.setState(prevState=>({show_tags: !prevState.show_tags}));
-                            break;
-            case 'upload': this.setState(prevState=>({
-                                show_albums: false,
-                                show_upload: !prevState.show_upload
-                            }));
-                            break;
-        }*/
     }
     handleCloseClick(){
         this.setState(prevState=>({
@@ -87,6 +69,12 @@ export default class UserHomeContainer extends React.Component{
                 this.setState({zoomed_image_tags: res.data});
             });
     }
+    handlePublicShowAllMediaClick(){
+        this.props.onPublicShowAllMediaButtonClick();
+    }
+    handleUserShowAllMediaClick(){
+        this.props.onUserShowAllMediaButtonClick();
+    }
     
     render(){
         const contStyle = {
@@ -112,20 +100,25 @@ export default class UserHomeContainer extends React.Component{
                     {this.state.media &&
                         <div>
                             <h2>Recent Media</h2>
-                            <ImageTilesList media={this.state.media} onImageClick={(image)=>this.handleImageClick(image)} can_delete={true} onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)} />
+                            <ImageTilesList media={this.state.media} 
+                                            onImageClick={(image)=>this.handleImageClick(image)} 
+                                            can_delete={true}
+                                            show_all={true} 
+                                            onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)} 
+                                            onShowAllButtonClick={()=>this.handleUserShowAllMediaClick()}/>
                         </div>
                     }
                     {this.state.public_media &&
                         <div>
                             <h2>Recent Public Media</h2>
-                            <ImageTilesList media={this.state.public_media} onImageClick={(image)=>this.handleImageClick(image)} can_delete={false} />
+                            <ImageTilesList media={this.state.public_media} 
+                                            onImageClick={(image)=>this.handleImageClick(image)} 
+                                            can_delete={false}
+                                            show_all={true} 
+                                            onShowAllButtonClick={()=>this.handlePublicShowAllMediaClick()}/>
                         </div>
                     }
                 </div>
-                
-                {/*this.state.show_upload &&
-                    <UploadMedia tags={this.state.tags}/>
-                */}
             </div>
         );
     }
