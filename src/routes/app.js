@@ -28,6 +28,10 @@ const routes = [
         req_authorization: true
     },
     {
+        path: '/media',
+        req_authorization: true
+    },
+    {
         path: '/media_details',
         req_authorization: true //shut it down!
     },
