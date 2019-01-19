@@ -11,6 +11,8 @@ import MediaDetails from './containers/media-details.container';
 import Layout from './containers/layout.container';
 import Search from './containers/search.container';
 import Tags from './containers/tags.container';
+import UserMedia from './containers/user-media.container';
+import PublicMedia from './containers/public-media.container';
 
 class App extends React.Component {
   constructor(props){
@@ -82,6 +84,12 @@ class App extends React.Component {
     WindowNavigation.goToLocation(`/search?s=${query}`);
     this.setState({search_query: query});    
   }
+  handlePublicShowAllMedia(){
+    WindowNavigation.goToLocation('/media');
+  }
+  handleUserShowAllMedia(){
+    WindowNavigation.goToLocation(`/users/${this.state.id}/media`);
+  }
   verifyAuthentication(){
     axios.get('/api/auth/check').then(res=>{
       console.log(res.status);
@@ -133,7 +141,9 @@ class App extends React.Component {
                   id={this.state.id} 
                   {...props}
                   show_albums={this.state.show_albums}
-                  show_tags={this.state.show_tags}/>
+                  show_tags={this.state.show_tags}
+                  onPublicShowAllMediaButtonClick={()=>this.handlePublicShowAllMedia()}
+                  onUserShowAllMediaButtonClick={()=>this.handleUserShowAllMedia()}/>
                   )}/>
                 <Route path='/upload' render={(props)=>(
                   <UploadMedia id={this.state.id} {...props}/>
@@ -141,8 +151,14 @@ class App extends React.Component {
                 <Route path='/admin' render={()=>(
                   <div>This is the Admin page</div>
                   )} />
-                <Route path='/users/:id' render={(props)=>(
+                <Route exact path='/users/:id' render={(props)=>(
                   <div>User Profile for: {props.match.params.id}</div>
+                )}/>
+                <Route path='/users/:id/media' render={(props)=>(
+                  <UserMedia id={this.state.id} username={this.state.username} {...props}/>
+                )}/>
+                <Route path='/media' render={(props)=>(
+                  <PublicMedia {...props} />
                 )}/>
                 <Route path='/media_details/:id' render={(props)=>(
                   <MediaDetails user_id={this.state.id} {...props}/>
