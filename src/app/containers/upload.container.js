@@ -363,22 +363,30 @@ export default class UploadMedia extends React.Component{
         let reader = new FileReader();
         let name = uuid();
         let chunk = 524288;
+        let temp_media = this.state.media;
+        //let media_index = temp_media.indexOf(media);
+        
         reader.onload = (e) => {
             socket.emit('upload', {'name' : name, 'data' : e.target.result});
         };
         socket.on(`next_upload_chunk_${name}`, (data) => {
-            console.log(`Upload of "${media.file.name}" [${name}] : ${data.percent.toFixed(1)}%`);
+            console.log(`Upload of "${media.file.name}" [${name}] : ${data.percent.toFixed(1)}%`);                        
+            temp_media[temp_media.indexOf(media)].updateStatus("Uploading...", data.percent.toFixed(2)); 
+            this.setState({media: temp_media});
             let place = data.place * chunk;
             let newChunk = media.file.slice(place, place + Math.min(chunk, (media.file.size - place)));
             reader.readAsBinaryString(newChunk);
         });
         socket.on(`upload_done_${name}`, (data)=>{
             console.log(`${data.tmp_file} uploaded successfully in ${data.elapsed_time.toFixed(3)} s (${data.transfer_speed.toFixed(2)} Mbps)`);
+            temp_media[temp_media.indexOf(media)].appendStatus("Upload complete"); 
+            this.setState({media: temp_media});
             let fileData = {
                 id          : name,
                 extension   : media.file.name.slice((Math.max(0, media.file.name.lastIndexOf(".")) || Infinity) + 1),
                 fileDate    : media.file.lastModified,
-                filename    : data.tmp_file,            
+                filename    : data.tmp_file,
+                hash        : data.file_hash,            
                 height      : media.height,
                 mimetype    : media.file.type,
                 originalName: media.file.name,
@@ -391,6 +399,8 @@ export default class UploadMedia extends React.Component{
                 let message = `${data.step} - ${data.status}`;
                 if(data.elapsed_time) message += ` (${data.elapsed_time.toFixed(3)} s)`;
                 console.log(message);
+                temp_media[temp_media.indexOf(media)].appendStatus(data.step); 
+                this.setState({media: temp_media});
             });
             socket.on(`process_done_${name}`, (data)=>{                
                 console.log(data.result);
@@ -407,6 +417,8 @@ export default class UploadMedia extends React.Component{
                         console.log(obj);
                         dupe = obj;
                     }
+                    temp_media[temp_media.indexOf(media)].updateStatus("", -1);     //reset our status
+                    this.setState({media: temp_media});
                     this.setState({
                         has_upload_error: true,
                         upload_error: `ERROR: ${message}`,
