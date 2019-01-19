@@ -13,7 +13,8 @@ module.exports = (socket, dbase) => {
         queue[id] = {
             extension   : data.extension,
             fileDate    : data.fileDate,
-            filename    : data.filename,            
+            filename    : data.filename,
+            hash        : data.hash,            
             height      : data.height,
             mimetype    : data.mimetype,
             originalName: data.originalName,
@@ -29,7 +30,7 @@ module.exports = (socket, dbase) => {
         async.waterfall([
             //1. hash the media's first 10 MB
             //this will be the file's hash name within the dbase
-            (callback)=>{
+            /*(callback)=>{
                 socket.emit(`process_status_${id}`, {'step' : 'File hashing', 'status' : 'Starting'});
                 let shasum = crypto.createHash('sha1');
                 let s = fs.ReadStream(item.filename);                
@@ -45,9 +46,10 @@ module.exports = (socket, dbase) => {
                     socket.emit(`process_status_${id}`, {'step' : 'File hashing', 'status' : 'Complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
                     callback(null, d);
                 });
-            },
+            },*/
             //1a. create the perceptual hash of the media (if an image)
-            (data, callback)=>{
+            //(data, callback)=>{
+            (callback)=>{
                 socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing', 'status' : 'starting'});
                 if(item.mimetype.includes('image')){
                     let s = fs.ReadStream(item.filename);
@@ -58,12 +60,14 @@ module.exports = (socket, dbase) => {
                         }
                         s.destroy();
                         socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing (image)', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
-                        callback(null, {fileHash: data, pHash: phash});
+                        //callback(null, {fileHash: data, pHash: phash});
+                        callback(null, {fileHash: item.hash, pHash: phash});
                     });
                 }else{
                     //TODO: this is a video, so do *something*
                     socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing (video)', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
-                    callback(null, {fileHash: data, pHash: ""});
+                    //callback(null, {fileHash: data, pHash: ""});
+                    callback(null, {fileHash: item.hash, pHash: ""});
                 }
             },
             //2. check if the media duplicates an existing database entry
