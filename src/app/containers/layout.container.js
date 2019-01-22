@@ -11,7 +11,7 @@ export default class Layout extends React.Component{
     render(){
         const contStyle = {
             display: "flex",
-            flexFlow: "row wrap",
+            flexFlow: "column nowrap",
             alignItems: "flex-start"
         };
 
