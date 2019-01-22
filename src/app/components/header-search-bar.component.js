@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
 import HeaderSearchBarSuggestions from './header-search-bar-suggestions.component';
 
@@ -14,6 +15,24 @@ export default class HeaderSearchBar extends React.Component{
     }
     componentDidMount(){
         this.resetSearchState();
+    }
+    componentWillMount(){
+        if(typeof window !== 'undefined'){
+            document.addEventListener('click', this.handleGlobalClick.bind(this));
+        }
+    }
+    componentWillUnmount(){
+        if(typeof window !== 'undefined'){
+            document.removeEventListener('click', this.handleGlobalClick);
+        }
+    }
+    handleGlobalClick(e){
+        if(this.state.show_query_results){
+            const elmt = ReactDOM.findDOMNode(this);
+            if(!elmt.contains(e.target)){
+                this.setState(prevState=>({show_query_results: !prevState.show_query_results}));
+            }
+        }
     }
     handleImageClick(image){
 
