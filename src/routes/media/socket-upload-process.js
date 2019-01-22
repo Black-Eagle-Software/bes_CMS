@@ -74,7 +74,7 @@ module.exports = (socket, dbase) => {
             (data, callback)=>{
                 socket.emit(`process_status_${id}`, {'step' : 'Duplicate media check', 'status' : 'starting'});
                 //check if the hash exists in the database already
-                let query = "SELECT *, BIT_COUNT(CONV(pHash, 16, 10) ^ CONV(?, 16, 10)) as hamming_distance FROM media HAVING hamming_distance < 10 ORDER BY hamming_distance ASC";
+                let query = "SELECT *, BIT_COUNT(CONV(pHash, 16, 10) ^ CONV(?, 16, 10)) as hamming_distance FROM media HAVING hamming_distance < 5 ORDER BY hamming_distance ASC";
                 dbase.query(query, [data.pHash], (error, results, fields)=>{
                     if(error) {
                         callback(error);
