@@ -4,6 +4,7 @@ import TagsSelectableList from '../components/tags-selectable-list.component';
 import UploadImageTilesList from '../components/upload-image-tiles-list.component';
 import UploadImageDetails from '../components/upload-image-details.component';
 import Media from '../../models/media';
+import Queue from '../../models/queue';
 
 const uuid = require('uuid/v4');
 
@@ -71,9 +72,20 @@ export default class UploadMedia extends React.Component{
         //this.uploadMedia(this.state.media);
         //redo this to send each file separately :-\
         let temp = [].concat(this.state.media);
-        for(let i = 0; i < temp.length; i++){
+        //throttle this a bit so we don't overwhelm the server
+        /*for(let i = 0; i < temp.length; i++){
             this.uploadMediaViaSocket(temp[i]);
-        }        
+        }*/
+        //create a queue for our uploads;
+        let q = new Queue(temp);
+        this.uploadQueue(q);
+    }
+    uploadQueue(queue){
+        this.uploadMediaViaSocket(queue.next(), ()=>{
+            if(queue.length() > 0){
+                this.uploadQueue(queue);
+            }
+        });
     }
     handleGlobalTagClick(tag, index, value){
         if(!tag || index === -1 || this.state.media.length === 0) return;
@@ -358,7 +370,7 @@ export default class UploadMedia extends React.Component{
     //that request will go thru the usual hoops and move the file if ok
     //need to update tiles to have progress overlay
     //need to throw progress back down the dom to the tiles' overlay
-    uploadMediaViaSocket(media){
+    uploadMediaViaSocket(media, callback){
         let socket = io();
         let reader = new FileReader();
         let name = uuid();
@@ -427,6 +439,7 @@ export default class UploadMedia extends React.Component{
                 }else{
                     this.handleRemoveClick(media);
                 }
+                if(callback) callback(null);
             });
             socket.emit('start_process', fileData);
         });
