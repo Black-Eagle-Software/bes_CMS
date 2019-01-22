@@ -14,12 +14,14 @@ export default class MediaDeleteConfirmation extends React.PureComponent{
             justifyContent: "center",
             flex: "1 1 auto",
             maxHeight: "50%",
-            objectFit: "contain"
+            /*objectFit: "contain"*/
         };
         const imgStyle={
             maxHeight: "100%",
             maxWidth: "100%",
-            boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 12px 40px 0 rgba(0, 0, 0, 0.2)"
+            boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 12px 40px 0 rgba(0, 0, 0, 0.2)",
+            objectFit: "contain",
+            flex: "1 1 auto"
         };
         const commandsStyle={
             display: "flex",
