@@ -38,6 +38,7 @@ export default class HeaderSearchBarSuggestions extends React.PureComponent{
 
         return(
             <div style={resultsDivStyle}>
+            {this.props.query_results.albums.length > 0 &&
                 <div>Albums:
                     <ul style={ulStyle}>
                         {this.props.query_results.albums.length > 0 && this.props.query_results.albums.map(result=>{
@@ -45,26 +46,38 @@ export default class HeaderSearchBarSuggestions extends React.PureComponent{
                         })}
                     </ul>
                 </div>
+            }
+            {this.props.query_results.media.length > 0 &&
                 <div>Media:                    
                     <ul style={ulStyle}>
                         {this.props.query_results.media.length > 0 && this.props.query_results.media.map(result=>{
                             return <li key={uuid()}>
-                                        <a href={`/media_details/${result.media}`} style={linkStyle} onClick={(e)=>this.handleLinkClick(e)}>
-                                            <img src={`${result.filePath}/thumbnails/${result.thumbnailFilename}`} alt={result.originalFilename} style={mediaThumbStyle}/>
+                                        <a href={`/media_details/${result.id}`} style={linkStyle} onClick={(e)=>this.handleLinkClick(e)}>
+                                            <img src={`/${result.filePath}/thumbnails/${result.thumbnailFilename}`} alt={result.originalFilename} style={mediaThumbStyle}/>
                                             {result.originalFilename}
                                         </a>
                                     </li>
                         })}                        
                     </ul>
                 </div>
+            }
+            {this.props.query_results.tags.length > 0 &&
                 <div>Tags:
                     <ul style={ulStyle}>
                         {this.props.query_results.tags.length > 0 && this.props.query_results.tags.map(result=>{
-                            return <li key={uuid()}>{result.description}</li>
+                            return <a key={uuid()} className={"tag"} href={`/search?t=${result.description}`}>
+                                        {result.description}
+                                    </a>
                         })}
                     </ul>
                 </div>
+            }
+            {(this.props.query_results.albums.length > 0 || this.props.query_results.media.length > 0 || this.props.query_results.tags.length > 0) &&
                 <button onClick={()=>this.handleShowMoreButtonClick()}>Show more...</button>
+            }
+            {(this.props.query_results.albums.length === 0 && this.props.query_results.media.length === 0 && this.props.query_results.tags.length === 0) &&
+                <span>No results</span>
+            }
             </div>
         );
     }
