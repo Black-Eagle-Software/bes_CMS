@@ -98,15 +98,13 @@ search.get('/', (req, res)=>{
                 });                
             });
         }else{
-            let queryString = `SELECT m.id, m.type, m.dateAdded, m.pHash, m.fileDate, m.width, m.height, 
+            let queryString = `SELECT DISTINCT m.id, m.type, m.dateAdded, m.pHash, m.fileDate, m.width, m.height, 
                                 m.filePath, m.originalFilename, m.hashFilename, m.thumbnailFilename, m.owner, 
-                                t.id AS tagId, tam.accessLevel, t.description, t.owner FROM media m 
+                                tam.accessLevel FROM media m 
                                 INNER JOIN tagsToMediaMap tmm 
                                 ON tmm.media = m.id 
                                 INNER JOIN tagsToAccessLevelMap tam 
-                                ON tam.tagId = tmm.tag 
-                                INNER JOIN tags t 
-                                ON tmm.tag = t.id 
+                                ON tam.tagId = tmm.tag
                                 WHERE m.originalFilename LIKE ? 
                                 AND (m.owner = ? 
                                     OR tam.accessLevel = 'Public' 
@@ -195,6 +193,44 @@ search.get('/', (req, res)=>{
             });                                    
         }
         //res.status(200).send({'mesage':'This will return all albums with media specified'});
+    }else if(req.query.phash){
+        console.log(req.query.phash);
+        if(user.role === 'Administrator'){
+            let queryString = `SELECT *, BIT_COUNT(CONV(pHash, 16, 10) ^ CONV(?, 16, 10)) 
+                                as hamming_distance FROM media HAVING 
+                                hamming_distance < 30 ORDER BY hamming_distance ASC`;
+            res.locals.connection.query(queryString, [req.query.phash], (error, results, fields)=>{
+                if(error){
+                    res.status(404).send({'message': error.message});
+                    return;
+                }
+                res.status(200).send(JSON.stringify({media: results}));
+                return;
+            });
+        }else{
+            queryString = `SELECT DISTINCT m.id, m.type, m.dateAdded, m.pHash, m.fileDate, m.width, m.height, 
+                            m.filePath, m.originalFilename, m.hashFilename, m.thumbnailFilename, 
+                            m.owner, tam.accessLevel, BIT_COUNT(CONV(pHash, 16, 10) ^ CONV(?, 16, 10)) 
+                            as hamming_distance FROM media m 
+                            INNER JOIN tagsToMediaMap tmm 
+                            ON tmm.media = m.id 
+                            INNER JOIN tagsToAccessLevelMap tam 
+                            ON tam.tagId = tmm.tag
+                            HAVING hamming_distance < 30 AND (m.owner = ?
+                                              OR tam.accessLevel = 'Public'
+                                              OR m.owner = (SELECT uuf.userId FROM usersToUsersFriendMap uuf 
+                                                            WHERE uuf.friendId = ?) 
+                                              OR m.owner = (SELECT uuf.friendId FROM usersToUsersFriendMap uuf 
+                                                            WHERE uuf.userId = ?)) ORDER BY hamming_distance ASC`;
+            res.locals.connection.query(queryString, [req.query.phash, user.id, user.id, user.id], (error, results, fields)=>{
+                if(error){
+                    res.status(404).send({'message': error.message});
+                    return;
+                }
+                res.status(200).send(JSON.stringify({media: results}));
+                return;
+            });
+        }
     }else{
         res.status(404).send({'message':'Invalid search query attempted'});
     }
