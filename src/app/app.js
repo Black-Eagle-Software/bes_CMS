@@ -50,6 +50,9 @@ class App extends React.Component {
         case 'home':
                     WindowNavigation.goToLocation('/'); 
                     break;
+        case 'media':
+                    this.handleUserShowAllMedia();
+                    break;
         case 'login': 
                     this.setState({
                         show_login: true,
