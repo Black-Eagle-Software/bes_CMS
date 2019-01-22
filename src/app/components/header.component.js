@@ -42,7 +42,8 @@ export default class Header extends React.Component{
             paddingLeft: "0.5em",
             paddingRight: "0.5em",
             zIndex: "500",
-            boxShadow: "rgba(0, 0, 0, 0.2) 0px 2px 4px 0px"
+            boxShadow: "rgba(0, 0, 0, 0.2) 0px 2px 4px 0px",
+            flex: "0 0 auto"
         };
         const titleStyle = {
             paddingRight: "1em"
@@ -195,6 +196,13 @@ export default class Header extends React.Component{
                         3236.9 3301.3 3263.8 3306.1 3242.2 3314.2z`}/>
                         </svg>
                 </div>
+                {this.props.isAuthenticated && 
+                    <div className={"headerBtn"} onClick={()=>this.handleBtnClick('media')} title="Media">
+                        <svg style={svgStyle} viewBox={"0 0 24 24"}>
+                            <path d="M18,14.5V11A1,1 0 0,0 17,10H16C18.24,8.39 18.76,5.27 17.15,3C15.54,0.78 12.42,0.26 10.17,1.87C9.5,2.35 8.96,3 8.6,3.73C6.25,2.28 3.17,3 1.72,5.37C0.28,7.72 1,10.8 3.36,12.25C3.57,12.37 3.78,12.5 4,12.58V21A1,1 0 0,0 5,22H17A1,1 0 0,0 18,21V17.5L22,21.5V10.5L18,14.5M13,4A2,2 0 0,1 15,6A2,2 0 0,1 13,8A2,2 0 0,1 11,6A2,2 0 0,1 13,4M6,6A2,2 0 0,1 8,8A2,2 0 0,1 6,10A2,2 0 0,1 4,8A2,2 0 0,1 6,6Z" />
+                        </svg>
+                    </div>
+                }
                 {this.props.isAuthenticated && 
                     <div className={"headerBtn"} onClick={()=>this.handleBtnClick('tags')} title="Tags">
                         <svg style={svgStyle} viewBox={"0 0 24 24"}>
