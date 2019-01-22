@@ -97,7 +97,7 @@ app_routes.get('*', (req, res, next)=>{
         <html>
             <head>
                 <title>Black Eagle Software CMS</title>
-                <link rel="shortcut icon" href="favicon-16x16.png">
+                <link rel="shortcut icon" href="/favicon-16x16.png">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
                 <link rel="stylesheet" href="/global.css">
                 <script src="/bundle.js" defer></script>
