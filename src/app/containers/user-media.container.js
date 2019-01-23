@@ -3,6 +3,9 @@ import axios from 'axios';
 import ImageTilesList from '../components/image-tiles-list.component';
 import MediaZoom from '../components/media-zoom.component';
 import MediaDeleteConfirmation from '../components/media-delete-confirmation.component';
+import ViewToolbar from '../components/view-toolbar.component';
+import MediaDeleteSelectionConfirmation from '../components/media-delete-selection-confirmation.component';
+import Queue from '../../models/queue';
 
 export default class UserMedia extends React.Component{
     constructor(props){
@@ -14,14 +17,18 @@ export default class UserMedia extends React.Component{
             zoomed_image: {},
             zoomed_image_tags: [],
             show_delete_dialog: false,
-            request_delete_media: {}
+            request_delete_media: {},
+            show_delete_selection_dialog: false
         };
     }
 
     componentDidMount(){
         this.updateMediaFromDatabase();
     }
-
+    getSelectionCount(){
+        let count = this.state.media.filter(media=>media.selected);
+        return count.length;
+    }
     handleHeaderBtnClick(name){
         this.props.onHeaderBtnClick(name);
     }
@@ -58,6 +65,43 @@ export default class UserMedia extends React.Component{
             this.updateMediaFromDatabase();
         });
     }
+    handleDeleteSelection(queue){
+        axios.delete(`/api/m/${queue.next().file.id}`).then(res=>{
+            console.log(res);
+            if(queue.length() > 0){
+                this.handleDeleteSelection(queue);
+            }else{
+                this.setState({show_delete_selection_dialog: false});
+                this.updateMediaFromDatabase(); 
+            }
+        });
+    }
+    handleDeleteSelectionClick(){
+        this.setState({show_delete_selection_dialog: true});
+    }
+    handleDeleteSelectionConfirmButtonClick(){
+        let q = new Queue(this.state.media.filter(media=>media.selected));
+        this.handleDeleteSelection(q);                  
+    }
+    handleDeleteSelectionDialogCloseClick(){
+        this.setState({show_delete_selection_dialog: false});
+    }
+    handleDeselectClick(){
+        let temp = this.state.media;
+        for(let i = 0; i < temp.length; i++){
+            if(temp[i].selected){
+                temp[i].selected = false;
+            }
+        }
+        this.setState({media: temp});
+    }
+    handleDownloadSelectionClick(){
+        axios.post(`/api/archive/zip`, {media: this.state.media.filter(media=>media.selected)}, {headers: {'Content-Type':'application/json'}})
+        .then(res=>{
+            console.log(res);
+            window.location = `/api/archive/zip/${res.data.file}`;
+        });
+    }
     handleImageClick(image){
         this.setState(prevState=>({
             zoomed_image: image,
@@ -68,36 +112,90 @@ export default class UserMedia extends React.Component{
                 this.setState({zoomed_image_tags: res.data});
             });
     }
+    handleMediaSelect(media){
+        let temp = this.state.media;
+        let media_index = temp.indexOf(media);
+        temp[media_index].selected = !temp[media_index].selected;
+        this.setState({media: temp});
+    }
     render(){
         const contStyle = {
             height: "100%",
-            width: "100%"
+            width: "100%",
+            overflow: "auto"
         };
         const pageStyle = {
             height: "100%",
             marginLeft: "1em",
             marginRight: "1em"
         };
+        const svgStyle = {
+            position: "relative",
+            top: "6px",
+            width: "24px",
+            height: "24px",
+            marginRight: "0.25em"
+        };
+        const outerDivStyle = {
+            display: "flex",
+            flexFlow: "column nowrap",            
+            width: "100%",
+            flex: "1 1 auto"
+        };
+        const deselectStyle = {
+            float: "right"
+        };
         
         return(
-            <div style={contStyle}>
-                {this.state.is_image_focused &&
-                    <MediaZoom image_source={this.state.zoomed_image} media_tags={this.state.zoomed_image_tags} onCloseClick={()=>this.handleCloseClick()}/>
-                }
-                {this.state.show_delete_dialog && 
-                    <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
-                }
-                <div style={pageStyle}>
-                    {this.state.media &&
+            <div style={outerDivStyle}>
+                {this.state.media.some(media=>media.selected) &&
+                    <ViewToolbar>
                         <div>
-                            <h2>All Media for {this.props.username}</h2>
-                            <ImageTilesList media={this.state.media} 
-                                            onImageClick={(image)=>this.handleImageClick(image)} 
-                                            can_delete={true}
-                                            show_all={false} 
-                                            onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)} />
+                            <div className={"toolbar_btn"} onClick={()=>this.handleDownloadSelectionClick()}>
+                                <svg style={svgStyle} viewBox={"0 0 24 24"}>
+                                    <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                </svg>
+                                Download as zip
+                            </div>
+                            <div className={"toolbar_btn"} onClick={()=>this.handleDeleteSelectionClick()}>
+                                &#x2716;
+                                Delete selected media 
+                            </div>
+                            {/* will want things like download all media as a .zip file */}
+                            <div style={deselectStyle} className={"toolbar_btn"} onClick={()=>this.handleDeselectClick()} title={"Deselect"}>                                
+                                <svg style={svgStyle} viewBox={"0 0 24 24"}>
+                                    <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12C4,13.85 4.63,15.55 5.68,16.91L16.91,5.68C15.55,4.63 13.85,4 12,4M12,20A8,8 0 0,0 20,12C20,10.15 19.37,8.45 18.32,7.09L7.09,18.32C8.45,19.37 10.15,20 12,20Z" />
+                                </svg>
+                                {this.state.media.filter(media=>media.selected).length} selected
+                            </div>
                         </div>
-                    }                    
+                    </ViewToolbar>
+                }
+                <div style={contStyle}>
+                    {this.state.is_image_focused &&
+                        <MediaZoom image_source={this.state.zoomed_image} media_tags={this.state.zoomed_image_tags} onCloseClick={()=>this.handleCloseClick()}/>
+                    }
+                    {this.state.show_delete_dialog && 
+                        <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
+                    }
+                    {this.state.show_delete_selection_dialog &&
+                        <MediaDeleteSelectionConfirmation count={this.getSelectionCount()} onCloseClick={()=>this.handleDeleteSelectionDialogCloseClick()} onConfirmClick={()=>this.handleDeleteSelectionConfirmButtonClick()}/>
+                    }
+                    
+                    <div style={pageStyle}>
+                        {this.state.media &&
+                            <div>
+                                <h2>All Media for {this.props.username} ({this.state.media.length})</h2>
+                                <ImageTilesList media={this.state.media} 
+                                                onImageClick={(image)=>this.handleImageClick(image)} 
+                                                can_delete={true}
+                                                include_show_all_button={false}
+                                                allow_selection={true} 
+                                                onMediaSelect={(media)=>this.handleMediaSelect(media)}
+                                                onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)} />
+                            </div>
+                        }                    
+                    </div>
                 </div>
             </div>
         );
@@ -109,7 +207,12 @@ export default class UserMedia extends React.Component{
             let temp_media = [];
             let res = response.data;
             for(let i = 0; i < res.length; i++){
-                temp_media.push({file: res[i], src_file: `/${res[i].filePath}/${res[i].hashFilename}`, thumb: `/${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
+                temp_media.push({
+                    file: res[i], 
+                    src_file: `/${res[i].filePath}/${res[i].hashFilename}`, 
+                    thumb: `/${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`, 
+                    selected: false
+                });
             }
             this.setState({media: temp_media});
         });
