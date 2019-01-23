@@ -13,6 +13,7 @@
         "webpack-node-externals": "^1.6.0"
     },
     "dependencies": {
+        "archiver": "^3.0.0",
         "async": "^2.6.1",
         "axios": "^0.18.0",
         "body-parser": "^1.18.3",

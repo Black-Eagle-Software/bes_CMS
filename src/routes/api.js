@@ -1,5 +1,6 @@
 const api = require('express').Router();
 const albums = require('./albums');
+const archives = require('./archives');
 const auth = require('./auth');
 const media = require('./media');
 const tags = require('./tags');
@@ -23,6 +24,8 @@ api.get('/access_levels', (req, res)=>{
 
 api.use('/albums', albums);
 api.use('/a', albums);
+
+api.use('/archive', archives);
 
 api.use('/auth', auth);
 
