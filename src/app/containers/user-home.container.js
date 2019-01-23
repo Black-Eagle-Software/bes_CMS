@@ -103,7 +103,7 @@ export default class UserHomeContainer extends React.Component{
                             <ImageTilesList media={this.state.media} 
                                             onImageClick={(image)=>this.handleImageClick(image)} 
                                             can_delete={true}
-                                            show_all={true} 
+                                            include_show_all_button={true} 
                                             onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)} 
                                             onShowAllButtonClick={()=>this.handleUserShowAllMediaClick()}/>
                         </div>
@@ -114,7 +114,7 @@ export default class UserHomeContainer extends React.Component{
                             <ImageTilesList media={this.state.public_media} 
                                             onImageClick={(image)=>this.handleImageClick(image)} 
                                             can_delete={false}
-                                            show_all={true} 
+                                            include_show_all_button={true} 
                                             onShowAllButtonClick={()=>this.handlePublicShowAllMediaClick()}/>
                         </div>
                     }
