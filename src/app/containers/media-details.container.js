@@ -2,8 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import ImageFingerprintGraphic from '../components/image-fingerprint-graphic.component';
 import ViewToolbar from '../components/view-toolbar.component';
-
-const uuid = require('uuid/v4');
+import TagSearchButtonList from '../components/tag-search-button-list.component';
 
 export default class MediaDetails extends React.Component{
     constructor(props){
@@ -11,7 +10,9 @@ export default class MediaDetails extends React.Component{
 
         this.state = {
             image_source: null,
-            tags: []
+            tags: [],
+            possible_tags: [],
+            temp_tags: []
         };
     }
     componentDidMount(){
@@ -33,7 +34,96 @@ export default class MediaDetails extends React.Component{
         let date = new Date(msDate);
         let output = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         return output;
-    }  
+    }
+    handleAddTag(tag){
+        //assume that our possible and temp tags arrays
+        //encompass all possible tags, this just 
+        //moves a tag from possible to temp
+        let tempP = this.state.possible_tags;
+        let tempT = this.state.temp_tags;
+        let pIndex = tempP.indexOf(tag);
+        tempP.splice(pIndex, 1);
+        tempT.push(tag);
+        tempT.sort((a, b)=>{
+            let x = a.description.toLowerCase();
+            let y = b.description.toLowerCase();
+            return x > y ? 1 : x < y ? -1 : 0;
+        });
+        this.setState({
+            possible_tags: tempP,
+            temp_tags: tempT
+        });
+    }
+    handleCancelChangesBtnClick(e){
+        e.preventDefault();
+        e.stopPropagation();
+        this.setState(prevState=>({
+            show_edit_tags: !prevState.show_edit_tags,
+            disable_edit_tags_button: !prevState.disable_edit_tags_button
+        }));
+    }
+    handleEditTagsClick(){
+        let temp_tags = [].concat(this.state.tags);
+        axios.get(`/api/u/${this.props.user_id}/t?all=true`).then(res=>{
+            //need to make sure the possible tags don't 
+            //duplicate already applied tags
+            let posTags = [];
+            for(let i = 0; i < res.data.length; i++){
+                if(temp_tags.find(t=>t.id === res.data[i].id) === undefined){
+                    //this tag is not in our temp_tags
+                    posTags.push(res.data[i]);
+                }
+            }
+            this.setState(prevState=>({
+                possible_tags: posTags,
+                temp_tags: temp_tags,
+                show_edit_tags: !prevState.show_edit_tags,
+                disable_edit_tags_button: !prevState.disable_edit_tags_button
+            }));
+        });        
+    }
+    handleRemoveTag(tag){
+        //assume that our possible and temp tags arrays
+        //encompass all possible tags, this just 
+        //moves a tag from temp to possible
+        let tempP = this.state.possible_tags;
+        let tempT = this.state.temp_tags;
+        let tIndex = tempT.indexOf(tag);
+        tempT.splice(tIndex, 1);
+        tempP.push(tag);
+        tempP.sort((a, b)=>{
+            let x = a.description.toLowerCase();
+            let y = b.description.toLowerCase();
+            return x > y ? 1 : x < y ? -1 : 0;
+        });
+        this.setState({
+            possible_tags: tempP,
+            temp_tags: tempT
+        });
+    }
+    handleSaveChangesBtnClick(e){
+        e.preventDefault();
+        e.stopPropagation();
+        //this should update our media entry in the database
+        //with the current set of this.state.temp_tags
+        axios.put(`/api/m/${this.props.match.params.id}/t`, this.state.temp_tags)
+        .then(res=>{
+            console.log(res);
+            //confirm that our tags are in the database properly
+            axios.get(`/api/m/${this.props.match.params.id}/t`)
+            .then(res=>{
+                if(res){
+                    this.setState(prevState=>({
+                        tags: res.data,
+                        possible_tags: [],
+                        temp_tags: [],
+                        show_edit_tags: !prevState.show_edit_tags,
+                        disable_edit_tags_button: !prevState.disable_edit_tags_button
+                    }));
+                }
+            });            
+        });
+    }
     render(){
         const contStyle = {
             padding: "70px",
@@ -87,13 +177,21 @@ export default class MediaDetails extends React.Component{
             width: "100%",
             flex: "1 1 auto"
         };
+        const toolbarStyle = {
+            float: "right"
+        };
+        const buttonStyle = {
+            marginRight: "0.5em"
+        };
+
+        const editTagsClass = this.state.disable_edit_tags_button ? "toolbar_btn active" : "toolbar_btn";
 
         return(
             <div style={outerDivStyle}>
                 <ViewToolbar>
                 {this.state.image_source &&
                     <div>
-                        <div className={"toolbar_btn"}>
+                        <div className={editTagsClass} onClick={()=>this.handleEditTagsClick()}>
                             <svg style={svgStyle} viewBox={"0 0 24 24"}>
                                 <path d="M5.5,7A1.5,1.5 0 0,1 4,5.5A1.5,1.5 0 0,1 5.5,4A1.5,1.5 0 0,1 7,5.5A1.5,1.5 0 0,1 5.5,7M21.41,11.58L12.41,2.58C12.05,2.22 11.55,2 11,2H4C2.89,2 2,2.89 2,4V11C2,11.55 2.22,12.05 2.59,12.41L11.58,21.41C11.95,21.77 12.45,22 13,22C13.55,22 14.05,21.77 14.41,21.41L21.41,14.41C21.78,14.05 22,13.55 22,13C22,12.44 21.77,11.94 21.41,11.58Z" />
                             </svg>
@@ -143,14 +241,25 @@ export default class MediaDetails extends React.Component{
                                         <li style={liStyle}><span style={liLabelStyle}>Owner: </span><span style={liItemStyle}>{this.state.image_source.owner}</span></li>
                                         <li style={liStyle}>
                                             <span style={liLabelStyle}>Tags: </span>
-                                            {this.state.tags.map(tag=>{
+                                            {/*this.state.tags.map(tag=>{
                                                 return <a key={uuid()} className={"tag"} href={`/search?t=${tag.description}`}>
                                                             {tag.description}
                                                         </a>
-                                            })}
+                                            })*/}
+                                            <TagSearchButtonList tags={this.state.show_edit_tags ? this.state.temp_tags : this.state.tags} 
+                                                                is_editing={this.state.show_edit_tags}
+                                                                all_tags={this.state.possible_tags}
+                                                                onAddTag={(tag)=>this.handleAddTag(tag)}
+                                                                onRemoveTag={(tag)=>this.handleRemoveTag(tag)}/>
                                             
                                         </li>
                                     </ul>
+                                    {this.state.show_edit_tags &&
+                                        <div style={toolbarStyle}>
+                                            <button style={buttonStyle} className={'btn btn-primary'} onClick={(e)=>this.handleSaveChangesBtnClick(e)}>Save changes</button>
+                                            <button className={'btn btn-danger'} onClick={(e)=>this.handleCancelChangesBtnClick(e)}>Cancel</button>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
