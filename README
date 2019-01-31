@@ -33,7 +33,7 @@
 /users/<id>             /u/<id>         PATCH           Partially updates the user with id of <id> - password update?
 /media/<id>             /m/<id>         PATCH           Partially updates the media with id of <id> - add tags?
 /tag/<id>               /t/<id>         PATCH           Partially updates the tag with id of <id> - rename?
-/albums/<id>            /a/<id>         PATCH           Partially updates the album with if of <id> - add new media?
+/albums/<id>            /a/<id>         PATCH           Partially updates the album with id of <id> - add new media?
 
 /users/<id>             /u/<id>         DELETE          Deletes the user with id of <id>
 /media/<id>             /m/<id>         DELETE          Deletes the media with an id of <id>
