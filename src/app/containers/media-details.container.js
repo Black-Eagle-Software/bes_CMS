@@ -3,6 +3,7 @@ import axios from 'axios';
 import ImageFingerprintGraphic from '../components/image-fingerprint-graphic.component';
 import ViewToolbar from '../components/view-toolbar.component';
 import TagSearchButtonList from '../components/tag-search-button-list.component';
+import DateHelper from '../../helpers/date';
 
 export default class MediaDetails extends React.Component{
     constructor(props){
@@ -29,11 +30,6 @@ export default class MediaDetails extends React.Component{
                 this.setState({tags: res.data});
             }
         });
-    }
-    formatDateForMillisecondDate(msDate){
-        let date = new Date(msDate);
-        let output = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-        return output;
     }
     handleAddTag(tag){
         //assume that our possible and temp tags arrays
@@ -232,8 +228,8 @@ export default class MediaDetails extends React.Component{
                                         <li style={liStyle}><span style={liLabelStyle}>Dimensions:</span><span style={liItemStyle}>{this.state.image_source.width} x {this.state.image_source.height}</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Width:</span><span style={liItemStyle}>{this.state.image_source.width} pixels</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Height:</span><span style={liItemStyle}>{this.state.image_source.height} pixels</span></li>
-                                        <li style={liStyle}><span style={liLabelStyle}>File date: </span><span style={liItemStyle}>{this.formatDateForMillisecondDate(this.state.image_source.fileDate)}</span></li>
-                                        <li style={liStyle}><span style={liLabelStyle}>Date added: </span><span style={liItemStyle}>{this.formatDateForMillisecondDate(this.state.image_source.dateAdded)}</span></li>
+                                        <li style={liStyle}><span style={liLabelStyle}>File date: </span><span style={liItemStyle}>{DateHelper.formatDateForMillisecondDate(this.state.image_source.fileDate)}</span></li>
+                                        <li style={liStyle}><span style={liLabelStyle}>Date added: </span><span style={liItemStyle}>{DateHelper.formatDateForMillisecondDate(this.state.image_source.dateAdded)}</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Perceptual hash (pHash): </span><span style={liItemStyle}><ImageFingerprintGraphic hash={this.state.image_source.pHash}/></span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>File path: </span><span style={liItemStyle}>{this.state.image_source.filePath}</span></li>
                                         <li style={liStyle}><span style={liLabelStyle}>Hashed filename: </span><span style={liItemStyle}>{this.state.image_source.hashFilename}</span></li>
