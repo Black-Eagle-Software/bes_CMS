@@ -18,8 +18,11 @@ export default class ImageTileDeleteButton extends React.PureComponent{
             cursor: "default",
             marginLeft: "0.25em"
         }
+
+        const title = this.props.title ? this.props.title : "Remove media";
+
         return(
-            <div style={buttonStyle} className={"tile_deleteBtn"} onClick={(e)=>this.handleButtonClick(e)} title={"Delete media"}>
+            <div style={buttonStyle} className={"tile_deleteBtn"} onClick={(e)=>this.handleButtonClick(e)} title={title}>
                 &#x2716;
             </div>            
         );
