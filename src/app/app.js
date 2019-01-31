@@ -13,6 +13,7 @@ import Search from './containers/search.container';
 import Tags from './containers/tags.container';
 import UserMedia from './containers/user-media.container';
 import PublicMedia from './containers/public-media.container';
+import AlbumDetails from './containers/album-details.container';
 
 class App extends React.Component {
   constructor(props){
@@ -44,9 +45,14 @@ class App extends React.Component {
       search_query: ""
     };
   }
+  handleAddAlbum(){
+    WindowNavigation.goToLocation('/new_album');
+  }
   handleHeaderBtnClick(name){
     switch (name){
-        case 'ablums': break;
+        case 'albums': 
+                    this.handleUserShowAllAlbums();
+                    break;
         case 'home':
                     WindowNavigation.goToLocation('/'); 
                     break;
@@ -89,6 +95,9 @@ class App extends React.Component {
   }
   handlePublicShowAllMedia(){
     WindowNavigation.goToLocation('/media');
+  }
+  handleUserShowAllAlbums(){
+    WindowNavigation.goToLocation(`/users/${this.state.id}/albums`);
   }
   handleUserShowAllMedia(){
     WindowNavigation.goToLocation(`/users/${this.state.id}/media`);
@@ -146,7 +155,9 @@ class App extends React.Component {
                   show_albums={this.state.show_albums}
                   show_tags={this.state.show_tags}
                   onPublicShowAllMediaButtonClick={()=>this.handlePublicShowAllMedia()}
-                  onUserShowAllMediaButtonClick={()=>this.handleUserShowAllMedia()}/>
+                  onUserShowAllMediaButtonClick={()=>this.handleUserShowAllMedia()}
+                  onUserShowAllAlbumsButtonClick={()=>this.handleUserShowAllAlbums()}
+                  onAddAlbum={()=>this.handleAddAlbum()}/>
                   )}/>
                 <Route path='/upload' render={(props)=>(
                   <UploadMedia id={this.state.id} {...props}/>
@@ -162,6 +173,12 @@ class App extends React.Component {
                 )}/>
                 <Route path='/media' render={(props)=>(
                   <PublicMedia {...props} />
+                )}/>
+                <Route path='/album_details/:id' render={(props)=>(
+                  <AlbumDetails user_id={this.state.id} {...props}/>
+                )}/>
+                <Route path='/new_album' render={(props)=>(
+                  <AlbumDetails user_id={this.state.id} {...props}/>
                 )}/>
                 <Route path='/media_details/:id' render={(props)=>(
                   <MediaDetails user_id={this.state.id} {...props}/>

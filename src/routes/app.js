@@ -42,6 +42,14 @@ const routes = [
     {
         path: '/tags',
         req_authorization: true
+    },
+    {
+        path: '/album_details',
+        req_authorization: true
+    },
+    {
+        path: '/new_album',
+        req_authorization: true
     }
 ];
 
