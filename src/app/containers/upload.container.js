@@ -196,6 +196,7 @@ export default class UploadMedia extends React.Component{
             color: "#f5f5f5", 
             height: "100%", 
             maxWidth: "15em", 
+            width: "15em", 
             paddingLeft: "1em",
             paddingRight: "1em"
         };
@@ -439,6 +440,7 @@ export default class UploadMedia extends React.Component{
                 }else{
                     this.handleRemoveClick(media);
                 }
+                socket.disconnect();
                 if(callback) callback(null);
             });
             socket.emit('start_process', fileData);
