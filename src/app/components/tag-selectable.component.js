@@ -17,8 +17,14 @@ export default class TagSelectable extends React.Component{
         this.props.onTagClick(this.props.tag, val);
     }
     render(){
+        const contStyle={
+            display: "inline-block",
+            margin: "0.25em 0.5em",
+            minWidth: "10em"
+        };
+
         return(
-            <div>
+            <div style={contStyle}>
                 <label><input type="checkbox" checked={this.state.selected} onChange={(e)=>this.handleChange(e)}/>{this.props.description}</label>
             </div>
         );
