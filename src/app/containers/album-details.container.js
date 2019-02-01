@@ -134,14 +134,18 @@ export default class AlbumDetails extends React.Component{
         const contStyle = {
             height: "100%",
             width: "100%",
-            overflow: "auto"
+            //overflow: "auto",
+            flex: "1 1 auto",
+            display: "flex",
+            flexFlow: "column nowrap"
         };
         const pageStyle = {
             height: "100%",
             marginLeft: "1em",
             marginRight: "1em",
             display: "flex",
-            flexFlow: "column nowrap"
+            flexFlow: "column nowrap",
+            flex: "1 1 auto"
         };
         const svgStyle = {
             position: "relative",
@@ -219,14 +223,17 @@ export default class AlbumDetails extends React.Component{
                         {this.state.album_is_editing &&
                             <input type='text' onChange={(e)=>this.handleAlbumNameChange(e)} value={this.state.album_name} />
                         }
-                        {!this.state.album_is_editing && this.state.media && this.state.media.length > 0 &&
+                        {!this.state.album_is_editing && this.state.media && this.state.media.length > 0 &&                            
+                            <div style={{maxHeight: "100%", minHeight: "10%", flex: "1 1 auto"}}>
                             <ImageTilesList media={this.state.media} 
                                             onImageClick={(image)=>this.handleImageClick(image)} 
                                             can_delete={false}
                                             include_show_all_button={false}
                                             allow_selection={false} />
+                            </div>
                         }
                         {this.state.album_is_editing && this.state.temp_album_media && this.state.temp_album_media.length > 0 &&
+                            <div style={{maxHeight: "50%", flex: "1 1 auto"}}>
                             <ImageTilesList media={this.state.temp_album_media} 
                                             onImageClick={(image)=>this.handleImageClick(image)} 
                                             can_delete={true}
@@ -234,6 +241,7 @@ export default class AlbumDetails extends React.Component{
                                             include_show_all_button={false}
                                             allow_selection={false}
                                             allow_reorder={true} />
+                            </div>
                         }
                         {this.state.album_is_editing && this.state.temp_album_media && this.state.temp_album_media.length > 0 &&
                             <div style={toolbarStyle}>
@@ -245,11 +253,13 @@ export default class AlbumDetails extends React.Component{
                             <span style={borderStyle}></span>
                         }
                         {this.state.album_is_editing && this.state.possible_media && this.state.possible_media.length > 0 &&
+                            <div style={{maxHeight: "100%", minHeight: "10%", flex: "1 1 auto"}}>
                             <ImageTilesList media={this.state.possible_media} 
                                             onImageClick={(image)=>this.handlePossibleMediaClick(image)} 
                                             can_delete={false}
                                             include_show_all_button={false}
                                             allow_selection={false} />
+                            </div>
                         }
                     </div>
                 </div>

@@ -116,7 +116,13 @@ export default class UserHomeContainer extends React.Component{
         const pageStyle = {
             height: "100%",
             marginLeft: "1em",
-            marginRight: "1em"
+            marginRight: "1em",
+            display: "flex",
+            flexFlow: "column nowrap",
+            flex: "1 1 auto"
+        };
+        const paneStyle={
+            flex: "1 1 auto"
         };
         //redo this a bit to separate out our page content
         //but keep the overlays here?
@@ -144,7 +150,7 @@ export default class UserHomeContainer extends React.Component{
                         </div>
                     }
                     {this.state.media && this.state.media.length > 0 &&
-                        <div>
+                        <div style={paneStyle}>
                             <h2>Recent Media</h2>
                             <ImageTilesList media={this.state.media} 
                                             onImageClick={(image)=>this.handleImageClick(image)} 
@@ -155,7 +161,7 @@ export default class UserHomeContainer extends React.Component{
                         </div>
                     }
                     {this.state.public_media && this.state.public_media.length > 0 &&
-                        <div>
+                        <div style={paneStyle}>
                             <h2>Recent Public Media</h2>
                             <ImageTilesList media={this.state.public_media} 
                                             onImageClick={(image)=>this.handleImageClick(image)} 

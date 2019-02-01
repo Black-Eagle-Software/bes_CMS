@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import ImageTilesList from '../components/image-tiles-list.component';
+import ViewToolbar from '../components/view-toolbar.component';
 
 const uuid = require('uuid/v4');
 
@@ -39,6 +40,17 @@ export default class Search extends React.Component{
             });
     }
     render(){
+        const contStyle = {
+            /*height: "100%",
+            width: "100%",
+            margin: "1em",*/
+            //overflow: "auto",
+            flex: "1 1 auto",
+            padding: "1em",
+            display: "flex",
+            flexFlow: "column nowrap"
+        };
+
         const resultsDivStyle = {
             position: "absolute",
             width: "100%",
@@ -61,53 +73,83 @@ export default class Search extends React.Component{
             width: "10em", 
             objectFit: "contain"
         }
+        const outerDivStyle = {
+            display: "flex",
+            flexFlow: "column nowrap",            
+            width: "100%",
+            flex: "1 1 auto"
+        };
+        const svgStyle = {
+            position: "relative",
+            top: "6px",
+            width: "24px",
+            height: "24px",
+            marginRight: "0.25em"
+        };
 
         return(
-            <div >                
-                {/*
-                    break this out into separate albums, media, tags results components 
-                    so we can selectively add and remove them from the page
-                    based on what type of search was performed
-                    ==========================================================================
-                    ?a returns a list of albums -> should be links to album details page
-                    ?s returns a list of albums (-> album details page), a list of media
-                        (-> media details page), and a list of tags (-> ?t search with tag
-                    ?t returns a list of media -> should be links to media details page
-                */} 
-                {this.state.query_results_albums &&
-                    <div>Albums:
-                        <ul style={ulStyle}>
-                            {this.state.query_results_albums.length > 0 && this.state.query_results_albums.map(result=>{
-                                return <li key={uuid()}>{result.name}</li>
-                            })}
-                        </ul>
-                    </div>
+            <div style={outerDivStyle}>
+                {false && 
+                    <ViewToolbar>
+                    {this.state.query_results_media &&
+                        <div>
+                            {/* will want to have something like 'Create album from results' or similar
+                            <div className={"toolbar_btn"}>
+                                <svg style={svgStyle} viewBox={"0 0 24 24"}>
+                                    <path d="M5.5,7A1.5,1.5 0 0,1 4,5.5A1.5,1.5 0 0,1 5.5,4A1.5,1.5 0 0,1 7,5.5A1.5,1.5 0 0,1 5.5,7M21.41,11.58L12.41,2.58C12.05,2.22 11.55,2 11,2H4C2.89,2 2,2.89 2,4V11C2,11.55 2.22,12.05 2.59,12.41L11.58,21.41C11.95,21.77 12.45,22 13,22C13.55,22 14.05,21.77 14.41,21.41L21.41,14.41C21.78,14.05 22,13.55 22,13C22,12.44 21.77,11.94 21.41,11.58Z" />
+                                </svg>
+                                Select media 
+                            </div>*/}                        
+                        </div>
+                    }
+                    </ViewToolbar>
                 }
-                {this.state.query_results_media &&
-                    <div>Media:
-                        {/* this breaks because our id isn't the media id for some query results*/}
-                        <ImageTilesList media={this.state.query_results_media} can_delete={false}/>                    
-                        {/*<ul style={ulStyle}>
-                            {this.state.query_results_media.length > 0 && this.state.query_results_media.map(result=>{
-                                return <li key={uuid()}>
-                                            <a href={`/media_details/${result.media}`} style={linkStyle} onClick={(e)=>this.handleLinkClick(e)}>
-                                                <img src={`${result.filePath}/thumbnails/${result.thumbnailFilename}`} alt={result.originalFilename} style={mediaThumbStyle}/>
-                                                {result.originalFilename}
-                                            </a>
-                                        </li>
-                            })}                        
-                        </ul>*/}
-                    </div>
-                }
-                {this.state.query_results_tags &&
-                    <div>Tags:
-                        <ul style={ulStyle}>
-                            {this.state.query_results_tags.length > 0 && this.state.query_results_tags.map(result=>{
-                                return <li key={uuid()} className={"tag"}>{result.description}</li>
-                            })}
-                        </ul>
-                    </div>
-                }
+                <div style={contStyle}>                
+                    {/*
+                        break this out into separate albums, media, tags results components 
+                        so we can selectively add and remove them from the page
+                        based on what type of search was performed
+                        ==========================================================================
+                        ?a returns a list of albums -> should be links to album details page
+                        ?s returns a list of albums (-> album details page), a list of media
+                            (-> media details page), and a list of tags (-> ?t search with tag
+                        ?t returns a list of media -> should be links to media details page
+                    */} 
+                    {this.state.query_results_albums &&
+                        <div>Albums:
+                            <ul style={ulStyle}>
+                                {this.state.query_results_albums.length > 0 && this.state.query_results_albums.map(result=>{
+                                    return <li key={uuid()}>{result.name}</li>
+                                })}
+                            </ul>
+                        </div>
+                    }
+                    {this.state.query_results_media &&
+                        <div style={{flex: "1 1 auto"}}>Media:
+                            {/* this breaks because our id isn't the media id for some query results*/}
+                            <ImageTilesList media={this.state.query_results_media} can_delete={false}/>                    
+                            {/*<ul style={ulStyle}>
+                                {this.state.query_results_media.length > 0 && this.state.query_results_media.map(result=>{
+                                    return <li key={uuid()}>
+                                                <a href={`/media_details/${result.media}`} style={linkStyle} onClick={(e)=>this.handleLinkClick(e)}>
+                                                    <img src={`${result.filePath}/thumbnails/${result.thumbnailFilename}`} alt={result.originalFilename} style={mediaThumbStyle}/>
+                                                    {result.originalFilename}
+                                                </a>
+                                            </li>
+                                })}                        
+                            </ul>*/}
+                        </div>
+                    }
+                    {this.state.query_results_tags &&
+                        <div>Tags:
+                            <ul style={ulStyle}>
+                                {this.state.query_results_tags.length > 0 && this.state.query_results_tags.map(result=>{
+                                    return <li key={uuid()} className={"tag"}>{result.description}</li>
+                                })}
+                            </ul>
+                        </div>
+                    }
+                </div>
             </div>
         );
     }

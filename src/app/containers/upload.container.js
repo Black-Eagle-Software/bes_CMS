@@ -195,7 +195,7 @@ export default class UploadMedia extends React.Component{
             background: "#1f1f1f", 
             color: "#f5f5f5", 
             height: "100%", 
-            maxWidth: "15em", 
+            maxWidth: "15em",
             width: "15em", 
             paddingLeft: "1em",
             paddingRight: "1em"
@@ -261,7 +261,9 @@ export default class UploadMedia extends React.Component{
                                         <span style={queueCountLabelStyle}>Files in queue: </span>
                                         <span style={queueCountStyle}>{this.state.media.length}</span>
                                     </div>
-                                    <h3>Tags:</h3>                            
+                                    Create new album for upload(s)?
+                                    <h3>Tags:</h3>
+                                    <button>Add new tag</button>                            
                                     <TagsSelectableList tags={this.state.tags} selected_tags={this.state.global_tags} onTagClick={(tag, index, value)=>this.handleGlobalTagClick(tag, index, value)}/>
                                     <br/>
                                     <input type="submit" className={"btn-primary"} style={uploadAllStyle} value="Upload all files"/>
@@ -436,7 +438,7 @@ export default class UploadMedia extends React.Component{
                         has_upload_error: true,
                         upload_error: `ERROR: ${message}`,
                         upload_error_dupe: dupe
-                    });
+                    });                    
                 }else{
                     this.handleRemoveClick(media);
                 }

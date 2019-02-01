@@ -122,12 +122,18 @@ export default class UserMedia extends React.Component{
         const contStyle = {
             height: "100%",
             width: "100%",
-            overflow: "auto"
+            overflow: "auto",
+            flex: "1 1 auto",
+            display: "flex",
+            flexFlow: "column nowrap"
         };
         const pageStyle = {
             height: "100%",
             marginLeft: "1em",
-            marginRight: "1em"
+            marginRight: "1em",
+            flex: "1 1 auto",
+            display: "flex",
+            flexFlow: "column nowrap"
         };
         const svgStyle = {
             position: "relative",
@@ -184,8 +190,9 @@ export default class UserMedia extends React.Component{
                     
                     <div style={pageStyle}>
                         {this.state.media &&
-                            <div>
+                            <div style={outerDivStyle}>
                                 <h2>All Media for {this.props.username} ({this.state.media.length})</h2>
+                                <div style={{flex: "1 1 auto"}}>
                                 <ImageTilesList media={this.state.media} 
                                                 onImageClick={(image)=>this.handleImageClick(image)} 
                                                 can_delete={true}
@@ -193,6 +200,7 @@ export default class UserMedia extends React.Component{
                                                 allow_selection={true} 
                                                 onMediaSelect={(media)=>this.handleMediaSelect(media)}
                                                 onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)} />
+                                                </div>
                             </div>
                         }                    
                     </div>
