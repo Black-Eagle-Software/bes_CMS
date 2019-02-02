@@ -1,5 +1,5 @@
 import React from 'react';
-import TagsSelectableList from './tags-selectable-list.component';
+import TagsSelectableList from './tags/tags-selectable-list.component';
 import ImageWithDimensions from './image-with-dimensions.component';
 
 const uuid = require('uuid/v4');
