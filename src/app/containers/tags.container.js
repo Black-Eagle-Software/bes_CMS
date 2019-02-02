@@ -1,7 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import TagDeleteConfirmation from '../components/tag-delete-confirmation.component';
-import TagAddForm from '../components/tag-add-form.component';
+import TagDeleteConfirmation from '../components/tags/tag-delete-confirmation.component';
+import TagAddForm from '../components/tags/tag-add-form.component';
+import TagList from '../components/tags/tag-list.component';
 
 const uuid = require('uuid/v4');
 
@@ -35,6 +36,12 @@ export default class Tags extends React.Component{
     handleButtonClick(e, tag){
         e.preventDefault();
         e.stopPropagation();
+        this.setState({
+            show_delete_dialog: true,
+            request_delete_tag: tag
+        });
+    }
+    handleRemoveTag(tag){
         this.setState({
             show_delete_dialog: true,
             request_delete_tag: tag
@@ -85,6 +92,8 @@ export default class Tags extends React.Component{
             marginRight: "-0.75em"
         };
 
+        //this needs to be changed to use a toolbar and have an edit state (so tags can search on click by default)
+
         return(
             <div style={contStyle}>
                 {this.state.show_delete_dialog && 
@@ -99,7 +108,7 @@ export default class Tags extends React.Component{
                         User Tags: 
                         <div>
                             {/* color the tags based on access level */}
-                            {this.state.user_tags.map(tag=>{
+                            {/*this.state.user_tags.map(tag=>{
                                 return  <a key={uuid()} className={`tag ${tag.accessLevel}`} href={`/search?t=${tag.description}`}>                                            
                                             <div style={tagLinkStyle}>
                                                 <span>{tag.description}</span>
@@ -109,18 +118,27 @@ export default class Tags extends React.Component{
                                             </div>
                                         </a>
                                                                             
-                            })}
+                            })*/}
+                            <TagList    tags={this.state.user_tags}
+                                        show_access_level_colors={true}
+                                        canAdd={false}
+                                        canRemove={true}
+                                        onRemoveTag={(tag)=>this.handleRemoveTag(tag)}/>
                         </div>
                     </div>
                     <br/>
                     <div>
                         Public Tags:
                         <div>
-                            {this.state.public_tags.map(tag=>{
+                            {/*this.state.public_tags.map(tag=>{
                                 return <a key={uuid()} className={"tag"} href={`/search?t=${tag.description}`}>
                                             {tag.description}
                                         </a>
-                            })}
+                            })*/}
+                            <TagList    tags={this.state.public_tags}
+                                        show_access_level_colors={false}
+                                        canAdd={false}
+                                        canRemove={false}/>
                         </div>
                     </div>
                 </div>

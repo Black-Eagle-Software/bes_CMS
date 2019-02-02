@@ -1,10 +1,11 @@
 import React from 'react';
 import axios from 'axios';
-import TagsSelectableList from '../components/tags-selectable-list.component';
+import TagsSelectableList from '../components/tags/tags-selectable-list.component';
 import UploadImageTilesList from '../components/upload-image-tiles-list.component';
 import UploadImageDetails from '../components/upload-image-details.component';
 import Media from '../../models/media';
 import Queue from '../../models/queue';
+import TagConnectedLists from '../components/tags/tag-connected-lists.component';
 
 const uuid = require('uuid/v4');
 
@@ -31,10 +32,10 @@ export default class UploadMedia extends React.Component{
         //get our tags list
         axios.get(`/api/u/${this.props.id}/t?all=true`)
         .then(res=>{
-            let tag_bools = this.initTagBoolArray(res.data.length);
+            //let tag_bools = this.initTagBoolArray(res.data.length);
             this.setState({
                 tags: res.data,
-                global_tags: tag_bools
+                //global_tags: tag_bools
             });
         });
     }
@@ -85,6 +86,44 @@ export default class UploadMedia extends React.Component{
             if(queue.length() > 0){
                 this.uploadQueue(queue);
             }
+        });
+    }
+    handleAddGlobalTag(tag){
+        //assume that our possible and temp tags arrays
+        //encompass all possible tags, this just 
+        //moves a tag from possible to temp
+        let tempP = this.state.tags;
+        let tempT = this.state.global_tags;
+        let pIndex = tempP.indexOf(tag);
+        tempP.splice(pIndex, 1);
+        tempT.push(tag);
+        tempT.sort((a, b)=>{
+            let x = a.description.toLowerCase();
+            let y = b.description.toLowerCase();
+            return x > y ? 1 : x < y ? -1 : 0;
+        });
+        this.setState({
+            tags: tempP,
+            global_tags: tempT
+        });
+    }
+    handleRemoveGlobalTag(tag){
+        //assume that our possible and temp tags arrays
+        //encompass all possible tags, this just 
+        //moves a tag from temp to possible
+        let tempP = this.state.tags;
+        let tempT = this.state.global_tags;
+        let tIndex = tempT.indexOf(tag);
+        tempT.splice(tIndex, 1);
+        tempP.push(tag);
+        tempP.sort((a, b)=>{
+            let x = a.description.toLowerCase();
+            let y = b.description.toLowerCase();
+            return x > y ? 1 : x < y ? -1 : 0;
+        });
+        this.setState({
+            tags: tempP,
+            global_tags: tempT
         });
     }
     handleGlobalTagClick(tag, index, value){
@@ -164,10 +203,10 @@ export default class UploadMedia extends React.Component{
             let media = new Media({file: files[i], url: url, tags: [].concat(tag_inputs), data: null});
             temp_media.push(media);
         }
-        let tag_bools = this.initTagBoolArray(tags.length);
+        //let tag_bools = this.initTagBoolArray(tags.length);
         this.setState({
             media: temp_media,
-            global_tags: tag_bools
+            //global_tags: tag_bools
         });
     }
     mapTagSelectionsForMediaToTagIndex(media){
@@ -239,6 +278,8 @@ export default class UploadMedia extends React.Component{
             padding: "0.5em 1em"
         };
 
+        //this needs a lot more work
+
         return(
             <div style={contStyle}>
                 {this.state.has_upload_error &&
@@ -264,7 +305,13 @@ export default class UploadMedia extends React.Component{
                                     Create new album for upload(s)?
                                     <h3>Tags:</h3>
                                     <button>Add new tag</button>                            
-                                    <TagsSelectableList tags={this.state.tags} selected_tags={this.state.global_tags} onTagClick={(tag, index, value)=>this.handleGlobalTagClick(tag, index, value)}/>
+                                    {/*<TagsSelectableList tags={this.state.tags} selected_tags={this.state.global_tags} onTagClick={(tag, index, value)=>this.handleGlobalTagClick(tag, index, value)}/>*/}
+                                    <TagConnectedLists  primaryTags={this.state.global_tags}
+                                                        secondaryTags={this.state.tags}
+                                                        is_editing={true}
+                                                        onMoveTagFromSecondaryToPrimary={(tag)=>this.handleAddGlobalTag(tag)}
+                                                        onMoveTagFromPrimaryToSecondary={(tag)=>this.handleRemoveGlobalTag(tag)}
+                                                        show_access_level_colors={false}/>
                                     <br/>
                                     <input type="submit" className={"btn-primary"} style={uploadAllStyle} value="Upload all files"/>
                                 </div>

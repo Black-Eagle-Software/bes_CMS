@@ -2,8 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import ImageFingerprintGraphic from '../components/image-fingerprint-graphic.component';
 import ViewToolbar from '../components/view-toolbar.component';
-import TagSearchButtonList from '../components/tag-search-button-list.component';
 import DateHelper from '../../helpers/date';
+import TagConnectedLists from '../components/tags/tag-connected-lists.component';
 
 export default class MediaDetails extends React.Component{
     constructor(props){
@@ -242,11 +242,19 @@ export default class MediaDetails extends React.Component{
                                                             {tag.description}
                                                         </a>
                                             })*/}
-                                            <TagSearchButtonList tags={this.state.show_edit_tags ? this.state.temp_tags : this.state.tags} 
+                                            {/*<TagSearchButtonList tags={this.state.show_edit_tags ? this.state.temp_tags : this.state.tags} 
                                                                 is_editing={this.state.show_edit_tags}
                                                                 all_tags={this.state.possible_tags}
                                                                 onAddTag={(tag)=>this.handleAddTag(tag)}
-                                                                onRemoveTag={(tag)=>this.handleRemoveTag(tag)}/>
+                                                                onRemoveTag={(tag)=>this.handleRemoveTag(tag)}
+                                                                onSearch={(tag)=>Search.searchTagQuery([tag])}/>
+                                        */}
+                                            <TagConnectedLists  primaryTags={this.state.show_edit_tags ? this.state.temp_tags : this.state.tags}
+                                                                secondaryTags={this.state.possible_tags}
+                                                                is_editing={this.state.show_edit_tags}
+                                                                onMoveTagFromSecondaryToPrimary={(tag)=>this.handleAddTag(tag)}
+                                                                onMoveTagFromPrimaryToSecondary={(tag)=>this.handleRemoveTag(tag)}
+                                                                show_access_level_colors={true}/>
                                             
                                         </li>
                                     </ul>

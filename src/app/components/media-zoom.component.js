@@ -1,4 +1,5 @@
 import React from 'react';
+import TagList from './tags/tag-list.component';
 const uuid = require('uuid/v4');
 
 //get image_source, onCloseClick
@@ -107,12 +108,13 @@ export default class MediaZoom extends React.Component{
                     {/*TODO: this will want a link to the /media/id details page for this media item*/}
                 </div>
                 <span> 
-                    {this.props.media_tags.map(tag=>{
-                        /*return <span key={uuid()} style={spanTagStyle}>{tag.description}</span>*/
+                    {/*this.props.media_tags.map(tag=>{
                         return <a key={uuid()} className={"tag gray"} href={`/search?t=${tag.description}`}>
                                     {tag.description}
                                 </a>
-                    })}
+                    })*/}
+                    <TagList    tags={this.props.media_tags}
+                                show_access_level_colors={true}/>
                 </span>
             </div>
         );
