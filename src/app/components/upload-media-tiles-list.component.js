@@ -1,33 +1,30 @@
 import React from 'react';
-import UploadImageTile from './upload-image-tile.component';
-import UploadVideoTile from './upload-video-tile.component';
+import UploadMediaTile from './media/upload-media-tile.component';
 const {AutoSizer, List} = require('react-virtualized');
 
 const uuid = require('uuid/v4');
 const item_size = 200;
 
-export default class UploadImageTilesList extends React.Component{
+export default class UploadMediaTilesList extends React.Component{
     constructor(props){
         super(props);
 
         this.rowRenderer = this.rowRenderer.bind(this);
     }
-    handleImageClick(media){
-        this.props.onImageClick(media);
+    handleMediaClick(media){
+        this.props.onMediaClick(media);
     }
-    handleImageDimensionsChange(media, size){
-        this.props.onImageDimensionsChange(media, size);
-    }
-    handleMediaLoaded(media, data){
-        this.props.onMediaLoaded(media, data);
-    }
-    handleRemoveClick(media){
+    handleRemoveClick(e, media){
+        e.preventDefault();
+        e.stopPropagation();
         this.props.onRemoveClick(media);
     }
-    handleUploadClick(media){
+    handleUploadClick(e, media){
+        e.preventDefault();
+        e.stopPropagation();
         this.props.onUploadClick(media);
     }
-    
+
     render(){        
         const items_count = this.props.media.length;
 
@@ -69,26 +66,24 @@ export default class UploadImageTilesList extends React.Component{
             <div key={key} style={Object.assign({}, style, divStyle)}>
                 {this.props.media.map((item, index)=>{
                     if(index >= fromIndex && index < toIndex){
-                        if(item.file.type.includes('image')){
-                            return <UploadImageTile 
-                                        key={uuid()}
-                                        media={item} 
-                                        imgSrc={item.url} 
-                                        filename={item.file.name}
-                                        onImageClick={()=>this.handleImageClick(item)}
-                                        onUploadClick={()=>this.handleUploadClick(item)}
-                                        onRemoveClick={()=>this.handleRemoveClick(item)}
-                                        onImageDimensionsChange={(size)=>this.handleImageDimensionsChange(item, size)}/>
-                        }else{
-                            return <UploadVideoTile 
-                                        key={uuid()}
-                                        media={item} 
-                                        imgSrc={item.url} 
-                                        filename={item.file.name}
-                                        onImageClick={()=>this.handleImageClick(item)}
-                                        onUploadClick={()=>this.handleUploadClick(item)}
-                                        onRemoveClick={()=>this.handleRemoveClick(item)}/>
+                        let src = item.url;
+                        let cache = item.data !== null;
+                        if(cache){
+                            src = item.data;
                         }
+                        return <UploadMediaTile key={uuid()}
+                                                    type={item.file.type.includes('image')?'image':'video'}                        
+                                                    src={src}
+                                                    mediaHasThumb={item.data !== null}
+                                                    title={item.file.name}
+                                                    codec={item.file.type}
+                                                    shouldShowOverlay={item.status_text !== "" || item.percent !== -1}
+                                                    overlayData={{text: item.status_text, percent: item.percent}}
+                                                    onMediaClick={()=>this.handleMediaClick(item)}
+                                                    onUploadClick={(e)=>this.handleUploadClick(e, item)}
+                                                    onRemoveClick={(e)=>this.handleRemoveClick(e, item)}
+                                                    onMediaThumbnail={(data)=>item.updateData(data)}
+                                                    onMediaDimensions={(size)=>item.updateDimensions(size)}/>                        
                     }
                 })}
             </div>
