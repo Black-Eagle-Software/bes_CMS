@@ -1,8 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import TagsSelectableList from '../components/tags/tags-selectable-list.component';
-import UploadImageTilesList from '../components/upload-image-tiles-list.component';
-import UploadImageDetails from '../components/upload-image-details.component';
+import UploadMediaTilesList from '../components/upload-media-tiles-list.component';
+import UploadImageDetails from '../components/upload-media-details.component';
 import Media from '../../models/media';
 import Queue from '../../models/queue';
 import TagConnectedLists from '../components/tags/tag-connected-lists.component';
@@ -15,7 +14,9 @@ export default class UploadMedia extends React.Component{
 
         this.state = {
             media: [],
-            img_selected: null,
+            media_selected: null,
+            media_selected_remaining_tags: null,
+            all_tags: [],
             tags: [],
             global_tags: [],
             has_upload_error: false,
@@ -34,6 +35,7 @@ export default class UploadMedia extends React.Component{
         .then(res=>{
             //let tag_bools = this.initTagBoolArray(res.data.length);
             this.setState({
+                all_tags: [].concat(res.data),
                 tags: res.data,
                 //global_tags: tag_bools
             });
@@ -48,12 +50,12 @@ export default class UploadMedia extends React.Component{
         return [].concat(output);
     }
     handleCloseClick(){
-        this.setState({img_selected: null});
+        this.setState({media_selected: null});
     }
     handleDetailsTagClick(tag, index, value){
         if(!tag || index === -1 || this.state.media.length === 0) return;
         let temp_media = this.state.media;
-        let selected_media = this.state.img_selected;
+        let selected_media = this.state.media_selected;
         let tag_index = index;
         let media_index = temp_media.indexOf(selected_media);
         /*if(temp_media[media_index].tags[tag_index] !== tag){
@@ -65,7 +67,7 @@ export default class UploadMedia extends React.Component{
         //selected_media = media_index && media_index !== -1 ? temp_media[media_index] : null;
         this.setState({
             media: temp_media,
-            img_selected: selected_media
+            media_selected: selected_media
         });
     }
     handleFormSubmit(event){
@@ -74,9 +76,9 @@ export default class UploadMedia extends React.Component{
         //redo this to send each file separately :-\
         let temp = [].concat(this.state.media);
         //throttle this a bit so we don't overwhelm the server
-        /*for(let i = 0; i < temp.length; i++){
-            this.uploadMediaViaSocket(temp[i]);
-        }*/
+        for(let i = 0; i < temp.length; i++){
+            temp[i].updateStatus("Uploading...", -1);
+        }
         //create a queue for our uploads;
         let q = new Queue(temp);
         this.uploadQueue(q);
@@ -106,6 +108,7 @@ export default class UploadMedia extends React.Component{
             tags: tempP,
             global_tags: tempT
         });
+        this.synchronizeTagsWithMedia(tag, "add");
     }
     handleRemoveGlobalTag(tag){
         //assume that our possible and temp tags arrays
@@ -125,12 +128,55 @@ export default class UploadMedia extends React.Component{
             tags: tempP,
             global_tags: tempT
         });
+        this.synchronizeTagsWithMedia(tag, "remove");
+    }
+    synchronizeTagsWithMedia(tag, action){
+        //ensure our media items have all the global tags selected
+        if(this.state.media.length === 0) return;
+        let temp_media = this.state.media;
+        for(let i = 0;  i < temp_media.length; i++){
+            if(action === "add"){
+                if(!temp_media[i].tags.some(t=>{return t === tag})){
+                    //tag doesn't exist in the media's selections
+                    temp_media[i].tags.push(tag);
+                }
+            }else if(action === "remove"){
+                if(temp_media[i].tags.some(t=>{return t === tag})){
+                    //tag exists in the media's selections
+                    temp_media[i].tags.splice(temp_media[i].tags.indexOf(tag), 1);
+                }
+            }
+        }
+        this.setState({media: temp_media});        
+    }
+    handleAddMediaTag(tag){
+        let temp_media = this.state.media_selected;
+        temp_media.tags.push(tag);
+        temp_media.tags.sort((a, b)=>{
+            let x = a.description.toLowerCase();
+            let y = b.description.toLowerCase();
+            return x > y ? 1 : x < y ? -1 : 0;
+        });
+        let temp = this.regenerateRemainingTagsForMedia(temp_media);
+        this.setState({
+            media_selected: temp_media,
+            media_selected_remaining_tags: temp
+        });
+    }
+    handleRemoveMediaTag(tag){
+        let temp_media = this.state.media_selected;
+        temp_media.tags.splice(temp_media.tags.indexOf(tag), 1);
+        let temp = this.regenerateRemainingTagsForMedia(temp_media);
+        this.setState({
+            media_selected: temp_media,
+            media_selected_remaining_tags: temp
+        });
     }
     handleGlobalTagClick(tag, index, value){
         if(!tag || index === -1 || this.state.media.length === 0) return;
         let temp_media = this.state.media;
         let global_tags = this.state.global_tags;
-        let selected_media = this.state.img_selected;
+        let selected_media = this.state.media_selected;
         let tag_index = index;
         let media_index = temp_media.indexOf(selected_media);
         /*if(temp_media[0].tags[tag_index] !== tag){
@@ -145,14 +191,29 @@ export default class UploadMedia extends React.Component{
         //selected_media = media_index && media_index !== -1 ? temp_media[media_index] : null;
         this.setState({
             media: temp_media,
-            img_selected: selected_media,
+            media_selected: selected_media,
             global_tags: global_tags
         });
     }
-    handleImageClick(image){
-        this.setState({img_selected: image});
+    handleMediaClick(media){
+        let temp = this.regenerateRemainingTagsForMedia(media);
+        //console.log(temp);
+        this.setState({
+            media_selected: media,
+            media_selected_remaining_tags: temp
+        });
     }
-    handleImageDimensionsChange(media, size){
+    regenerateRemainingTagsForMedia(media){
+        let temp = this.state.all_tags.filter(t=>{
+            if(media.tags.length === 0) return true;
+            for(let i = 0; i < media.tags.length; i++){
+                if(t === media.tags[i]) return false;
+                return true;
+            }
+        });
+        return temp;
+    }
+    /*handleImageDimensionsChange(media, size){
         //save the dimensions into the media item so we can send them during upload
         let temp_media = this.state.media;
         let media_index = temp_media.indexOf(media);
@@ -163,7 +224,7 @@ export default class UploadMedia extends React.Component{
         temp_media[media_index].height = size.height;
         console.log(temp_media[media_index]);
         this.setState({media: temp_media});
-    }
+    }*/
     handleUploadClick(media){
         //this.uploadMedia([media]);
         this.uploadMediaViaSocket(media);
@@ -171,7 +232,7 @@ export default class UploadMedia extends React.Component{
     handleRemoveClick(media){
         //need to remove media item from media array in state
         let temp_media = this.state.media;
-        let selected_media = this.state.img_selected;
+        let selected_media = this.state.media_selected;
         let media_index = temp_media.indexOf(media);
         temp_media.splice(media_index, 1);
         if(selected_media === media) selected_media = null;
@@ -180,7 +241,7 @@ export default class UploadMedia extends React.Component{
         }
         this.setState({
             media: temp_media,
-            img_selected: selected_media
+            media_selected: selected_media
         });
         if(temp_media.length === 0){
             this.uploadRef.current.value = "";
@@ -200,8 +261,10 @@ export default class UploadMedia extends React.Component{
             if(!files[i].type.includes('image') && !files[i].type.includes('video')) continue;
             let url = URL.createObjectURL(files[i]);
             //let media = {file: files[i], url: url, tags: [].concat(tag_inputs), data: null, index: i, updateData: (newData)=>{this.data = newData;}};
-            let media = new Media({file: files[i], url: url, tags: [].concat(tag_inputs), data: null});
+            //let media = new Media({file: files[i], url: url, tags: [].concat(tag_inputs), data: null});
+            let media = new Media({file: files[i], url: url, tags: [], data: null});
             temp_media.push(media);
+            //console.log(files[i]);
         }
         //let tag_bools = this.initTagBoolArray(tags.length);
         this.setState({
@@ -311,7 +374,7 @@ export default class UploadMedia extends React.Component{
                                                         is_editing={true}
                                                         onMoveTagFromSecondaryToPrimary={(tag)=>this.handleAddGlobalTag(tag)}
                                                         onMoveTagFromPrimaryToSecondary={(tag)=>this.handleRemoveGlobalTag(tag)}
-                                                        show_access_level_colors={false}/>
+                                                        show_access_level_colors={true}/>
                                     <br/>
                                     <input type="submit" className={"btn-primary"} style={uploadAllStyle} value="Upload all files"/>
                                 </div>
@@ -321,14 +384,19 @@ export default class UploadMedia extends React.Component{
                     </div>
                     
                     <div style={uploadImageTilesDivStyle}>                    
-                        <UploadImageTilesList media={this.state.media} 
-                                                onImageClick={(image)=>this.handleImageClick(image)}
+                        <UploadMediaTilesList   media={this.state.media} 
+                                                onMediaClick={(media)=>this.handleMediaClick(media)}
                                                 onUploadClick={(media)=>this.handleUploadClick(media)}
-                                                onRemoveClick={(media)=>this.handleRemoveClick(media)}
-                                                onImageDimensionsChange={(media, size)=>this.handleImageDimensionsChange(media, size)}/>
+                                                onRemoveClick={(media)=>this.handleRemoveClick(media)}/>
                     </div>
-                    {this.state.img_selected && 
-                        <UploadImageDetails media={this.state.img_selected} tags={this.state.tags} onCloseClick={()=>this.handleCloseClick()} onTagClick={(tag, index, value)=>this.handleDetailsTagClick(tag, index, value)}/>                
+                    {this.state.media_selected && this.state.media_selected_remaining_tags && 
+                        //<UploadImageDetails media={this.state.media_selected} tags={this.state.all_tags} onCloseClick={()=>this.handleCloseClick()} onTagClick={(tag, index, value)=>this.handleDetailsTagClick(tag, index, value)}/>
+                        <UploadImageDetails media={this.state.media_selected}
+                                            primaryTags={this.state.media_selected.tags}
+                                            secondaryTags={this.state.media_selected_remaining_tags}
+                                            onMoveTagFromSecondaryToPrimary={(tag)=>this.handleAddMediaTag(tag)}
+                                            onMoveTagFromPrimaryToSecondary={(tag)=>this.handleRemoveMediaTag(tag)}
+                                            onCloseClick={()=>this.handleCloseClick()}/>
                     }
                 </div>                
             </div>
@@ -454,7 +522,8 @@ export default class UploadMedia extends React.Component{
                 originalName: media.file.name,
                 owner       : this.props.id,
                 size        : media.file.size,
-                tags        : JSON.stringify(this.mapTagSelectionsForMediaToTagIndex(media)),            
+                //tags        : JSON.stringify(this.mapTagSelectionsForMediaToTagIndex(media)),            
+                tags        : media.tags,
                 width       : media.width,
             };
             socket.on(`process_status_${name}`, (data)=>{
