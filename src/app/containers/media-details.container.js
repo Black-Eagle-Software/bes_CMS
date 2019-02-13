@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import ImageFingerprintGraphic from '../components/image-fingerprint-graphic.component';
+import ImageFingerprintGraphic from '../components/media/image-fingerprint-graphic.component';
 import ViewToolbar from '../components/view-toolbar.component';
 import DateHelper from '../../helpers/date';
 import TagConnectedLists from '../components/tags/tag-connected-lists.component';
