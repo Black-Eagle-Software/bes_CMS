@@ -16,7 +16,7 @@ export default class Layout extends React.Component{
         };
 
         return(
-            <div id={"content"} style={contStyle}>
+            <div id={"content"} >
                 <Header isAuthenticated={this.props.isAuthenticated} 
                         username={this.props.username} 
                         id={this.props.id} 
