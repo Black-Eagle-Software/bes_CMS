@@ -69,37 +69,38 @@ export default class MediaZoom extends React.Component{
             marginBottom: "0.5em"
         };
 
-        console.log(this.props.image_source);
+        //console.log(this.props.media_source);
         //this gets in a type as props.image_source.file.type
         //type is either "image" or "video"
         //can use that to determine whether to show image 
         //or video here in the zoomed viewer
 
-        const filename = this.props.image_source.file.originalFilename;
-        const isVideo = this.props.image_source.file.type === "video";
+        const filename = this.props.media_source.originalFilename;
+        const src = `/${this.props.media_source.filePath}/${this.props.media_source.hashFilename}`;
+        const isVideo = this.props.media_source.type === "video";
 
         return(
             <div  style={contStyle}>
                 <div className={"expand_close"} onClick={()=>this.handleCloseClick()}></div>
                 {!isVideo && 
-                    <img style={imgStyle} src={this.props.image_source.src_file} alt={filename}/>
+                    <img style={imgStyle} src={src} alt={filename}/>
                 }
                 {isVideo && 
                     <video style={vidStyle}  autoplay loop controls >
-                        <source src={this.props.image_source.src_file}/>
+                        <source src={src}/>
                     </video>
                 }
                 <div style={filenameDivStyle}>
                     <span style={spanStyle}>{filename}</span>
                     <span style={dlSpanStyle}>
-                        <a className={"downloadLink"} href={this.props.image_source.src_file} download={filename} title={"Download media"}>
+                        <a className={"downloadLink"} href={src} download={filename} title={"Download media"}>
                             <svg style={svgStyle}>
                                 <path d={"M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"} />
                             </svg>
                         </a>
                     </span>
                     <span>
-                        <a className={"downloadLink"} href={`/media_details/${this.props.image_source.file.id}`} title={"Media details"}>
+                        <a className={"downloadLink"} href={`/media_details/${this.props.media_source.id}`} title={"Media details"}>
                             <svg style={svgStyle}>
                                 <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
                             </svg>
