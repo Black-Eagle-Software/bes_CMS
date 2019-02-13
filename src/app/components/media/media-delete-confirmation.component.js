@@ -33,11 +33,14 @@ export default class MediaDeleteConfirmation extends React.PureComponent{
             margin: "0em 0.25em"
         };
 
+        const filename = this.props.media.originalFilename;
+        const src = `/${this.props.media.filePath}/${this.props.media.hashFilename}`;
+
         return(
             <DialogOverlay>
                 <h2>You are about to delete the following media item.</h2>                
                 <div style={imgFrameStyle}>
-                    <img style={imgStyle} src={this.props.media.src_file} alt={this.props.media.file.originalFilename}></img>
+                    <img style={imgStyle} src={src} alt={filename}></img>
                 </div>
                 <br/>
                 This can not be undone.  The media item will be removed from the server's database, including any albums that may contain it, and deleted from the server's file system.
