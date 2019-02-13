@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import ViewToolbar from '../components/view-toolbar.component';
-import ImageTilesList from '../components/image-tiles-list.component';
+import MediaTilesList from '../components/media/media-tiles-list.component';
 import MediaZoom from '../components/media-zoom.component';
 import DateHelper from '../../helpers/date';
 import WindowNavigation from '../../helpers/windowNavigation';
@@ -35,7 +35,8 @@ export default class AlbumDetails extends React.Component{
                 }
                 this.setState({
                     album_is_editing: true,
-                    possible_media: temp_media,
+                    //possible_media: temp_media,
+                    possible_media: response.data,
                     album_name: "New album"
                 });
             });
@@ -62,7 +63,8 @@ export default class AlbumDetails extends React.Component{
             }
             this.setState(prevState=>({
                 album_is_editing: !prevState.album_is_editing,
-                possible_media: temp_media,
+                //possible_media: temp_media,
+                possible_media: response.data,
                 temp_album_media: ta_media,
                 album_name: this.state.album.name
             }));
@@ -225,7 +227,7 @@ export default class AlbumDetails extends React.Component{
                         }
                         {!this.state.album_is_editing && this.state.media && this.state.media.length > 0 &&                            
                             <div style={{maxHeight: "100%", minHeight: "10%", flex: "1 1 auto"}}>
-                            <ImageTilesList media={this.state.media} 
+                            <MediaTilesList media={this.state.media} 
                                             onImageClick={(image)=>this.handleImageClick(image)} 
                                             can_delete={false}
                                             include_show_all_button={false}
@@ -234,7 +236,7 @@ export default class AlbumDetails extends React.Component{
                         }
                         {this.state.album_is_editing && this.state.temp_album_media && this.state.temp_album_media.length > 0 &&
                             <div style={{maxHeight: "50%", flex: "1 1 auto"}}>
-                            <ImageTilesList media={this.state.temp_album_media} 
+                            <MediaTilesList media={this.state.temp_album_media} 
                                             onImageClick={(image)=>this.handleImageClick(image)} 
                                             can_delete={true}
                                             onDeleteButtonClick={(media)=>this.handleTempDeleteButtonClick(media)}
@@ -254,7 +256,7 @@ export default class AlbumDetails extends React.Component{
                         }
                         {this.state.album_is_editing && this.state.possible_media && this.state.possible_media.length > 0 &&
                             <div style={{maxHeight: "100%", minHeight: "10%", flex: "1 1 auto"}}>
-                            <ImageTilesList media={this.state.possible_media} 
+                            <MediaTilesList media={this.state.possible_media} 
                                             onImageClick={(image)=>this.handlePossibleMediaClick(image)} 
                                             can_delete={false}
                                             include_show_all_button={false}
@@ -276,10 +278,11 @@ export default class AlbumDetails extends React.Component{
         .then(response=>{
             let temp_media = [];
             let res = response.data;
-            for(let i = 0; i < res.length; i++){
+            /*for(let i = 0; i < res.length; i++){
                 temp_media.push({file: res[i], src_file: `/${res[i].filePath}/${res[i].hashFilename}`, thumb: `/${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});                
-            }
-            this.setState({media: temp_media});
+            }*/
+            //this.setState({media: temp_media});
+            this.setState({media: response.data});
         });
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import ImageTilesList from '../components/image-tiles-list.component';
+import MediaTilesList from '../components/media/media-tiles-list.component';
 import MediaZoom from '../components/media-zoom.component';
 
 export default class PublicMedia extends React.Component{
@@ -9,9 +9,9 @@ export default class PublicMedia extends React.Component{
 
         this.state = {
             media: [],
-            is_image_focused: false,
-            zoomed_image: {},
-            zoomed_image_tags: [],
+            is_media_focused: false,
+            zoomed_media: {},
+            zoomed_media_tags: [],
         };
     }
 
@@ -24,20 +24,20 @@ export default class PublicMedia extends React.Component{
     }
     handleCloseClick(){
         this.setState(prevState=>({
-            zoomed_image: {},
-            zoomed_image_tags: [],
-            is_image_focused: !prevState.is_image_focused
+            zoomed_media: {},
+            zoomed_media_tags: [],
+            is_media_focused: !prevState.is_media_focused
         }));
     }
     
-    handleImageClick(image){
+    handleMediaClick(media){
         this.setState(prevState=>({
-            zoomed_image: image,
-            is_image_focused: !prevState.is_image_focused
+            zoomed_media: media,
+            is_media_focused: !prevState.is_media_focused
         }));
-        axios.get(`/api/m/${image.file.id}/t`)
+        axios.get(`/api/m/${media.id}/t`)
             .then(res=>{
-                this.setState({zoomed_image_tags: res.data});
+                this.setState({zoomed_media_tags: res.data});
             });
     }
     render(){
@@ -53,17 +53,17 @@ export default class PublicMedia extends React.Component{
         
         return(
             <div style={contStyle}>
-                {this.state.is_image_focused &&
-                    <MediaZoom image_source={this.state.zoomed_image} media_tags={this.state.zoomed_image_tags} onCloseClick={()=>this.handleCloseClick()}/>
+                {this.state.is_media_focused &&
+                    <MediaZoom media_source={this.state.zoomed_media} media_tags={this.state.zoomed_media_tags} onCloseClick={()=>this.handleCloseClick()}/>
                 }
                 <div style={pageStyle}>
                     {this.state.media &&
                         <div>
                             <h2>All Public Media</h2>
-                            <ImageTilesList media={this.state.media} 
-                                            onImageClick={(image)=>this.handleImageClick(image)} 
-                                            can_delete={false}
-                                            show_all={false} />
+                            <MediaTilesList media={this.state.media} 
+                                        onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
+                                        onMediaInfoClick={(media)=>this.handleMediaClick(media)} 
+                                        can_delete={false}/>
                         </div>
                     }                    
                 </div>
@@ -76,10 +76,10 @@ export default class PublicMedia extends React.Component{
         .then(response=>{
             let temp_media = [];
             let res = response.data;
-            for(let i = 0; i < res.length; i++){
+            /*for(let i = 0; i < res.length; i++){
                 temp_media.push({file: res[i], src_file: `/${res[i].filePath}/${res[i].hashFilename}`, thumb: `/${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
-            }
-            this.setState({media: temp_media});
+            }*/
+            this.setState({media: res});
         });
     }
 }

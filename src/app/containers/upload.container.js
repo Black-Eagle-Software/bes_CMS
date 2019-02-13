@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import UploadMediaTilesList from '../components/upload-media-tiles-list.component';
+import UploadMediaTilesList from '../components/media/upload-media-tiles-list.component';
 import UploadImageDetails from '../components/upload-media-details.component';
 import Media from '../../models/media';
 import Queue from '../../models/queue';
@@ -391,7 +391,7 @@ export default class UploadMedia extends React.Component{
                     </div>
                     {this.state.media_selected && this.state.media_selected_remaining_tags && 
                         //<UploadImageDetails media={this.state.media_selected} tags={this.state.all_tags} onCloseClick={()=>this.handleCloseClick()} onTagClick={(tag, index, value)=>this.handleDetailsTagClick(tag, index, value)}/>
-                        <UploadImageDetails media={this.state.media_selected}
+                        <UploadMediaDetails media={this.state.media_selected}
                                             primaryTags={this.state.media_selected.tags}
                                             secondaryTags={this.state.media_selected_remaining_tags}
                                             onMoveTagFromSecondaryToPrimary={(tag)=>this.handleAddMediaTag(tag)}

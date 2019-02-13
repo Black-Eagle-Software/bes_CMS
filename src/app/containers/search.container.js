@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import ImageTilesList from '../components/image-tiles-list.component';
+import MediaTilesList from '../components/media/media-tiles-list.component';
 import ViewToolbar from '../components/view-toolbar.component';
 
 const uuid = require('uuid/v4');
@@ -28,16 +28,19 @@ export default class Search extends React.Component{
                     let res = response.data.media;
                     if(res){
                         //for if we have an ImageTilesList in the page
-                        for(let i = 0; i < res.length; i++){
+                        /*for(let i = 0; i < res.length; i++){
                             temp_media.push({file: res[i], src_file: `${res[i].filePath}/${res[i].hashFilename}`, thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
-                        }
-                        this.setState({query_results_media: temp_media});
+                        }*/
+                        this.setState({query_results_media: res});
                     }
                 }
                 if(response.data.tags){
                     this.setState({query_results_tags: response.data.tags});
                 }                
             });
+    }
+    handleMediaClick(media){
+        
     }
     render(){
         const contStyle = {
@@ -125,9 +128,13 @@ export default class Search extends React.Component{
                         </div>
                     }
                     {this.state.query_results_media &&
-                        <div style={{flex: "1 1 auto"}}>Media:
+                        <div style={{flex: "1 1 auto"}}>
+                            Media:
                             {/* this breaks because our id isn't the media id for some query results*/}
-                            <ImageTilesList media={this.state.query_results_media} can_delete={false}/>                    
+                            <MediaTilesList media={this.state.query_results_media}
+                                            onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
+                                            onMediaInfoClick={(media)=>this.handleMediaClick(media)} 
+                                            can_delete={false}/>                    
                             {/*<ul style={ulStyle}>
                                 {this.state.query_results_media.length > 0 && this.state.query_results_media.map(result=>{
                                     return <li key={uuid()}>
