@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import MediaTilesList from '../components/media/media-tiles-list.component';
-import MediaZoom from '../components/media-zoom.component';
 import MediaDeleteConfirmation from '../components/media/media-delete-confirmation.component';
 import AlbumCoversList from '../components/albums/album-covers-list.component';
 import AlbumDeleteConfirmation from '../components/albums/album-delete-confirmation.component';
@@ -14,10 +13,7 @@ export default class UserHomeContainer extends React.Component{
         this.state = {
             albums: [],
             media: [],
-            public_media: [],
-            is_media_focused: false,
-            zoomed_media: {},
-            zoomed_media_tags: [],
+            public_media: [],            
             show_delete_dialog: false,
             request_delete_media: {},
             show_album_delete_dialog: false,
@@ -27,13 +23,6 @@ export default class UserHomeContainer extends React.Component{
 
     componentDidMount(){
         this.updateMediaFromDatabase();
-    }
-    handleCloseClick(){
-        this.setState(prevState=>({
-            zoomed_media: {},
-            zoomed_media_tags: [],
-            is_media_focused: !prevState.is_media_focused
-        }));
     }
     handleDeleteButtonClick(media){
         //need to tell the server to delete the media
@@ -59,16 +48,6 @@ export default class UserHomeContainer extends React.Component{
             });
             this.updateMediaFromDatabase();
         });
-    }
-    handleMediaClick(media){
-        this.setState(prevState=>({
-            zoomed_media: media,
-            is_media_focused: !prevState.is_media_focused
-        }));
-        axios.get(`/api/m/${media.id}/t`)
-            .then(res=>{
-                this.setState({zoomed_media_tags: res.data});
-            });
     }
     handleUserShowAllAlbumsClick(){
         this.props.onUserShowAllAlbumsButtonClick();
@@ -132,9 +111,6 @@ export default class UserHomeContainer extends React.Component{
         //but keep the overlays here?
         return(
             <div style={contStyle}>
-                {this.state.is_media_focused &&
-                    <MediaZoom media_source={this.state.zoomed_media} media_tags={this.state.zoomed_media_tags} onCloseClick={()=>this.handleCloseClick()}/>
-                }
                 {this.state.show_delete_dialog && 
                     <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
                 }
@@ -173,9 +149,10 @@ export default class UserHomeContainer extends React.Component{
                                             </>}>
                         <MediaTilesList media={this.state.media} 
                                         onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                        onMediaInfoClick={(media)=>this.handleMediaClick(media)} 
+                                        onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)} 
                                         can_delete={true} 
-                                        onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)}/>
+                                        onMediaDeleteClick={(media)=>this.handleDeleteButtonClick(media)}
+                                        showAll={true}/>
                     </MediaListUserHomeRow>
                     {/*this.state.media && this.state.media.length > 0 &&
                         <div style={paneStyle}>
@@ -198,8 +175,9 @@ export default class UserHomeContainer extends React.Component{
                                             </>}>
                         <MediaTilesList media={this.state.public_media} 
                                         onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                        onMediaInfoClick={(media)=>this.handleMediaClick(media)} 
-                                        can_delete={false}/>
+                                        onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)} 
+                                        can_delete={false}
+                                        showAll={true}/>
                     </MediaListUserHomeRow>
                     {/*this.state.public_media && this.state.public_media.length > 0 &&
                         <div style={paneStyle}>
