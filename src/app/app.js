@@ -102,6 +102,12 @@ class App extends React.Component {
   handleUserShowAllMedia(){
     WindowNavigation.goToLocation(`/users/${this.state.id}/media`);
   }
+  handleMediaInfo(media){
+    WindowNavigation.goToLocation(`/media_details/${media.id}`);
+  }
+  handleAlbumClick(album){
+    WindowNavigation.goToLocation(`/album_details/${album.id}`);
+  }
   verifyAuthentication(){
     axios.get('/api/auth/check').then(res=>{
       console.log(res.status);
@@ -150,14 +156,16 @@ class App extends React.Component {
                 {/*<AuthRoute path='/home' isAuthenticated={this.state.isAuthenticated} render={(props)=>(<UserHomeContainer isAuthenticated={this.state.isAuthenticated} {...props}/>)}/>*/}
                 <Route path='/home' render={(props)=>(
                   <UserHomeContainer
-                  id={this.state.id} 
-                  {...props}
-                  show_albums={this.state.show_albums}
-                  show_tags={this.state.show_tags}
-                  onPublicShowAllMediaButtonClick={()=>this.handlePublicShowAllMedia()}
-                  onUserShowAllMediaButtonClick={()=>this.handleUserShowAllMedia()}
-                  onUserShowAllAlbumsButtonClick={()=>this.handleUserShowAllAlbums()}
-                  onAddAlbum={()=>this.handleAddAlbum()}/>
+                    id={this.state.id} 
+                    {...props}
+                    show_albums={this.state.show_albums}
+                    show_tags={this.state.show_tags}
+                    onMediaInfoClick={(media)=>this.handleMediaInfo(media)}
+                    onPublicShowAllMediaButtonClick={()=>this.handlePublicShowAllMedia()}
+                    onUserShowAllMediaButtonClick={()=>this.handleUserShowAllMedia()}
+                    onUserShowAllAlbumsButtonClick={()=>this.handleUserShowAllAlbums()}
+                    onAddAlbum={()=>this.handleAddAlbum()}
+                    onAlbumClick={(album)=>this.handleAlbumClick(album)}/>
                   )}/>
                 <Route path='/upload' render={(props)=>(
                   <UploadMedia id={this.state.id} {...props}/>
@@ -169,10 +177,10 @@ class App extends React.Component {
                   <div>User Profile for: {props.match.params.id}</div>
                 )}/>
                 <Route path='/users/:id/media' render={(props)=>(
-                  <UserMedia id={this.state.id} username={this.state.username} {...props}/>
+                  <UserMedia id={this.state.id} username={this.state.username} {...props} onMediaInfoClick={(media)=>this.handleMediaInfo(media)}/>
                 )}/>
                 <Route path='/media' render={(props)=>(
-                  <PublicMedia {...props} />
+                  <PublicMedia {...props} onMediaInfoClick={(media)=>this.handleMediaInfo(media)}/>
                 )}/>
                 <Route path='/album_details/:id' render={(props)=>(
                   <AlbumDetails user_id={this.state.id} {...props}/>
@@ -184,7 +192,7 @@ class App extends React.Component {
                   <MediaDetails user_id={this.state.id} {...props}/>
                 )}/>
                 <Route path='/search' render={(props)=>(
-                  <Search {...props} />
+                  <Search {...props} onMediaInfoClick={(media)=>this.handleMediaInfo(media)}/>
                 )}/>
                 <Route path='/tags' render={(props)=>(
                   <Tags id={this.state.id} {...props}/>
