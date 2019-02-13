@@ -1,12 +1,11 @@
 import React from 'react';
-import TagsSelectableList from './tags/tags-selectable-list.component';
 import TagConnectedLists from './tags/tag-connected-lists.component';
 import ImageWithDimensions from './media/image-with-dimensions.component';
 import VideoWithDimensions from './media/video-with-dimensions.component';
 
 const uuid = require('uuid/v4');
 
-export default class UploadImageDetails extends React.Component{
+export default class UploadMediaDetails extends React.Component{
     constructor(props){
         super(props);
 
