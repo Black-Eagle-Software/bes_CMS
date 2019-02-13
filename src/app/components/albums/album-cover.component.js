@@ -1,12 +1,8 @@
 import React from 'react';
-import ImageTileButtonGroup from './image-tile-button-group.component';
-import ImageTileInfoButton from './image-tile-info-button.component';
-import ImageTileDeleteButton from './image-tile-delete-button.component';
-import HammingDistanceOverlay from './hamming-distance-overlay.component';
-import ImageTileSelectButton from './image-tile-select-button.component';
+import AlbumCoverTile from './album-cover-tile.component';
+import MediaTileToolbar from '../media/media-tile-toolbar.component';
+import MediaTileDeleteButton from '../media/media-tile-delete-button.component';
 import axios from 'axios';
-
-const uuid = require('uuid/v4');
 
 export default class AlbumCover extends React.PureComponent{
     constructor(props){
@@ -18,7 +14,7 @@ export default class AlbumCover extends React.PureComponent{
     }
     componentDidMount(){
         this._isMounted = true; //this is icky, but it stops react from complaining
-        axios.get(`/api/a/${this.props.album.id}/m?limit=4`)
+        axios.get(`/api/a/${this.props.album_id}/m?limit=4`)
         .then(response=>{
             if(this._isMounted){
                 this.setState({media: response.data});
@@ -87,31 +83,22 @@ export default class AlbumCover extends React.PureComponent{
             fontSize: "0.75em"
         };
 
+        const {canDelete} = this.props;
+
         return(
-            <a style={contStyle} className={"tile-bg"} href={`/album_details/${this.props.album.id}`}>
+            <div style={contStyle} className={"tile-bg"} onClick={()=>this.props.onAlbumClick()}>
                 {this.state.media && this.state.media.length > 0 && 
-                    this.state.media.map(media=>{
-                        return <img key={uuid()} style={imgStyle} src={`${media.filePath}/thumbnails/${media.thumbnailFilename}`}/>
-                    })
+                    <AlbumCoverTile media={this.state.media}/>
                 }
-                {/*<img style={imgStyle} src={imgSrc} alt={filename} />                
-                                
-                {this.props.allow_selection && 
-                    <ImageTileSelectButton media={this.props.media} onMediaSelect={()=>this.handleMediaSelect(this.props.media)}/>
-                }*/}
-                <ImageTileButtonGroup>
-                    {/*<ImageTileInfoButton media={this.props.media.file}/>*/}
-                    {this.props.can_delete &&
-                        <ImageTileDeleteButton onDeleteButtonClick={()=>this.handleDeleteButtonClick(this.props.album)} title={"Remove album"}/>
+                <MediaTileToolbar>
+                    {canDelete &&
+                        <MediaTileDeleteButton onClick={()=>this.props.onDeleteButtonClick()} title={"Remove album"}/>
                     }
-                </ImageTileButtonGroup>
-                <div style={infoStyle}>
-                    <div style={titleStyle}>{this.props.album.name}</div>
-                    {/*this.props.media.file.hamming_distance >= 0 &&
-                        <HammingDistanceOverlay hammingDistance={this.props.media.file.hamming_distance}/>
-                    */}
+                </MediaTileToolbar>
+                <div className="media_tile-title_container">
+                    <div className="media_tile-title" title={this.props.title}>{this.props.title}</div>                    
                 </div>   
-            </a>
+            </div>
         );
     }
 }
