@@ -10,10 +10,11 @@ export default class MediaTileWithToolbar extends React.Component{
         const {src, title, imgClass, canSelect, isSelected, canDelete} = this.props;
 
         return(
-            <div className="media_tile_with_toolbar-container tile-bg" onClick={()=>this.props.onMediaClick()}>                
+            <div className="media_tile_with_toolbar-container tile-bg" >                
                 <MediaTile  src={src}
                             title={title}
-                            imgClass={imgClass}/>
+                            imgClass={imgClass}
+                            onMediaClick={()=>this.props.onMediaClick()}/>
                 <MediaTileToolbar>
                     {canSelect &&
                         <MediaTileSelectButton  isSelected={isSelected}
