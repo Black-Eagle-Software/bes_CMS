@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 import ViewToolbar from '../components/view-toolbar.component';
 import MediaTilesList from '../components/media/media-tiles-list.component';
-import MediaZoom from '../components/media-zoom.component';
 import DateHelper from '../../helpers/date';
 import WindowNavigation from '../../helpers/windowNavigation';
 
@@ -13,9 +12,6 @@ export default class AlbumDetails extends React.Component{
         this.state = {
             album: {},
             media: [],
-            is_image_focused: false,
-            zoomed_image: {},
-            zoomed_image_tags: [],
             album_is_editing: false,
             possible_media: [],
             temp_album_media: []
@@ -42,13 +38,6 @@ export default class AlbumDetails extends React.Component{
             });
         }
     }
-    handleCloseClick(){
-        this.setState(prevState=>({
-            zoomed_image: {},
-            zoomed_image_tags: [],
-            is_image_focused: !prevState.is_image_focused
-        }));
-    }
     handleEditAlbumClick(){
         let ta_media = [].concat(this.state.media);        
         axios.get(`/api/u/${this.props.user_id}/m?all=true`)
@@ -56,29 +45,20 @@ export default class AlbumDetails extends React.Component{
             let temp_media = [];
             let res = response.data;
             for(let i = 0; i < res.length; i++){
-                if(ta_media.find(m=>m.file.id === res[i].id) === undefined){
+                if(ta_media.find(m=>m.id === res[i].id) === undefined){
                     //this media is not in our ta_media
-                    temp_media.push({file: res[i], src_file: `/${res[i].filePath}/${res[i].hashFilename}`, thumb: `/${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
+                    //temp_media.push({file: res[i], src_file: `/${res[i].filePath}/${res[i].hashFilename}`, thumb: `/${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
+                    temp_media.push(res[i]);
                 }                
             }
             this.setState(prevState=>({
                 album_is_editing: !prevState.album_is_editing,
-                //possible_media: temp_media,
-                possible_media: response.data,
+                possible_media: temp_media,
+                //possible_media: response.data,
                 temp_album_media: ta_media,
                 album_name: this.state.album.name
             }));
         });        
-    }
-    handleImageClick(image){
-        this.setState(prevState=>({
-            zoomed_image: image,
-            is_image_focused: !prevState.is_image_focused
-        }));
-        axios.get(`/api/m/${image.file.id}/t`)
-        .then(res=>{
-            this.setState({zoomed_image_tags: res.data});
-        });
     }
     handlePossibleMediaClick(media){
         let temp_media = this.state.temp_album_media;
@@ -144,10 +124,11 @@ export default class AlbumDetails extends React.Component{
         const pageStyle = {
             height: "100%",
             marginLeft: "1em",
-            marginRight: "1em",
             display: "flex",
             flexFlow: "column nowrap",
-            flex: "1 1 auto"
+            flex: "1 1 auto",
+            overflowX: "hidden",
+            overflowY: "auto"
         };
         const svgStyle = {
             position: "relative",
@@ -212,10 +193,7 @@ export default class AlbumDetails extends React.Component{
                         </div>
                     </div>
                 </ViewToolbar>
-                <div style={contStyle}>                    
-                    {this.state.is_image_focused &&
-                        <MediaZoom image_source={this.state.zoomed_image} media_tags={this.state.zoomed_image_tags} onCloseClick={()=>this.handleCloseClick()}/>
-                    }
+                <div style={contStyle}>
                     <div style={pageStyle}>
                         Album {this.props.match.params.id} details
                         <br/>
@@ -227,8 +205,9 @@ export default class AlbumDetails extends React.Component{
                         }
                         {!this.state.album_is_editing && this.state.media && this.state.media.length > 0 &&                            
                             <div style={{maxHeight: "100%", minHeight: "10%", flex: "1 1 auto"}}>
-                            <MediaTilesList media={this.state.media} 
-                                            onImageClick={(image)=>this.handleImageClick(image)} 
+                            <MediaTilesList media={this.state.media}
+                                            onMediaClick={(media)=>this.props.onMediaInfoClick(media)} 
+                                            onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)} 
                                             can_delete={false}
                                             include_show_all_button={false}
                                             allow_selection={false} />
@@ -237,10 +216,9 @@ export default class AlbumDetails extends React.Component{
                         {this.state.album_is_editing && this.state.temp_album_media && this.state.temp_album_media.length > 0 &&
                             <div style={{maxHeight: "50%", flex: "1 1 auto"}}>
                             <MediaTilesList media={this.state.temp_album_media} 
-                                            onImageClick={(image)=>this.handleImageClick(image)} 
+                                            onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)} 
                                             can_delete={true}
-                                            onDeleteButtonClick={(media)=>this.handleTempDeleteButtonClick(media)}
-                                            include_show_all_button={false}
+                                            onMediaDeleteClick={(media)=>this.handleTempDeleteButtonClick(media)}
                                             allow_selection={false}
                                             allow_reorder={true} />
                             </div>
@@ -257,7 +235,7 @@ export default class AlbumDetails extends React.Component{
                         {this.state.album_is_editing && this.state.possible_media && this.state.possible_media.length > 0 &&
                             <div style={{maxHeight: "100%", minHeight: "10%", flex: "1 1 auto"}}>
                             <MediaTilesList media={this.state.possible_media} 
-                                            onImageClick={(image)=>this.handlePossibleMediaClick(image)} 
+                                            onMediaClick={(media)=>this.handlePossibleMediaClick(media)} 
                                             can_delete={false}
                                             include_show_all_button={false}
                                             allow_selection={false} />

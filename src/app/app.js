@@ -42,7 +42,10 @@ class App extends React.Component {
       show_login: false,
       show_register: false,
       show_tags: false,
-      search_query: ""
+      search_query: "",
+      show_media_zoom: false,
+      media_zoom_source: {},
+      media_zoom_tags: []
     };
   }
   handleAddAlbum(){
@@ -105,6 +108,19 @@ class App extends React.Component {
   handleMediaInfo(media){
     WindowNavigation.goToLocation(`/media_details/${media.id}`);
   }
+  handleZoomMedia(media){
+    this.setState(prevState=>({
+      media_zoom_source: media,
+      show_media_zoom: true
+    }));
+    axios.get(`/api/m/${media.id}/t`)
+      .then(res=>{
+          this.setState({media_zoom_tags: res.data});
+    });
+  }
+  handleHideZoomMedia(){
+    this.setState({show_media_zoom: false});
+  }
   handleAlbumClick(album){
     WindowNavigation.goToLocation(`/album_details/${album.id}`);
   }
@@ -136,7 +152,11 @@ class App extends React.Component {
           id={this.state.id}
           onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
           onSearchShowMoreButtonClick={(query)=>this.handleSearchShowMoreButtonClick(query)}
-          query_value={this.state.search_query}>
+          query_value={this.state.search_query}
+          show_media_zoom={this.state.show_media_zoom}
+          media_zoom_source={this.state.media_zoom_source}
+          media_zoom_tags={this.state.media_zoom_tags}
+          hideMediaZoom={()=>{this.handleHideZoomMedia()}}>
             {/*<Header isAuthenticated={this.state.isAuthenticated} username={this.state.username} id={this.state.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
 
             <Switch>
@@ -161,6 +181,7 @@ class App extends React.Component {
                     show_albums={this.state.show_albums}
                     show_tags={this.state.show_tags}
                     onMediaInfoClick={(media)=>this.handleMediaInfo(media)}
+                    onZoomMediaClick={(media)=>this.handleZoomMedia(media)}
                     onPublicShowAllMediaButtonClick={()=>this.handlePublicShowAllMedia()}
                     onUserShowAllMediaButtonClick={()=>this.handleUserShowAllMedia()}
                     onUserShowAllAlbumsButtonClick={()=>this.handleUserShowAllAlbums()}
@@ -177,22 +198,35 @@ class App extends React.Component {
                   <div>User Profile for: {props.match.params.id}</div>
                 )}/>
                 <Route path='/users/:id/media' render={(props)=>(
-                  <UserMedia id={this.state.id} username={this.state.username} {...props} onMediaInfoClick={(media)=>this.handleMediaInfo(media)}/>
+                  <UserMedia  id={this.state.id} 
+                              username={this.state.username} 
+                              {...props} 
+                              onMediaInfoClick={(media)=>this.handleMediaInfo(media)}
+                              onZoomMediaClick={(media)=>this.handleZoomMedia(media)}/>
                 )}/>
                 <Route path='/media' render={(props)=>(
-                  <PublicMedia {...props} onMediaInfoClick={(media)=>this.handleMediaInfo(media)}/>
+                  <PublicMedia  {...props} 
+                                onMediaInfoClick={(media)=>this.handleMediaInfo(media)}
+                                onZoomMediaClick={(media)=>this.handleZoomMedia(media)}/>
                 )}/>
                 <Route path='/album_details/:id' render={(props)=>(
-                  <AlbumDetails user_id={this.state.id} {...props}/>
+                  <AlbumDetails user_id={this.state.id} 
+                                {...props}
+                                onMediaInfoClick={(media)=>this.handleMediaInfo(media)}
+                                onZoomMediaClick={(media)=>this.handleZoomMedia(media)}/>
                 )}/>
                 <Route path='/new_album' render={(props)=>(
-                  <AlbumDetails user_id={this.state.id} {...props}/>
+                  <AlbumDetails user_id={this.state.id} 
+                                {...props}
+                                onZoomMediaClick={(media)=>this.handleZoomMedia(media)}/>
                 )}/>
                 <Route path='/media_details/:id' render={(props)=>(
                   <MediaDetails user_id={this.state.id} {...props}/>
                 )}/>
                 <Route path='/search' render={(props)=>(
-                  <Search {...props} onMediaInfoClick={(media)=>this.handleMediaInfo(media)}/>
+                  <Search {...props} 
+                          onMediaInfoClick={(media)=>this.handleMediaInfo(media)}
+                          onZoomMediaClick={(media)=>this.handleZoomMedia(media)}/>
                 )}/>
                 <Route path='/tags' render={(props)=>(
                   <Tags id={this.state.id} {...props}/>

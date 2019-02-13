@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import MediaTilesList from '../components/media/media-tiles-list.component';
-import MediaZoom from '../components/media-zoom.component';
 import MediaDeleteConfirmation from '../components/media/media-delete-confirmation.component';
 import ViewToolbar from '../components/view-toolbar.component';
 import MediaDeleteSelectionConfirmation from '../components/media/media-delete-selection-confirmation.component';
@@ -12,10 +11,7 @@ export default class UserMedia extends React.Component{
         super(props);
 
         this.state = {
-            media: [],
-            is_media_focused: false,
-            zoomed_media: {},
-            zoomed_media_tags: [],
+            media: [],            
             show_delete_dialog: false,
             request_delete_media: {},
             show_delete_selection_dialog: false
@@ -28,16 +24,6 @@ export default class UserMedia extends React.Component{
     getSelectionCount(){
         let count = this.state.media.filter(media=>media.selected);
         return count.length;
-    }
-    handleHeaderBtnClick(name){
-        this.props.onHeaderBtnClick(name);
-    }
-    handleCloseClick(){
-        this.setState(prevState=>({
-            zoomed_media: {},
-            zoomed_media_tags: [],
-            is_media_focused: !prevState.is_media_focused
-        }));
     }
 
     handleDeleteButtonClick(media){
@@ -102,16 +88,6 @@ export default class UserMedia extends React.Component{
             window.location = `/api/archive/zip/${res.data.file}`;
         });
     }
-    handleMediaClick(media){
-        this.setState(prevState=>({
-            zoomed_media: media,
-            is_media_focused: !prevState.is_media_focused
-        }));
-        axios.get(`/api/m/${media.id}/t`)
-            .then(res=>{
-                this.setState({zoomed_media_tags: res.data});
-            });
-    }
     handleMediaSelect(media){
         let temp = this.state.media;
         let media_index = temp.indexOf(media);
@@ -130,7 +106,6 @@ export default class UserMedia extends React.Component{
         const pageStyle = {
             height: "100%",
             marginLeft: "1em",
-            marginRight: "1em",
             flex: "1 1 auto",
             display: "flex",
             flexFlow: "column nowrap"
@@ -178,9 +153,6 @@ export default class UserMedia extends React.Component{
                     </ViewToolbar>
                 }
                 <div style={contStyle}>
-                    {this.state.is_media_focused &&
-                        <MediaZoom media_source={this.state.zoomed_media} media_tags={this.state.zoomed_media_tags} onCloseClick={()=>this.handleCloseClick()}/>
-                    }
                     {this.state.show_delete_dialog && 
                         <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
                     }
@@ -195,7 +167,7 @@ export default class UserMedia extends React.Component{
                                 <div style={{flex: "1 1 auto"}}>
                                     <MediaTilesList media={this.state.media} 
                                                     onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                                    onMediaInfoClick={(media)=>this.handleMediaClick(media)} 
+                                                    onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)} 
                                                     can_delete={true}
                                                     include_show_all_button={false}
                                                     allow_selection={true} 

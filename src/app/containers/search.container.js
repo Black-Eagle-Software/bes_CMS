@@ -39,9 +39,6 @@ export default class Search extends React.Component{
                 }                
             });
     }
-    handleMediaClick(media){
-        
-    }
     render(){
         const contStyle = {
             /*height: "100%",
@@ -133,7 +130,7 @@ export default class Search extends React.Component{
                             {/* this breaks because our id isn't the media id for some query results*/}
                             <MediaTilesList media={this.state.query_results_media}
                                             onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                            onMediaInfoClick={(media)=>this.handleMediaClick(media)} 
+                                            onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)}
                                             can_delete={false}/>                    
                             {/*<ul style={ulStyle}>
                                 {this.state.query_results_media.length > 0 && this.state.query_results_media.map(result=>{

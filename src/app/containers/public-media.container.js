@@ -1,44 +1,18 @@
 import React from 'react';
 import axios from 'axios';
 import MediaTilesList from '../components/media/media-tiles-list.component';
-import MediaZoom from '../components/media-zoom.component';
 
-export default class PublicMedia extends React.Component{
+export default class PublicMedia extends React.PureComponent{
     constructor(props){
         super(props);
 
         this.state = {
-            media: [],
-            is_media_focused: false,
-            zoomed_media: {},
-            zoomed_media_tags: [],
+            media: []
         };
     }
 
     componentDidMount(){
         this.updateMediaFromDatabase();
-    }
-
-    handleHeaderBtnClick(name){
-        this.props.onHeaderBtnClick(name);
-    }
-    handleCloseClick(){
-        this.setState(prevState=>({
-            zoomed_media: {},
-            zoomed_media_tags: [],
-            is_media_focused: !prevState.is_media_focused
-        }));
-    }
-    
-    handleMediaClick(media){
-        this.setState(prevState=>({
-            zoomed_media: media,
-            is_media_focused: !prevState.is_media_focused
-        }));
-        axios.get(`/api/m/${media.id}/t`)
-            .then(res=>{
-                this.setState({zoomed_media_tags: res.data});
-            });
     }
     render(){
         const contStyle = {
@@ -48,22 +22,29 @@ export default class PublicMedia extends React.Component{
         const pageStyle = {
             height: "100%",
             marginLeft: "1em",
-            marginRight: "1em"
+            flex: "1 1 auto",
+            display: "flex",
+            flexFlow: "column nowrap"
+        };
+        const outerDivStyle = {
+            display: "flex",
+            flexFlow: "column nowrap",            
+            width: "100%",
+            flex: "1 1 auto"
         };
         
         return(
             <div style={contStyle}>
-                {this.state.is_media_focused &&
-                    <MediaZoom media_source={this.state.zoomed_media} media_tags={this.state.zoomed_media_tags} onCloseClick={()=>this.handleCloseClick()}/>
-                }
                 <div style={pageStyle}>
                     {this.state.media &&
-                        <div>
+                        <div style={outerDivStyle}>
                             <h2>All Public Media</h2>
-                            <MediaTilesList media={this.state.media} 
-                                        onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                        onMediaInfoClick={(media)=>this.handleMediaClick(media)} 
-                                        can_delete={false}/>
+                            <div style={{flex: "1 1 auto"}}>
+                                <MediaTilesList media={this.state.media} 
+                                            onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
+                                            onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)}
+                                            can_delete={false}/>
+                            </div>
                         </div>
                     }                    
                 </div>

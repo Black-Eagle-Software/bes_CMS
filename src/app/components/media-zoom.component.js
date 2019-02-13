@@ -1,15 +1,10 @@
 import React from 'react';
 import TagList from './tags/tag-list.component';
-const uuid = require('uuid/v4');
-
-//get image_source, onCloseClick
 
 export default class MediaZoom extends React.Component{
-    
     handleCloseClick(){
         this.props.onCloseClick();
     }
-
     render(){
         const contStyle = {
             position: "fixed",
