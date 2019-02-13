@@ -1,5 +1,5 @@
 import React from 'react';
-import UploadMediaTile from './media/upload-media-tile.component';
+import UploadMediaTile from './upload-media-tile.component';
 const {AutoSizer, List} = require('react-virtualized');
 
 const uuid = require('uuid/v4');

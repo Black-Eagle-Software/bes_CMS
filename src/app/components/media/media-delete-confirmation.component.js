@@ -1,5 +1,5 @@
 import React from 'react';
-import DialogOverlay from './dialog-overlay.component';
+import DialogOverlay from '../dialog-overlay.component';
 
 export default class MediaDeleteConfirmation extends React.PureComponent{
     handleCancelClick(){
