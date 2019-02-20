@@ -1,0 +1,206 @@
+.media_tile-container{
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    /*margin-right: 1em;
+    margin-bottom: 1em;*/
+    width: 12.5em;
+    height: 12.5em;
+    overflow: hidden;
+}
+.media_tile-title_container{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+}
+.media_tile-title{
+    display: inline-block;
+    width: 100%;
+    background: rgba(51,51,51,0.8);
+    color: #f5f5f5;
+    padding: 0em 0.25em;
+    text-align: center;
+    font-size: 0.75em;
+}
+.media_tile_image_content-img_thumb{
+    flex: 1 1 auto;
+    object-fit: cover;
+    height: 100%;
+}
+.media_tile_overlay-container{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background: rgba(31,31,31,0.9);
+    color: #f5f5f5;
+    padding: 1em;
+}
+.media_tile_overlay-progress_well{
+    width: 100%;
+    height: 1em;
+    border: 1px solid #ebebeb;
+}
+.media_tile_overlay-progress_bar{
+    height: 1em;
+    background: #007527;
+    position: relative;
+    top: -1em;
+}
+.media_tile_overlay-status_text{
+    white-space: pre;
+    font-size: 0.75em;
+}
+.media_tile_video_content-vid_thumb{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 1px;
+    width: 1px;
+    object-fit: contain;
+    z-index: -1;
+}
+.media_tile_video_content-video_badge{
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    background: rgba(51, 51, 51, 0.75);
+    color: #f5f5f5;
+    border-radius: 1em;
+    padding: 0.25em 1em;
+    font-size: 0.75em;
+    height: 2em;
+    margin: 0 0.25em;
+    cursor: default;
+    border: 1px solid rgba(245, 245, 245, 0.15);    
+}
+.media_tile_video_content-warning_badge{
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    background: rgba(227, 15, 1, 0.75);
+    color: #f5f5f5;
+    border-radius: 1em;
+    font-size: 0.75em;
+    height: 2em;
+    width: 2em;
+    text-align: center;
+    line-height: 2em;
+    margin: 0 0.25em;
+    cursor: default;
+}
+.upload_media_tile-button{
+    margin: 0em 0.25em;
+}
+.upload_media_tile-container{
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+    margin-right: 1em;
+    margin-bottom: 1em;
+    width: 12.5em;
+    height: 12.5em;
+    overflow: hidden;
+}
+.upload_media_tile-loading_img{
+    max-height: 50%;
+    max-width: 50%;
+    object-fit: contain;
+}
+.media_tile_with_toolbar-container{
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+    margin-right: 1em;
+    margin-bottom: 1em;
+    width: 12.5em;
+    height: 12.5em;
+    overflow: hidden;
+}
+.media_tile_toolbar-container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.25em;
+    background: rgba(51,51,51,0.25);
+}
+.media_tile_toolbar_button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 0.75em;
+    cursor: default;
+}
+.media_tile_delete_button{
+    margin-left: 0.25em;
+}
+.media_tile_info_button{
+    font-style: italic;
+}
+.media_tile_select_button{
+    position: absolute;
+    left: 0.25em;
+}
+
+.tile-bg{
+    background: #f5f5f5;
+    border: 2px solid #f5f5f5;
+}
+.tile-bg:hover{
+    background: #ebebeb;
+    border: 2px solid #1f1f1f;
+}
+
+.tile_deleteBtn{
+    background: #fce7e6;
+    color: #e30f01;
+    border: 2px solid #f7bcb8;
+}
+.tile_deleteBtn:hover{
+    background: #e30f01;
+    color: #fef3f2;
+    border: 2px solid #e30f01;
+}
+.tile_infoBtn{
+    background: #ebebeb;
+    color: #1f1f1f;
+    fill: #1f1f1f;
+    border: 2px solid #c6c6c6;
+}
+.tile_infoBtn:hover{
+    background: #ffc801;
+    color: #1f1f1f;
+    fill: #1f1f1f;
+    border: 2px solid #1f1f1f;
+}
+.tile_selectBtn{
+    background: #ebebeb;
+    color: #006cb7;
+    border: 2px solid #c6c6c6;
+}
+.tile_selectBtn:hover{
+    background: #006cb7;
+    color: #f5f5f5;
+    border: 2px solid #f2f8fb;
+}
+.tile_selectBtn.active{
+    background: #006cb7;
+    color: #f5f5f5;
+    border: 2px solid #f2f8fb;
+}
