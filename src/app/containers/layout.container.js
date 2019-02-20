@@ -23,10 +23,7 @@ export default class Layout extends React.PureComponent{
                         id={this.props.id} 
                         onBtnClick={(name)=>this.handleHeaderBtnClick(name)}
                         onSearchShowMoreButtonClick={(query)=>this.handleSearchShowMoreButtonClick(query)}
-                        query_value={this.props.query_value}/>
-                {this.props.show_media_zoom &&
-                    <MediaZoom media_source={this.props.media_zoom_source} media_tags={this.props.media_zoom_tags} onCloseClick={()=>this.props.hideMediaZoom()}/>
-                }
+                        query_value={this.props.query_value}/>                
                 {this.props.children}               
             </div>
         );
