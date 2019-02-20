@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import PageContent from '../components/pages/page-component';
 import MediaTilesList from '../components/media/media-tiles-list.component';
 import MediaDeleteConfirmation from '../components/media/media-delete-confirmation.component';
 import AlbumCoversList from '../components/albums/album-covers-list.component';
@@ -17,7 +18,10 @@ export default class UserHomeContainer extends React.Component{
             show_delete_dialog: false,
             request_delete_media: {},
             show_album_delete_dialog: false,
-            request_delete_album: {}
+            request_delete_album: {},
+            show_media_zoom: false,
+            media_zoom_source: {},
+            media_zoom_origin: []
         };
     }
 
@@ -86,6 +90,38 @@ export default class UserHomeContainer extends React.Component{
             this.updateMediaFromDatabase();
         });
     }
+    handleZoomMediaClick(media, origin){    //don't need to save origin here
+        this.setState({
+            show_media_zoom: true,
+            media_zoom_source: media,
+            media_zoom_origin: origin
+        });
+    }
+    handleHideZoomMedia(){
+        this.setState({show_media_zoom: false});
+    }
+    handleZoomMediaNext(){  //just pass origin array here
+        let media_index = this.state.media_zoom_origin.indexOf(this.state.media_zoom_source);
+        if(media_index + 1 === this.state.media_zoom_origin.length){
+            media_index = 0;
+        }else{
+            media_index += 1;
+        }
+        this.setState({
+            media_zoom_source: this.state.media_zoom_origin[media_index]
+        });
+    }
+    handleZoomMediaPrevious(){  //just pass origin array here
+        let media_index = this.state.media_zoom_origin.indexOf(this.state.media_zoom_source);
+        if(media_index === 0){
+            media_index = this.state.media_zoom_origin.length - 1;
+        }else{
+            media_index -= 1;
+        }
+        this.setState({
+            media_zoom_source: this.state.media_zoom_origin[media_index]
+        });
+    }
     
     render(){
         const contStyle = {
@@ -109,6 +145,51 @@ export default class UserHomeContainer extends React.Component{
         };
         //redo this a bit to separate out our page content
         //but keep the overlays here?
+        return(
+            <PageContent    show_media_zoom={this.state.show_media_zoom}
+                            media_zoom_source={this.state.media_zoom_source}
+                            hideMediaZoom={()=>{this.handleHideZoomMedia()}}
+                            onMediaZoomPreviousClick={()=>{this.handleZoomMediaPrevious()}}
+                            onMediaZoomNextClick={()=>{this.handleZoomMediaNext()}}>
+                {this.state.show_delete_dialog && 
+                    <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
+                }
+                {this.state.show_album_delete_dialog &&
+                    <AlbumDeleteConfirmation album={this.state.request_delete_album} onCloseClick={()=>this.handleAlbumDeleteDialogCloseClick()} onConfirmClick={(album)=>this.handleDeleteAlbumConfirmButtonClick(album)}/>
+                }
+                <MediaListUserHomeRow   rowHeader="Recent Albums" 
+                                        rowActions={<>
+                                            <div className="toolbar_btn" onClick={(e)=>this.handleAddAlbumClick(e)}>Add new album</div>
+                                            <div className="toolbar_btn" onClick={()=>this.handleUserShowAllAlbumsClick()}>Show all...</div>
+                                        </>}>
+                    <AlbumCoversList    albums={this.state.albums} 
+                                        onAlbumClick={(album)=>this.props.onAlbumClick(album)} 
+                                        can_delete={true}
+                                        onDeleteButtonClick={(album)=>this.handleAlbumDeleteButtonClick(album)}/>
+                </MediaListUserHomeRow>
+                <MediaListUserHomeRow   rowHeader="Recent Media"
+                                        rowActions={<>
+                                            <div className="toolbar_btn" onClick={()=>this.handleUserShowAllMediaClick()}>Show all...</div>
+                                        </>}>
+                    <MediaTilesList media={this.state.media} 
+                                    onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
+                                    onMediaInfoClick={(media)=>this.handleZoomMediaClick(media, this.state.media)} 
+                                    can_delete={true} 
+                                    onMediaDeleteClick={(media)=>this.handleDeleteButtonClick(media)}
+                                    showAll={true}/>
+                </MediaListUserHomeRow>
+                <MediaListUserHomeRow   rowHeader="Public Media"
+                                        rowActions={<>
+                                            <div className="toolbar_btn" onClick={()=>this.handlePublicShowAllMediaClick()}>Show all...</div>
+                                        </>}>
+                    <MediaTilesList media={this.state.public_media} 
+                                    onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
+                                    onMediaInfoClick={(media)=>this.handleZoomMediaClick(media, this.state.public_media)} 
+                                    can_delete={false}
+                                    showAll={true}/>
+                </MediaListUserHomeRow>
+            </PageContent>
+        )
         return(
             <div style={contStyle}>
                 {this.state.show_delete_dialog && 

@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import MediaTilesList from '../components/media/media-tiles-list.component';
 import ViewToolbar from '../components/view-toolbar.component';
+import PageContent from '../components/pages/page-component';
 
 const uuid = require('uuid/v4');
 
@@ -12,7 +13,9 @@ export default class Search extends React.Component{
         this.state = {
             query_results_albums: null,            
             query_results_media: null,
-            query_results_tags: null
+            query_results_tags: null,
+            show_media_zoom: false,
+            media_zoom_source: {}
         };
     }
     //maybe try and set the header's search bar content on component mount?
@@ -38,6 +41,37 @@ export default class Search extends React.Component{
                     this.setState({query_results_tags: response.data.tags});
                 }                
             });
+    }
+    handleZoomMediaClick(media){
+        this.setState({
+            show_media_zoom: true,
+            media_zoom_source: media
+        });
+    }
+    handleHideZoomMedia(){
+        this.setState({show_media_zoom: false});
+    }
+    handleZoomMediaNext(origin){
+        let media_index = origin.indexOf(this.state.media_zoom_source);
+        if(media_index + 1 === origin.length){
+            media_index = 0;
+        }else{
+            media_index += 1;
+        }
+        this.setState({
+            media_zoom_source: origin[media_index]
+        });
+    }
+    handleZoomMediaPrevious(origin){
+        let media_index = origin.indexOf(this.state.media_zoom_source);
+        if(media_index === 0){
+            media_index = origin.length - 1;
+        }else{
+            media_index -= 1;
+        }
+        this.setState({
+            media_zoom_source: origin[media_index]
+        });
     }
     render(){
         const contStyle = {
@@ -86,6 +120,77 @@ export default class Search extends React.Component{
             height: "24px",
             marginRight: "0.25em"
         };
+
+        return(
+            <PageContent    isAutoSizerListContent={true}
+                            show_media_zoom={this.state.show_media_zoom}
+                            media_zoom_source={this.state.media_zoom_source}
+                            hideMediaZoom={()=>{this.handleHideZoomMedia()}}
+                            onMediaZoomPreviousClick={()=>{this.handleZoomMediaPrevious(this.state.query_results_media)}}
+                            onMediaZoomNextClick={()=>{this.handleZoomMediaNext(this.state.query_results_media)}} 
+                            hasViewToolbar={true}
+                            toolbarChildren={
+                                <div>
+                                    <div className={"toolbar_btn"} onClick={()=>this.handleDownloadSelectionClick()}>
+                                        <svg style={svgStyle} viewBox={"0 0 24 24"}>
+                                            <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                        </svg>
+                                        Placeholder
+                                    </div>                                    
+                                </div>
+                            }>
+                <div style={outerDivStyle}>                
+                    {/*
+                        break this out into separate albums, media, tags results components 
+                        so we can selectively add and remove them from the page
+                        based on what type of search was performed
+                        ==========================================================================
+                        ?a returns a list of albums -> should be links to album details page
+                        ?s returns a list of albums (-> album details page), a list of media
+                            (-> media details page), and a list of tags (-> ?t search with tag
+                        ?t returns a list of media -> should be links to media details page
+                    */} 
+                    {this.state.query_results_albums &&
+                        <div>Albums:
+                            <ul style={ulStyle}>
+                                {this.state.query_results_albums.length > 0 && this.state.query_results_albums.map(result=>{
+                                    return <li key={uuid()}>{result.name}</li>
+                                })}
+                            </ul>
+                        </div>
+                    }
+                    {this.state.query_results_media &&
+                        <div style={{flex: "1 1 auto"}}>
+                            Media:
+                            {/* this breaks because our id isn't the media id for some query results*/}
+                            <MediaTilesList media={this.state.query_results_media}
+                                            onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
+                                            onMediaInfoClick={(media)=>this.handleZoomMediaClick(media)}
+                                            can_delete={false}/>                    
+                            {/*<ul style={ulStyle}>
+                                {this.state.query_results_media.length > 0 && this.state.query_results_media.map(result=>{
+                                    return <li key={uuid()}>
+                                                <a href={`/media_details/${result.media}`} style={linkStyle} onClick={(e)=>this.handleLinkClick(e)}>
+                                                    <img src={`${result.filePath}/thumbnails/${result.thumbnailFilename}`} alt={result.originalFilename} style={mediaThumbStyle}/>
+                                                    {result.originalFilename}
+                                                </a>
+                                            </li>
+                                })}                        
+                            </ul>*/}
+                        </div>
+                    }
+                    {this.state.query_results_tags &&
+                        <div>Tags:
+                            <ul style={ulStyle}>
+                                {this.state.query_results_tags.length > 0 && this.state.query_results_tags.map(result=>{
+                                    return <li key={uuid()} className={"tag"}>{result.description}</li>
+                                })}
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </PageContent>
+        );
 
         return(
             <div style={outerDivStyle}>
