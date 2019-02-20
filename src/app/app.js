@@ -42,10 +42,7 @@ class App extends React.Component {
       show_login: false,
       show_register: false,
       show_tags: false,
-      search_query: "",
-      show_media_zoom: false,
-      media_zoom_source: {},
-      media_zoom_tags: []
+      search_query: ""      
     };
   }
   handleAddAlbum(){
@@ -108,19 +105,6 @@ class App extends React.Component {
   handleMediaInfo(media){
     WindowNavigation.goToLocation(`/media_details/${media.id}`);
   }
-  handleZoomMedia(media){
-    this.setState(prevState=>({
-      media_zoom_source: media,
-      show_media_zoom: true
-    }));
-    axios.get(`/api/m/${media.id}/t`)
-      .then(res=>{
-          this.setState({media_zoom_tags: res.data});
-    });
-  }
-  handleHideZoomMedia(){
-    this.setState({show_media_zoom: false});
-  }
   handleAlbumClick(album){
     WindowNavigation.goToLocation(`/album_details/${album.id}`);
   }
@@ -152,13 +136,8 @@ class App extends React.Component {
           id={this.state.id}
           onHeaderBtnClick={(name)=>this.handleHeaderBtnClick(name)}
           onSearchShowMoreButtonClick={(query)=>this.handleSearchShowMoreButtonClick(query)}
-          query_value={this.state.search_query}
-          show_media_zoom={this.state.show_media_zoom}
-          media_zoom_source={this.state.media_zoom_source}
-          media_zoom_tags={this.state.media_zoom_tags}
-          hideMediaZoom={()=>{this.handleHideZoomMedia()}}>
+          query_value={this.state.search_query}>
             {/*<Header isAuthenticated={this.state.isAuthenticated} username={this.state.username} id={this.state.id} onBtnClick={(name)=>this.handleHeaderBtnClick(name)}/>*/}
-
             <Switch>
                 <Route exact path='/' render={(props, routeProps)=>(
                   <Landing 
