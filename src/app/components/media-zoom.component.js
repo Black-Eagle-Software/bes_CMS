@@ -1,7 +1,29 @@
 import React from 'react';
+import axios from 'axios';
 import TagList from './tags/tag-list.component';
 
-export default class MediaZoom extends React.Component{
+export default class MediaZoom extends React.PureComponent{
+    constructor(props){
+        super(props);
+
+        this.state={
+            tags: []
+        };
+    }
+    componentDidMount(){
+        this.fetchData();
+    }
+    componentDidUpdate(prevProps, prevState, snapshot){
+        if(this.props.media_source !== prevProps.media_source){
+            this.fetchData();
+        }
+    }
+    fetchData(){
+        axios.get(`/api/m/${this.props.media_source.id}/t`)
+        .then(res=>{
+            this.setState({tags: res.data});
+        });
+    }
     handleCloseClick(){
         this.props.onCloseClick();
     }
@@ -63,6 +85,10 @@ export default class MediaZoom extends React.Component{
         const filenameDivStyle = {
             marginBottom: "0.5em"
         };
+        const svgStyle2 = {
+            width: "24px",
+            height: "24px"
+        };
 
         //console.log(this.props.media_source);
         //this gets in a type as props.image_source.file.type
@@ -77,6 +103,18 @@ export default class MediaZoom extends React.Component{
         return(
             <div  style={contStyle}>
                 <div className={"expand_close"} onClick={()=>this.handleCloseClick()}></div>
+                <div style={{display: "flex", alignItems: "center", width: "2em", height: "4em", position: "absolute", zIndex: "10", left: "-6px", background: "#1f1f1f", border: "1px solid #c6c6c6", fill: "#f5f5f5"}}
+                        onClick={()=>this.props.onMediaZoomPreviousClick()}>
+                    <svg style={svgStyle2} viewBox={"0 0 24 24"}>
+                        <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+                    </svg>
+                </div>
+                <div style={{display: "flex", alignItems: "center", width: "2em", height: "4em", position: "absolute", zIndex: "10", right: "-6px", background: "#1f1f1f", border: "1px solid #c6c6c6", fill: "#f5f5f5"}}
+                        onClick={()=>this.props.onMediaZoomNextClick()}>
+                    <svg style={svgStyle2} viewBox={"0 0 24 24"}>
+                        <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+                    </svg>
+                </div>
                 {!isVideo && 
                     <img style={imgStyle} src={src} alt={filename}/>
                 }
@@ -109,7 +147,7 @@ export default class MediaZoom extends React.Component{
                                     {tag.description}
                                 </a>
                     })*/}
-                    <TagList    tags={this.props.media_tags}
+                    <TagList    tags={this.state.tags}
                                 show_access_level_colors={true}/>
                 </span>
             </div>
