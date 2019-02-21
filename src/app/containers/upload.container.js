@@ -207,9 +207,9 @@ export default class UploadMedia extends React.Component{
         let temp = this.state.all_tags.filter(t=>{
             if(media.tags.length === 0) return true;
             for(let i = 0; i < media.tags.length; i++){
-                if(t === media.tags[i]) return false;
-                return true;
+                if(t === media.tags[i]) return false;                
             }
+            return true;
         });
         return temp;
     }
