@@ -30,7 +30,8 @@ export default class UploadMediaTile extends React.PureComponent{
             <div className="upload_media_tile-container tile-bg" onClick={()=>this.props.onMediaClick()}>
                 <MediaTile  src={tileSrc}
                             title={title}
-                            imgClass={imgClass}/>
+                            imgClass={imgClass}
+                            onMediaClick={()=>this.props.onMediaClick()}/>
                 {type === 'video' &&
                     <span className={'media_tile_video_content-video_badge'}>video</span>
                 }
