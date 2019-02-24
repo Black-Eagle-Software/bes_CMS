@@ -108,6 +108,10 @@ app_routes.get('*', (req, res, next)=>{
                 <link rel="shortcut icon" href="/favicon-16x16.png">
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
                 <link rel="stylesheet" href="/global.css">
+                <link rel="stylesheet" href="/buttons.css">
+                <link rel="stylesheet" href="/header.css">
+                <link rel="stylesheet" href="/media.css">
+                <link rel="stylesheet" href="/tags.css">
                 <script src="/bundle.js" defer></script>
                 <script>window.__INITIAL_DATA__ = ${JSON.stringify(context.data)}</script>
                 <script src="/socket.io/socket.io.js"></script>                            

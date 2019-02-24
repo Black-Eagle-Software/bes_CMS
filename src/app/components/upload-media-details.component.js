@@ -1,10 +1,11 @@
 import React from 'react';
-import TagsSelectableList from './tags-selectable-list.component';
-import ImageWithDimensions from './image-with-dimensions.component';
+import TagConnectedLists from './tags/tag-connected-lists.component';
+import ImageWithDimensions from './media/image-with-dimensions.component';
+import VideoWithDimensions from './media/video-with-dimensions.component';
 
 const uuid = require('uuid/v4');
 
-export default class UploadImageDetails extends React.Component{
+export default class UploadMediaDetails extends React.Component{
     constructor(props){
         super(props);
 
@@ -83,16 +84,23 @@ export default class UploadImageDetails extends React.Component{
                     <div style={noteStyle}>Note: Non-H264 videos (i.e.: WMV, ASF, AVI) may not preview properly.  All videos will be transcoded to .MP4 once successfully uploaded to the server.</div>
                 }
                 {media.file.type.includes('video') &&
-                    <video ref={this.imgRef} style={imgStyle} muted={false} controls={true} src={media.url} typeof={media.file.type} onLoadedData={()=>this.handleVideoDidLoad()}>
-                        {/*<source src={media.url} type={media.file.type}/>*/}
-                    </video>
+                    //<video ref={this.imgRef} style={imgStyle} muted={false} controls={true} src={media.url} typeof={media.file.type} onLoadedData={()=>this.handleVideoDidLoad()}>
+                        /*<source src={media.url} type={media.file.type}/>*/
+                    //</video>
+                    <VideoWithDimensions style={imgStyle} muted={false} controls={true} src={media.url} typeof={media.file.type} onVidDimensionsChange={(size)=>this.handleImageDimensionsChange(size)}/>
                 }                
                 <div>
                     <span style={detailsHeaderStyle}>Filename:</span><span style={detailsStyle}>{media.file.name}</span>
                     <br/><span style={detailsHeaderStyle}>Dimensions:</span><span style={detailsStyle}>{this.state.width} x {this.state.height}</span>
                 </div>
                 <h3>Tags assigned to this media item:</h3>
-                <TagsSelectableList tags={this.props.tags} selected_tags={media.tags} onTagClick={(tag, index, value)=>this.handleTagClick(tag, index, value)}/>
+                {/*<TagsSelectableList tags={this.props.tags} selected_tags={media.tags} onTagClick={(tag, index, value)=>this.handleTagClick(tag, index, value)}/>*/}
+                <TagConnectedLists  primaryTags={this.props.primaryTags}
+                                    secondaryTags={this.props.secondaryTags}
+                                    is_editing={true}
+                                    onMoveTagFromSecondaryToPrimary={(tag)=>this.props.onMoveTagFromSecondaryToPrimary(tag)}
+                                    onMoveTagFromPrimaryToSecondary={(tag)=>this.props.onMoveTagFromPrimaryToSecondary(tag)}
+                                    show_access_level_colors={true}/>
             </div>
         );
     }

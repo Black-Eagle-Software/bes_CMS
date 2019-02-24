@@ -246,7 +246,8 @@ module.exports = (socket, dbase) => {
                             return;
                         }
                         socket.emit(`process_status_${id}`, {'step' : 'Inserting media in database', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
-                        callback(null, { mediaId: results.insertId, tags: JSON.parse(data.tags)});
+                        //callback(null, { mediaId: results.insertId, tags: JSON.parse(data.tags)});
+                        callback(null, { mediaId: results.insertId, tags: data.tags});
                     }
                 );
             },

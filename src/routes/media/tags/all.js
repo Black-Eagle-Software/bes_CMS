@@ -1,5 +1,5 @@
 module.exports = (req, res)=>{
-    let query = "SELECT * FROM tags t INNER JOIN tagsToMediaMap tmm ON t.id = tmm.tag WHERE tmm.media=? ORDER BY t.description ASC";
+    let query = "SELECT * FROM tags t INNER JOIN tagsToMediaMap tmm ON t.id = tmm.tag INNER JOIN tagsToAccessLevelMap tal ON tal.tagId = t.Id WHERE tmm.media=? ORDER BY t.description ASC";
     res.locals.connection.query(query, [req.params.id], (error, results, fields)=>{
         if(error) throw error;
         if(results.length === 0){

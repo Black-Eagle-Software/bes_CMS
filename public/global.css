@@ -17,7 +17,7 @@ html, body{
     overflow: hidden;
 }
 
-#content{
+#app{
     position: absolute;
     top: 0;
     left: 0;
@@ -27,109 +27,17 @@ html, body{
     height: 100%;
 }
 
-/*stealing this from bootstrap for now*/
-button, input[type=submit], .btn{
-    padding: 6px 12px;
-    margin-bottom: 0;
-    font-size: 0.875em;
-    font-weight: 400;
-    line-height: 1.42857143;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    -ms-touch-action: manipulation;
-    touch-action: manipulation;
-    cursor: default;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;  
-    user-select: none;
-    background-image: none;
-    border: 1px solid transparent;
-    border-top-color: transparent;
-    border-right-color: transparent;
-    border-bottom-color: transparent;
-    border-left-color: transparent;
-    border-radius: 0.25em;
-    color: #333;
-    background-color: #fff;
-    border-color: #ccc;
-}
-button, input[type=submit], .btn:hover{
-    color: #333;
-    background-color: #e6e6e6;
-    border-color: #adadad;
-}
-button, input[type=submit], .btn:focus{
-    color: #333;
-    background-color: #e6e6e6;
-    border-color: #8c8c8c;
-}
-button, input[type=submit], .btn:active{
-    color: #333;
-    background-color: #e6e6e6;
-    border-color: #adadad;
-}
-button, input[type=submit], .btn:active:hover{
-    color: #333;
-    background-color: #d4d4d4;
-    border-color: #8c8c8c;
-}
-.btn-primary{
-    color: #fff !important;
-    background-color: #337ab7 !important;
-    border-color: #2e6da4 !important;
-}
-.btn-primary:hover{
-    color: #fff !important;
-    background-color: #286090 !important;    
-    border-color: #204d74 !important;
-}
-.btn-primary:focus{
-    color: #fff !important;
-    background-color: #286090 !important;
-    border-color: #122b40 !important;
-}
-.btn-primary:active{
-    color: #fff !important;
-    background-color: #286090 !important;
-    border-color: #204d74 !important;
-}
-.btn-primary:active:hover{
-    color: #fff !important;
-    background-color: #204d74 !important;
-    border-color: #122b40 !important;
-}
-.btn-danger{
-    color: #fff !important;
-    background-color: #d9534f !important;
-    border-color: #d43f3a !important;
-}
-.btn-danger:hover{
-    color: #fff !important;
-    background-color: #c9302c !important;
-    border-color: #ac2925 !important;
-}
-.btn-danger:focus{
-    color: #fff !important;
-    background-color: #c9302c !important;
-    border-color: #761c19 !important;
-}
-.btn-danger:active{
-    color: #fff !important;
-    background-color: #c9302c !important;
-    border-color: #ac2925 !important;
-}
-.btn-danger:active:hover{
-    color: #fff !important;
-    background-color: #ac2925 !important;
-    border-color: #761c19 !important;
-}
-.btn-xs{
-    padding: 1px 5px;
-    font-size: 12px;
-    line-height: 1.5;
-    border-radius: 3px;
+#content{
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-start;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .expand_close {
@@ -157,67 +65,6 @@ button, input[type=submit], .btn:active:hover{
     background: #fff;
 }
 
-.headerBtn{
-    padding: 0em 0.5em;
-    cursor: default;
-    color: #1f1f1f;
-    fill: #1f1f1f;
-    stroke: #1f1f1f;
-    border: 0px solid transparent;
-    height: 2em;
-}
-.headerBtn:hover{
-    background: #333333;
-    color: #f5f5f5;
-    fill: #f5f5f5;
-    stroke: #f5f5f5;
-}
-
-.tile-bg{
-    background: #f5f5f5;
-    border: 2px solid #f5f5f5;
-}
-.tile-bg:hover{
-    background: #ebebeb;
-    border: 2px solid #1f1f1f;
-}
-
-.tile_deleteBtn{
-    background: #fce7e6;
-    color: #e30f01;
-    border: 2px solid #f7bcb8;
-}
-.tile_deleteBtn:hover{
-    background: #e30f01;
-    color: #fef3f2;
-    border: 2px solid #e30f01;
-}
-.tile_infoBtn{
-    background: #ebebeb;
-    color: #1f1f1f;
-    border: 2px solid #c6c6c6;
-}
-.tile_infoBtn:hover{
-    background: #ffc801;
-    color: #1f1f1f;
-    border: 2px solid #1f1f1f;
-}
-.tile_selectBtn{
-    background: #ebebeb;
-    color: #006cb7;
-    border: 2px solid #c6c6c6;
-}
-.tile_selectBtn:hover{
-    background: #006cb7;
-    color: #f5f5f5;
-    border: 2px solid #f2f8fb;
-}
-.tile_selectBtn.active{
-    background: #006cb7;
-    color: #f5f5f5;
-    border: 2px solid #f2f8fb;
-}
-
 .bad_input{
     background: #fce7e6;
     border: 2px solid #e30f01;
@@ -234,90 +81,6 @@ button, input[type=submit], .btn:active:hover{
     background: #ebebeb;
     color: #1f1f1f;
     fill: #1f1f1f;
-}
-
-/*svg classes for header logo*/
-.st0{stroke-width:120;stroke-miterlimit:10;fill-opacity:0;} 
-.st1{fill-rule:evenodd;clip-rule:evenodd;} 
-.st2{display:none;fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:10;} 
-.st3{stroke-width:40;stroke-linecap:round;stroke-miterlimit:10;}
-
-.tag {
-    flex: 0 0 auto;
-    background: #006cb7;
-    color: #f5f5f5;
-    border-radius: 1em;
-    padding: 0.25em 1em;
-    font-size: 0.75em;
-    height: 2em;
-    margin: 0.25em;
-    cursor: default;
-    text-decoration: none;
-}
-.tag:hover {
-    background: #4091c9;
-    color: #f2f8fb;
-}
-.tag.gray{
-    background: #ebebeb;
-    color: #1f1f1f;
-}
-.tag.gray:hover{
-    background: #1f1f1f;
-    color: #f5f5f5;
-}
-.tag.Private{
-    background: #e30f01;
-    color: #fef3f2;
-}
-.tag.Private:hover{
-    background: #ea4b41;
-    color: #fef3f2;
-}
-.tag.Restricted{
-    background: #ffc801;
-    color: #1f1f1f;
-}
-.tag.Restricted:hover{
-    background: #ffd641;
-    color: #1f1f1f;
-}
-.tag.Public{
-    background: #007527;
-    color: #f2f8f4;
-}
-.tag.Public:hover{
-    background: #40985d;
-    color: #f2f8f4;
-}
-
-.video_badge {
-    position: absolute;
-    top: 1em;
-    right: 1em;
-    background: rgba(51, 51, 51, 0.75);
-    color: #f5f5f5;
-    border-radius: 1em;
-    padding: 0.25em 1em;
-    font-size: 0.75em;
-    height: 2em;
-    margin: 0 0.25em;
-    cursor: default;    
-}
-.warning_badge {
-    position: absolute;
-    top: 1em;
-    left: 1em;
-    background: rgba(227, 15, 1, 0.75);
-    color: #f5f5f5;
-    border-radius: 1em;
-    font-size: 0.75em;
-    height: 2em;
-    width: 2em;
-    text-align: center;
-    line-height: 2em;
-    margin: 0 0.25em;
-    cursor: default;
 }
 
 input:invalid{
@@ -339,4 +102,24 @@ input:invalid{
 }
 .toolbar_btn.active{
     background: #00416e;
+}
+
+
+.commandContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+}
+.paneBtn{
+    margin: 0em 0.25em;
+}
+
+.album_cover_tile-img{
+    flex: 1 1 auto;
+    object-fit: cover;
+    height: 50%;
+    max-height: 50%;
+    width: 50%;
+    max-width: 50%;
 }

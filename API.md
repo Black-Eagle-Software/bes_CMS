@@ -15,7 +15,7 @@
 /tags?limit=#           /t?limit=#      GET             Returns the last # of public tags
 /tags/a-b               /t/a-b          GET             Returns all public tags between a and b (for pagination)
 /tags/<id>              /t/<id>         GET             Returns the tag with id of <id>
-#There are no public albums
+*There are no public albums*
 /albums/<id>            /a/<id>         GET             Returns the album with id of <id>
 /albums/<id>/media      /a/<id>/m       GET             Returns all the media for the album with id of <id>
 /albums/<id>/media/a-b  /a/<id>/m/a-b   GET             Returns all the media for hte album with id of <id> between a and b (for pagination)

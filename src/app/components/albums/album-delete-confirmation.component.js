@@ -1,5 +1,5 @@
 import React from 'react';
-import DialogOverlay from './dialog-overlay.component';
+import DialogOverlay from '../dialog-overlay.component';
 import AlbumCover from './album-cover.component';
 
 export default class AlbumDeleteConfirmation extends React.PureComponent{
