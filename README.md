@@ -1,6 +1,27 @@
 Black Eagle Software presents a Content Management System
 
 ##Summary
+The Black Eagle Software Content Management System (BES CMS) is an attempt to solve a simple problem; how to store pictures and videos (media) in a way that's not limited by a simple folder scheme, while allowing for:
+
+1. Tagging media as much or as little as desired
+2. Allowing for creating albums that contain media
+3. Allow for media in multiple albums
+4. Easily finding media via search
+5. Have a way to deal with duplicate media (ideally by not allowing duplicates in the system)
+
+Folders, and especially nested folders, work fine most of the time for media storage.  Problems start to arise when a folder scheme tries to also categorize or organize the media such that you end up with a folder structure like:
+```
+Root
++Date
+| + Person
+| + Event
++ Date 2
+  + Event
+```
+That sort of folder scheme starts to breakdown when, for instance, you have multiple people in a single picture.  Which person's folder do you put it under? Or do you create a `Groups` folder to catch those media that aren't of a single person?
+
+###What BES CMS Does Different
+BES CMS is basically a React front-end to a Node.js server that can connect to a SQL database.  Media is uploaded to the server from the front-end, and the server stores the media and adds references in the database.  The front-end allows for adding tags to media.  Tags can be a person's name, or an object, or an event, for instance.  Mappings between tags and media are stored in the databse.
 
 ##Installation
 
