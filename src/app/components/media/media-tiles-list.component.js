@@ -18,23 +18,6 @@ export default class MediaTilesList extends React.Component{
     render(){
         const items_count = this.props.media.length;
 
-        const contStyle = {
-            display: "flex",
-            flexFlow: "row wrap",
-            justifyContent: "flex-start"
-        };
-        const showAllStyle = {
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginRight: "1em",
-            marginBottom: "1em",
-            width: "12.5em",
-            height: "12.5em",
-            fontSize: "1em",
-            cursor: "default"
-        };
-
         const listStyle = {
             outline: "none"
         };
