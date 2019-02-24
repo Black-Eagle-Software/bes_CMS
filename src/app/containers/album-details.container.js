@@ -252,7 +252,6 @@ export default class AlbumDetails extends React.Component{
                                                 onMediaClick={(media)=>this.props.onMediaInfoClick(media)} 
                                                 onMediaInfoClick={(media)=>this.handleZoomMediaClick(media, this.state.media)} 
                                                 can_delete={false}
-                                                include_show_all_button={false}
                                                 allow_selection={false} />
                             </div>
                         }
@@ -281,7 +280,6 @@ export default class AlbumDetails extends React.Component{
                                                 onMediaInfoClick={(media)=>this.handleZoomMediaClick(media, this.state.possible_media)} 
                                                 onMediaClick={(media)=>this.handlePossibleMediaClick(media)} 
                                                 can_delete={false}
-                                                include_show_all_button={false}
                                                 allow_selection={false} />
                             </div>
                         }
