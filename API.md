@@ -1,3 +1,6 @@
+Note that not all of the below endpoints are currently implemented.
+
+```
 #URL                    SHORT FORM      HTTP Method     Operation
 /users                  /u              GET             Returns boolean to show whether user is logged in, and id of logged in user if true
 /users?email=X          /u?email=X      GET             Returns the user with email of X
@@ -44,3 +47,4 @@
 /search?t=x+y+z         /s?t=x+y+z      GET             Search for media with tag x, y, and z
 /search?s=abcd          /s?s=abcd       GET             Search for media, albums, tags with any property (i.e.: name) that includes string abcd
 /search?m=<id>          /s?m=<id>       GET             Search for all albums that include media with the id of <id> (for media details?)
+```
