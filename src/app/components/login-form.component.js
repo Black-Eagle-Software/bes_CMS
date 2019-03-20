@@ -1,8 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router-dom';
 
-export default class LoginForm extends React.Component{
+export default class LoginForm extends React.PureComponent{
     constructor(props){
         super(props);
 
@@ -21,7 +20,7 @@ export default class LoginForm extends React.Component{
     
     handleEmailChange(event){
         let val = event.target.value;
-        let bad = val === "";
+        let bad = val === "" || val.indexOf('@') === -1;
         this.setState({email: val, is_email_bad: bad});
     }
     handlePasswordChange(event){
@@ -34,22 +33,25 @@ export default class LoginForm extends React.Component{
             return;
         }
         let data = {email: this.state.email, password: this.state.password};
-        console.log(data);
+        //console.log(data);
         axios.post("/api/auth/login", data).then(res=>{
-            if(res.status === 200){
+            //console.log(res);
+            if(res.data === 'USER_PASS_UPDATE'){
+                //I don't always use magic strings, but when I do, it's here...
+                this.props.onUpdateRequired();
+            }else if(res.status === 200){
                 //this.setState({redirectTo: '/home'});
                 this.props.onLogin();
                 //res.redirect('/home');
             }
+        }).catch((error)=>{
+            console.log(error);
         });
         event.preventDefault();
     }
 
     render(){
-        if(this.state.redirectTo){
-            return <Redirect push to={{pathname: this.state.redirectTo}}/>
-        } else {
-            const formStyle = {
+        const formStyle = {
                 display: "flex",
                 flexFlow: "row wrap",
                 alignItems: "center",
@@ -72,6 +74,5 @@ export default class LoginForm extends React.Component{
                     <input style={inputStyle} type='submit' value='Log in'/>
                 </form>
                 );
-        }
     }
 }

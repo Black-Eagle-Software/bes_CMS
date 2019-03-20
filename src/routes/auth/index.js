@@ -1,6 +1,7 @@
 const User = require('../../models/user');
 const auth = require('express').Router();
 const passport = require('passport');
+const axios = require('axios');
 
 
 auth.get('/', (req, res)=>{
@@ -91,12 +92,12 @@ auth.post('/register', (req, res, next)=>{
         email: req.body.email,
         password: '',
         salt: '',
-        requiresPasswordReset: false
+        requiresPasswordReset: 'false'
     }
     let user = new User(JSON.stringify(data));
-    console.log(user);
+    //console.log(user);
     user.setPassword(req.body.password);
-    console.log(user);
+    //console.log(user);
     //add our user to the database
     let queryString = 'INSERT INTO users SET name=?, email=?, salt=?, password=?, requiresPasswordReset=?';
     res.locals.connection.query(queryString, [user.name, user.email, user.salt, user.password, user.requiresPasswordReset], (err, results, fields)=>{
@@ -105,6 +106,40 @@ auth.post('/register', (req, res, next)=>{
         }
         return res.status(200).send('User successfully registered');
     });
+});
+
+auth.post('/passwordChange', (req, res, next)=>{
+    console.log(req.body);
+    //zeroth confirm that new pass is not the same as the old pass
+    if(req.body.new_password === ''){
+        return res.status(422).send({message: 'New password can not be empty'});
+    }
+    if(req.body.old_password === req.body.new_password){
+        return res.status(422).send({message: 'New password can not be the same as the old password'});
+    }
+    //first confirm that the email is registered
+    axios.get(`http://localhost:8080/api/users?email=${req.body.email}`).then(results=>{
+        if(results.data[0] === undefined){
+            return done('No user entry found', null);
+        }
+        results = JSON.stringify(results.data[0]);
+        let user = new User(results);
+        //now confirm the old password is correct
+        let challenge = user.verifyPassword(req.body.old_password);
+        if(!challenge.allowed){
+            return res.status(401).send({message: 'Wrong or invalid password specified'});
+        } else {
+            //only now do we update the password and salt
+            user.setPassword(req.body.new_password);
+            let queryString = 'UPDATE users SET salt=?, password=?, requiresPasswordReset=? WHERE id=?';
+            res.locals.connection.query(queryString, [user.salt, user.password, 'false', user.id], (err, results, fields)=>{
+                if(err){
+                    return next(err);
+                }
+                return res.status(200).send('User password successfully updated');
+            });           
+        }        
+    });    
 });
 
 module.exports = auth;

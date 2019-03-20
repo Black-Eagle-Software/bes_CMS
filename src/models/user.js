@@ -24,7 +24,8 @@ class User{
         let saltedInput = this.salt + input;
         let hash = crypto.createHash('sha512').update(saltedInput).digest('hex');
         //console.log(`Input: ${input}, hash: ${hash}, password: ${this.password}, match?: ${hash === this.password}`);
-        return hash === this.password;
+        let match = hash === this.password;
+        return {allowed: match, isDirty: this.requiresPasswordReset === 'true'};    //hacky string vs boolean handling
     }
     setPassword(input){
         this.salt = crypto.randomBytes(32).toString('hex');
