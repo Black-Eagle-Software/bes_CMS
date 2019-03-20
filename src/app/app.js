@@ -14,6 +14,7 @@ import Tags from './containers/tags.container';
 import UserMedia from './containers/user-media.container';
 import PublicMedia from './containers/public-media.container';
 import AlbumDetails from './containers/album-details.container';
+import UserAlbums from './containers/user-albums.container';
 
 class App extends React.Component {
   constructor(props){
@@ -213,6 +214,12 @@ class App extends React.Component {
                               {...props} 
                               onMediaInfoClick={(media)=>this.handleMediaInfo(media)}
                               onZoomMediaClick={(media)=>this.handleZoomMedia(media)}/>
+                )}/>
+                <Route path='/users/:id/albums' render={(props)=>(
+                  <UserAlbums id={this.state.id} 
+                              username={this.state.username} 
+                              {...props}
+                              onAlbumClick={(album)=>this.handleAlbumClick(album)}/>
                 )}/>
                 <Route path='/media' render={(props)=>(
                   <PublicMedia  {...props} 
