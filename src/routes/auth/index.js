@@ -52,7 +52,7 @@ auth.post('/login', (req, res, next)=>{
     });*/
     passport.authenticate('local', (err, user, info)=>{
         if(info) {
-            return res.send(info.message); 
+            return res.send(info.message);
         }
         if(err){
             return next(err);
@@ -73,6 +73,38 @@ auth.post('/login', (req, res, next)=>{
             //return res.status(200).redirect('/home');
         });
     })(req, res, next);    
+});
+
+auth.post('/register', (req, res, next)=>{
+    console.log(req.body);        
+    if(!req.body){
+        res.status(403).send({'message':'Request body was undefined', 'req':req});
+        return;
+    }
+    if(!req.body.name || !req.body.email || !req.body.password){
+        res.status(403).send({'message': 'Could not add a new user: name, email, or password were not set'});
+        return;
+    }
+    let data = {
+        id: -1,
+        name: req.body.name,
+        email: req.body.email,
+        password: '',
+        salt: '',
+        requiresPasswordReset: false
+    }
+    let user = new User(JSON.stringify(data));
+    console.log(user);
+    user.setPassword(req.body.password);
+    console.log(user);
+    //add our user to the database
+    let queryString = 'INSERT INTO users SET name=?, email=?, salt=?, password=?, requiresPasswordReset=?';
+    res.locals.connection.query(queryString, [user.name, user.email, user.salt, user.password, user.requiresPasswordReset], (err, results, fields)=>{
+        if(err){
+            return next(err);
+        }
+        return res.status(200).send('User successfully registered');
+    });
 });
 
 module.exports = auth;

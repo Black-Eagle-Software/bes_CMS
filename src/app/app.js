@@ -85,6 +85,13 @@ class App extends React.Component {
     //this.verifyAuthentication();
     WindowNavigation.goToLocation('/home');    
   }
+  handleRegister(){
+    //new user registered, have them log in
+    this.setState({
+      show_login: true,
+      show_register: false
+    });
+  }
   handleSearchShowMoreButtonClick(query){
     //when we change location, it's getting a new instance
     //of app and losing state.
@@ -143,7 +150,8 @@ class App extends React.Component {
                   <Landing 
                   {...props} 
                   {...routeProps} 
-                  onLogin={()=>this.handleLogin()} 
+                  onLogin={()=>this.handleLogin()}
+                  onRegister={()=>this.handleRegister()}
                   show_login={this.state.show_login}
                   show_register={this.state.show_register}/>)} />
                 )}/>
