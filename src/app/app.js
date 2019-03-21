@@ -14,6 +14,7 @@ import Tags from './containers/tags.container';
 import UserMedia from './containers/user-media.container';
 import PublicMedia from './containers/public-media.container';
 import AlbumDetails from './containers/album-details.container';
+import UserAlbums from './containers/user-albums.container';
 
 class App extends React.Component {
   constructor(props){
@@ -41,6 +42,7 @@ class App extends React.Component {
       show_albums: false,
       show_login: false,
       show_register: false,
+      show_update: false,
       show_tags: false,
       search_query: ""      
     };
@@ -62,13 +64,15 @@ class App extends React.Component {
         case 'login': 
                     this.setState({
                         show_login: true,
-                        show_register: false
+                        show_register: false,
+                        show_update: false
                     });
                     break;
         case 'register': 
                     this.setState({
                         show_register: true,
-                        show_login: false
+                        show_login: false,
+                        show_update: false
                     });
                     break;        
         case 'tags': 
@@ -84,6 +88,30 @@ class App extends React.Component {
     //return <Redirect to='/home'/>
     //this.verifyAuthentication();
     WindowNavigation.goToLocation('/home');    
+  }
+  handleRegister(){
+    //new user registered, have them log in
+    this.setState({
+      show_login: true,
+      show_register: false,
+      show_update: false
+    });
+  }
+  handleUpdateRequired(){
+    //user needs to update their password
+    this.setState({
+      show_login: false,
+      show_register: false,
+      show_update: true
+    })
+  }
+  handleUpdatePass(){
+    //user updated pass, have them log in
+    this.setState({
+      show_login: true,
+      show_register: false,
+      show_update: false
+    });
   }
   handleSearchShowMoreButtonClick(query){
     //when we change location, it's getting a new instance
@@ -143,9 +171,13 @@ class App extends React.Component {
                   <Landing 
                   {...props} 
                   {...routeProps} 
-                  onLogin={()=>this.handleLogin()} 
+                  onLogin={()=>this.handleLogin()}
+                  onRegister={()=>this.handleRegister()}
+                  onUpdateRequired={()=>this.handleUpdateRequired()}
+                  onUpdatePass={()=>this.handleUpdatePass()}
                   show_login={this.state.show_login}
-                  show_register={this.state.show_register}/>)} />
+                  show_register={this.state.show_register}
+                  show_update={this.state.show_update}/>)} />
                 )}/>
                 {/*<Route path='/home' component={UserHomeContainer} />*/}
                 {/*<Route path='/home' render={(props)=>(
@@ -182,6 +214,12 @@ class App extends React.Component {
                               {...props} 
                               onMediaInfoClick={(media)=>this.handleMediaInfo(media)}
                               onZoomMediaClick={(media)=>this.handleZoomMedia(media)}/>
+                )}/>
+                <Route path='/users/:id/albums' render={(props)=>(
+                  <UserAlbums id={this.state.id} 
+                              username={this.state.username} 
+                              {...props}
+                              onAlbumClick={(album)=>this.handleAlbumClick(album)}/>
                 )}/>
                 <Route path='/media' render={(props)=>(
                   <PublicMedia  {...props} 

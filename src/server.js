@@ -56,13 +56,21 @@ passport.use(new localStrategy(
     (req, email, password, done)=>{
         axios.get(`http://localhost:8080/api/users?email=${email}`).then(results=>{
             //email exists in the database, so now check the password
-            //console.log(results.data[0]);
+            if(results.data[0] === undefined){
+                return done('No user entry found', null);
+            }
             results = JSON.stringify(results.data[0]);
             let user = new User(results);
-            let allowed = user.verifyPassword(password);
-            if(!allowed){
+            let challenge = user.verifyPassword(password);
+            console.log(challenge);
+            if(!challenge.allowed){
                 return done(null, false, {message: 'Wrong or invalid password specified'});
             } else {
+                console.log(challenge.isDirty);
+                if(challenge.isDirty){
+                    //console.log('User must update password');
+                    return done(null, user, {message: 'USER_PASS_UPDATE'});
+                }
                 //confirm user role for use later
                 /*let queryString = "SELECT userRoleId FROM userRolesToUsersMap ur INNER JOIN users u ON u.id = ur.userId WHERE u.email=?";
                 connection.query(queryString, [email], (error, results, fields)=>{

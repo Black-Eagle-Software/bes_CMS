@@ -11,7 +11,7 @@ export default class AlbumCoverTile extends React.Component{
                     media.map(item=>{
                         return <img key={uuid()} 
                                     className="album_cover_tile-img" 
-                                    src={`${item.filePath}/thumbnails/${item.thumbnailFilename}`}/>
+                                    src={`/${item.filePath}/thumbnails/${item.thumbnailFilename}`}/>
                     })
                 }
             </>

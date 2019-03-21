@@ -20,15 +20,16 @@ class User{
         if(this.password === null || this.password === "" || this.salt === null || this.salt === ""
         || input === null || input === ""){
             return JSON({message: "Password and input can not be empty or null"});
-        }
+        }        
         let saltedInput = this.salt + input;
         let hash = crypto.createHash('sha512').update(saltedInput).digest('hex');
         //console.log(`Input: ${input}, hash: ${hash}, password: ${this.password}, match?: ${hash === this.password}`);
-        return hash === this.password;
+        let match = hash === this.password;
+        return {allowed: match, isDirty: this.requiresPasswordReset === 'true'};    //hacky string vs boolean handling
     }
     setPassword(input){
-        let salt = crypto.randomBytes(32).toString('hex');
-        let saltedPass = salt + input;
+        this.salt = crypto.randomBytes(32).toString('hex');
+        let saltedPass = this.salt + input;
         this.password = crypto.createHash('sha512').update(saltedPass).digest('hex');
         //console.log(`Input: ${input}, salt: ${salt}, password: ${this.password}`);
     }
