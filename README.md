@@ -114,3 +114,35 @@ The following resources are available for use when doing development work on BES
 * [Coding Style](CODING-STYLE.md "CODING-STYLE.md")
 * [Node.js Server API End Points](API.md "API.md")
 * [Development Roadmap](DEV-ROADMAP.md "DEV-ROADMAP.md")
+
+## What's Included in the Box (and What's Not)
+The following features are currently implemented (this is not an exhaustive list):
+* User accounts
+  * New user accounts can be made via the `Register` button in the main page's header toolbar.
+  * There is a default Admin account accessible via the following information (you will be prompted to change the password on first login):
+  ```
+    email: admin@localhost
+    default password: BlackEagleSoftware
+  ```    
+  * *The Admin account doesn't actually do anything special at the moment.  See the [Development Roadmap](DEV-ROADMAP.md "DEV-ROADMAP.md") for more information about when a proper Admin dashboard may be implemented.*
+  * *User account's can only be deleted via direct manipulation of the database.*
+* Albums
+  * Users can create new albums and add media to them
+  * Albums can be edited (name, included media)
+  * Albums can be deleted (if the user owns the album)
+* Media uploading
+  * Media can be uploaded via the `/home` toolbar's `Upload` button.
+  * Tags can be assigned to all media being uploaded, or to individual media items (or a mix of both).
+  * Media can be deleted (if you the user owns the media)
+* Tags
+  * Users can create tags with 3 access levels: `Public`, `Restricted`, or `Private`.
+  * Public tags are viewable by all users.
+  * Restricted tags are only viewable by a user and their friends.
+    * User friends are not yet implemented.
+  * Private tags can only be viewed/used by the user that created them.
+* Search
+  * Search for all media tagged with a particular tag by clicking on a tag button.
+  * Search for media similar to a particular media item via the `Find similar...` button on the media details toolbar.
+  * Search for media, albums, and tags by name via the search box in the header toolbar
+    * *The search box works, but is due for an upgrade in the future.  Refer to the [Development Roadmap](DEV-ROADMAP.md "DEV-ROADMAP.md") for an idea of when that may occur.*
+
