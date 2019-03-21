@@ -103,7 +103,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `salt`, `requiresPasswordReset`) VALUES
-(1, 'Administrator', 'admin@localhost', 'd18c809cc6af599d3e18ec9a01cb2800d4edafbe53e3e4a978b43808ecda08143573f1a6cbc3a8364485e7db3548ec693ff8db794aa52ac882a02f91794712f5', '0b272896cc601bd7d8cde378329951250239dfe13149cd500e6bdf7d542d1ac5', 'false');
+(1, 'Administrator', 'admin@localhost', 'd18c809cc6af599d3e18ec9a01cb2800d4edafbe53e3e4a978b43808ecda08143573f1a6cbc3a8364485e7db3548ec693ff8db794aa52ac882a02f91794712f5', '0b272896cc601bd7d8cde378329951250239dfe13149cd500e6bdf7d542d1ac5', 'true');
 
 CREATE TABLE `usersToUsersFriendMap` (
   `userId` int(11) NOT NULL,
