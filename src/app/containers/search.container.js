@@ -150,7 +150,7 @@ export default class Search extends React.Component{
                             (-> media details page), and a list of tags (-> ?t search with tag
                         ?t returns a list of media -> should be links to media details page
                     */} 
-                    {this.state.query_results_albums &&
+                    {this.state.query_results_albums && this.state.query_results_albums.length > 0 &&
                         <div>Albums:
                             <ul style={ulStyle}>
                                 {this.state.query_results_albums.length > 0 && this.state.query_results_albums.map(result=>{
@@ -159,7 +159,7 @@ export default class Search extends React.Component{
                             </ul>
                         </div>
                     }
-                    {this.state.query_results_media &&
+                    {this.state.query_results_media && this.state.query_results_media.length > 0 &&
                         <div style={{flex: "1 1 auto"}}>
                             Media:
                             {/* this breaks because our id isn't the media id for some query results*/}
@@ -179,7 +179,7 @@ export default class Search extends React.Component{
                             </ul>*/}
                         </div>
                     }
-                    {this.state.query_results_tags &&
+                    {this.state.query_results_tags && this.state.query_results_tags.length > 0 &&
                         <div>Tags:
                             <ul style={ulStyle}>
                                 {this.state.query_results_tags.length > 0 && this.state.query_results_tags.map(result=>{
@@ -187,6 +187,9 @@ export default class Search extends React.Component{
                                 })}
                             </ul>
                         </div>
+                    }
+                    {(!this.state.query_results_albums || this.state.query_results_albums.length === 0) && (!this.state.query_results_media || this.state.query_results_media.length === 0) && (!this.state.query_results_tags || this.state.query_results_tags.length === 0) &&
+                        <div>No results found.</div>
                     }
                 </div>
             </PageContent>
