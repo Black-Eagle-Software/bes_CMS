@@ -7,13 +7,14 @@ import MediaTileSelectButton from './media-tile-select-button.component';
 
 export default class MediaTileWithToolbar extends React.Component{
     render(){
-        const {src, title, imgClass, canSelect, isSelected, canDelete} = this.props;
+        const {src, title, imgClass, canSelect, isSelected, canDelete, hammingDistance} = this.props;
 
         return(
             <div className="media_tile_with_toolbar-container tile-bg" >                
                 <MediaTile  src={src}
                             title={title}
                             imgClass={imgClass}
+                            hammingDistance={hammingDistance}
                             onMediaClick={()=>this.props.onMediaClick()}/>
                 <MediaTileToolbar>
                     {canSelect &&
