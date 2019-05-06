@@ -69,7 +69,8 @@ export default class MediaTilesList extends React.Component{
                                                         onInfoButtonClick={()=>this.props.onMediaInfoClick(item)}
                                                         canSelect={this.props.allow_selection}
                                                         isSelected={item.selected}
-                                                        onMediaSelect={()=>this.props.onMediaSelect(item)}/>                      
+                                                        onMediaSelect={()=>this.props.onMediaSelect(item)}
+                                                        hammingDistance={item.hamming_distance}/>                      
                     }
                 })}
             </div>
