@@ -111,7 +111,7 @@ var port = env.PORT || 8080;    //set our port
 
 ## Development
 The following resources are available for use when doing development work on BES CMS.
-* [Coding Style](CODING-STYLE.md "CODING-STYLE.md")
+* [Coding Style](CODING-STYLE.MD "CODING-STYLE.MD")
 * [Node.js Server API End Points](API.md "API.md")
 * [Development Roadmap](DEV-ROADMAP.md "DEV-ROADMAP.md")
 
