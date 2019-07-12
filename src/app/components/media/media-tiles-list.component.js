@@ -25,6 +25,7 @@ export default class MediaTilesList extends React.Component{
         return(
             <AutoSizer disableHeight={this.props.showAll}>
                 {({height, width})=>{
+                    if(width === 0 || height === 0) return(<></>);
                     const itemsPerRow = Math.floor(width/(item_size + 16));
                     const rowCount = Math.ceil(items_count/itemsPerRow);
                     //const height = width === 0 ? 0 : rowCount * (item_size + 16);
