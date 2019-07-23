@@ -1,6 +1,17 @@
 {
     "name": "bes_cms-api",
+    "description": "Black Eagle Software Content Management System",
+    "author": {
+        "name": "Gary Ramsey",
+        "email": "gsramsey@gmail.com",
+        "url": "http://www.blackeaglesoftware.com"
+    },
+    "bugs": "https://github.com/Black-Eagle-Software/bes_CMS/issues",
+    "homepage": "http://www.blackeaglesoftware.com",
+    "version": "1.1.0",
+    "repository": "github:Black-Eagle-Software/bes_CMS",
     "main": "./src/server.js",
+    "private": true,
     "devDependencies": {
         "@babel/cli": "^7.0.0",
         "@babel/core": "^7.0.1",
