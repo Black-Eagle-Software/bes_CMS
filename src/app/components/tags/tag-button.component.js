@@ -8,10 +8,11 @@ export default class TagButton extends React.PureComponent{
     render(){
         const {description, accessLevel, canAdd, canRemove} = this.props;
 
-        const tagTitle = canAdd ? "Add" : canRemove ? "Remove" : `Search for media tagged with "${description}"`;
+        const tagTitle = canAdd ? 'Add' : canRemove ? 'Remove' : `Search for media tagged with "${description}"`;
+        const tagAction = canAdd ? 'Add' : canRemove ? 'Remove' : 'Search';
 
         return(
-            <div className={`tag ${accessLevel}`} onClick={()=>this.props.onTagClick(tagTitle)} title={tagTitle}>
+            <div className={`tag ${accessLevel}`} onClick={()=>this.props.onTagClick(tagAction)} title={tagTitle}>
                 <span>{description}</span>
                 {!canAdd && !canRemove &&   //search by default
                     <div className="tag_btn tag_search_btn" >
