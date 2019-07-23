@@ -14,7 +14,8 @@ export default class PageContent extends React.Component{
             display: "flex",
             flexFlow: "column nowrap",            
             width: "100%",
-            flex: "1 1 auto"
+            flex: "1 1 auto",
+            overflow: "auto"
         };
         const pageStyle = {
             marginLeft: "1em",
@@ -22,6 +23,15 @@ export default class PageContent extends React.Component{
             display: "flex",
             flexFlow: "column nowrap",
             paddingTop: "1em"
+        };
+        const footerStyle={
+            padding: "4px 0px",
+            textAlign: "center",
+            background: "#1f1f1f",
+            color: "#f5f5f5"
+        };
+        const spanStyle={
+            paddingLeft: "20px"
         };
         
         return(
@@ -42,6 +52,10 @@ export default class PageContent extends React.Component{
                     <div style={pageStyle}>                    
                         {this.props.children}                    
                     </div>
+                </div>
+                <div style={footerStyle}>
+                    <span>&copy; Gary Ramsey &amp; Black Eagle Software, 2019</span>
+                    <span style={spanStyle}><a className="header-link" href="https://github.com/Black-Eagle-Software/bes_CMS">Fork us on GitHub!</a></span>
                 </div>
             </div>
         )
