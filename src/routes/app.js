@@ -75,13 +75,14 @@ app_routes.get('*', (req, res, next)=>{
             is_authorized = true;
         }else{
             res.status(304).redirect('/');
-            next();
+            return next();
         }
     }
 
     //special case for when we're going to / but we're already authenticated
     if(req.url === '/' && req.isAuthenticated()){
         res.status(200).redirect('/home');
+        return next();
     }
 
     if(can_proceed) {
@@ -122,42 +123,7 @@ app_routes.get('*', (req, res, next)=>{
         </html>
         `);
     }
-    next();
+    return next();
 });
-
-/*app_routes.get('/home', (req, res)=>{
-    console.log(`Can see user home: ${req.isAuthenticated()}`);
-    if(req.isAuthenticated()){
-        res.status(200);
-    }else{
-        res.redirect('/');
-    }
-});*/
-
-/*app_routes.get('/', (req, res)=>{
-    //var html = "<h1>I hate this at times.</h1>";
-    //console.log(App);
-    const html = ReactDOMServer.renderToString(
-    <ReactRouterDOM.StaticRouter location={req.url} context={{}}>
-        <App />
-    </ReactRouterDOM.StaticRouter>
-    );
-    //console.log(html);
-    res.status(200).send(`
-    <!DOCTYPE html>
-    <html>
-        <head>
-            <title>Black Eagle Software CMS</title>
-            <link rel="shortcut icon" href="favicon-16x16.png">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-            <link rel="stylesheet" href="global.css">
-            <script src="/bundle.js" defer></script>            
-        </head>
-        <body>
-            <div id="app">${html}</div>            
-        </body>
-    </html>
-    `);
-});*/
 
 module.exports = app_routes;
