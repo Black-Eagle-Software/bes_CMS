@@ -135,13 +135,11 @@ app.use('/media', (req, res, next)=>{
     let path = req.url[0] === '/' ? `media${req.url}` : `media/${req.url}`;
     let filePath = path.substring(0, path.lastIndexOf('/'));
     let filename = path.substring(path.lastIndexOf('/') + 1);
-    console.log(path);
-    console.log(`File path: ${filePath}, filename: ${filename}`);
     //we need to modify our query terms if we're requesting a thumbnail    
     if(filePath.includes('thumbnails')){
         filePath = filePath.substring(0, filePath.lastIndexOf('/'));    //this should remove /thumbnails from path
-        filenameSplit = filename.split('_thumb');
-        filename = `${filenameSplit[0]}${filenameSplit[1]}`;
+        filenameSplit = filename.split('_thumb');                       //this will remove the _thumb suffix from filename
+        filename = `${filenameSplit[0]}${filenameSplit[1]}`;            //join our base filename and extension for use in sql query
     }
     let qryString  = `SELECT * FROM media m	
                         LEFT JOIN tagsToMediaMap tmm 
