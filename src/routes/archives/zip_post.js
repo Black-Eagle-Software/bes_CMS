@@ -51,7 +51,7 @@ module.exports = (req, res) => {
     
     //append files to the stream
     for(let i = 0; i < req.body.media.length; i++){
-        let fullpath = path.join(__basedir, 'public', req.body.media[i].src_file);
+        let fullpath = path.join(__basedir, req.body.media[i].src_file);
         console.log(fullpath);
         archive.append(fs.createReadStream(fullpath), {name: req.body.media[i].file.originalFilename});
     }

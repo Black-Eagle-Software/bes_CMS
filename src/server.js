@@ -112,7 +112,7 @@ app.use(passport.session());
 //configure the database connection
 app.use((req, res, next)=>{
     res.locals.connection = connection;
-    next();
+    return next();
 });
 
 app.use((req, res, next)=>{
@@ -123,8 +123,54 @@ app.use((req, res, next)=>{
     res.on('finish', ()=>{
         console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] > ${res.statusCode} ${res.statusMessage} ${res.get('Content-Length') || 0}b sent`);
     });
-    next();
+    return next();
 });
+
+//make sure there are no unauthorized attempts at direct media access
+app.use('/media', (req, res, next)=>{
+    console.log("Requesting item from /media directory");
+    console.log(req.isAuthenticated());
+    //make sure the user can actually access this file
+    let user = JSON.parse(req.user);
+    let path = req.url[0] === '/' ? `media${req.url}` : `media/${req.url}`;
+    let filePath = path.substring(0, path.lastIndexOf('/'));
+    let filename = path.substring(path.lastIndexOf('/') + 1);
+    console.log(path);
+    console.log(`File path: ${filePath}, filename: ${filename}`);
+    //we need to modify our query terms if we're requesting a thumbnail    
+    if(filePath.includes('thumbnails')){
+        filePath = filePath.substring(0, filePath.lastIndexOf('/'));    //this should remove /thumbnails from path
+        filenameSplit = filename.split('_thumb');
+        filename = `${filenameSplit[0]}${filenameSplit[1]}`;
+    }
+    let qryString  = `SELECT * FROM media m	
+                        LEFT JOIN tagsToMediaMap tmm 
+                        ON tmm.media = m.id 
+                        LEFT JOIN tagsToAccessLevelMap tam 
+                        ON tam.tagId = tmm.tag 
+                        WHERE (m.filePath = ? AND m.hashFilename = ?) 
+                        AND (m.owner = ? 
+                            OR tam.accessLevel = 'Public' 
+                            OR m.owner = (SELECT uuf.userId FROM usersToUsersFriendMap uuf 
+                                            WHERE uuf.friendId = ?) 
+                            OR m.owner = (SELECT uuf.friendId FROM usersToUsersFriendMap uuf 
+                                            WHERE uuf.userId = ?))`    
+    res.locals.connection.query(qryString, [filePath, filename, user.id, user.id, user.id], (error, results, fields)=>{
+        console.log(results);
+        if(error){
+            res.status(404).send({'message': error.message});
+            return;
+        }
+        //if we have a result, then we should be able to show it
+        if(results.length > 0){
+            return next();
+        }else{
+            res.status(403).send({'message': `User is not authorized to view media item`});
+            return;
+        }
+    });
+    //return next();
+}, express.static("media"));
 
 app.use(express.static("public"));
 

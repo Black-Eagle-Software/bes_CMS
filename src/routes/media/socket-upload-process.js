@@ -126,7 +126,7 @@ module.exports = (socket, dbase) => {
             (data, callback)=>{
                 socket.emit(`process_status_${id}`, {'step' : 'Creating folders and moving files into place', 'status' : 'starting'});
                 let basePath = path.join('media', item.owner.toString(), time.toString());
-                let fullPath = path.join(__basedir, 'public', basePath);
+                let fullPath = path.join(__basedir, basePath);
                 let thumb_path = path.join(fullPath, 'thumbnails');
                 let filename = `${data.fileHash}.${item.extension}`;
                 let fullFilename = path.join(fullPath, filename);

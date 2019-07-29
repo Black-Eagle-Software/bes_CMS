@@ -63,7 +63,7 @@ module.exports = (req, res)=>{
         },
         //5. delete media from the file system
         (data, callback)=>{            
-            let fullPath = path.join(__basedir, 'public', data.filePath);
+            let fullPath = path.join(__basedir, data.filePath);
             let thumb_path = path.join(fullPath, 'thumbnails');
             fs.unlink(path.join(fullPath, data.hashFilename), (err)=>{
                 if(err){

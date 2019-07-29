@@ -155,7 +155,9 @@ module.exports = (req, res)=>{
             //3g. create thumbnail & write thumbnail to thumbnails folder
             (data, callback)=>{
                 let basePath = path.join('media', item.body.owner.toString(), time.toString());
-                let fullPath = path.join(__basedir, 'public', basePath);
+                //let fullPath = path.join(__basedir, 'public', basePath);
+                //change to make media library a touch more secure with access controls
+                let fullPath = path.join(__basedir, basePath);
                 let thumb_path = path.join(fullPath, 'thumbnails');
                 let filename = `${data.fileHash}.${item.body.extension}`;
                 let fullFilename = path.join(fullPath, filename);
