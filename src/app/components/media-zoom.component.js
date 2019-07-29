@@ -9,14 +9,20 @@ export default class MediaZoom extends React.PureComponent{
         this.state={
             tags: []
         };
+
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
     componentDidMount(){
         this.fetchData();
+        document.addEventListener("keydown", this.handleKeyDown);
     }
     componentDidUpdate(prevProps, prevState, snapshot){
         if(this.props.media_source !== prevProps.media_source){
             this.fetchData();
         }
+    }
+    componentWillUnmount(){
+        document.removeEventListener("keydown", this.handleKeyDown);
     }
     fetchData(){
         axios.get(`/api/m/${this.props.media_source.id}/t`)
@@ -26,6 +32,15 @@ export default class MediaZoom extends React.PureComponent{
     }
     handleCloseClick(){
         this.props.onCloseClick();
+    }
+    handleKeyDown(e){
+        if(e.key === 'ArrowLeft'){
+            this.props.onMediaZoomPreviousClick();
+        }else if(e.key === 'ArrowRight'){
+            this.props.onMediaZoomNextClick();
+        }else if(e.key === 'Escape'){
+            this.handleCloseClick();
+        }
     }
     render(){
         const contStyle = {
