@@ -21,9 +21,9 @@ module.exports = (req, res)=>{
     }    
     //let qryString = "SELECT * FROM media WHERE id=?";
     let qryString  = `SELECT * FROM media m	
-                        INNER JOIN tagsToMediaMap tmm 
+                        LEFT JOIN tagsToMediaMap tmm 
                         ON tmm.media = m.id 
-                        INNER JOIN tagsToAccessLevelMap tam 
+                        LEFT JOIN tagsToAccessLevelMap tam 
                         ON tam.tagId = tmm.tag 
                         WHERE m.id = ? 
                         AND (m.owner = ? 
