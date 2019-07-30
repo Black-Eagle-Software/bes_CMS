@@ -57,7 +57,9 @@ export default class UploadMediaDetails extends React.Component{
         const imgStyle = {
             maxHeight: "50%",
             maxWidth: "100%",
-            objectFit: "contain"
+            objectFit: "contain",
+            //boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 12px 40px 0 rgba(0, 0, 0, 0.2)",
+            marginBottom: "1em"
         };
         const detailsHeaderStyle = {
             color: "#666666"
