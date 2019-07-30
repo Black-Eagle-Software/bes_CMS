@@ -305,9 +305,9 @@ export default class UploadMedia extends React.Component{
         };
         const uploadImageTilesDivStyle = {
             flex: "1 1 auto", 
-            margin: "0em 0em 2.5em 1em", 
+            margin: "0em 0em 0em 1em", 
             overflow: "hidden", 
-            paddingTop: "1em"
+            //paddingTop: "1em"
         };
         const uploadInputStyle={
             width: "0.1px",
