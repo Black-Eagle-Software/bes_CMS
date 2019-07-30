@@ -18,11 +18,11 @@ export default class PageContent extends React.Component{
             overflow: "auto"
         };
         const pageStyle = {
-            marginLeft: "1em",
+            marginLeft: this.props.disableContentMargins ? "" : "1em",
             flex: "1 1 auto",
             display: "flex",
             flexFlow: "column nowrap",
-            paddingTop: "1em"
+            paddingTop: this.props.disableContentMargins ? "" : "1em"
         };
         const footerStyle={
             padding: "4px 0px",
