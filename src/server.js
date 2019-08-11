@@ -130,7 +130,16 @@ app.use((req, res, next)=>{
 app.use('/media', (req, res, next)=>{
     console.log("Requesting item from /media directory");
     console.log(req.isAuthenticated());
+    //if this is to the root /media endpoint, let it go 
+    //since that's for all public media anyways
+    if(req.url === '/'){
+        return next();
+    }
     //make sure the user can actually access this file
+    if(!req.isAuthenticated()){
+        res.status(403).send({'message': `User is not authorized to view media item`});
+        return;
+    }
     let user = JSON.parse(req.user);
     let path = req.url[0] === '/' ? `media${req.url}` : `media/${req.url}`;
     let filePath = path.substring(0, path.lastIndexOf('/'));
