@@ -118,10 +118,20 @@ app.use((req, res, next)=>{
 app.use((req, res, next)=>{
     let host = req.get('x-forwarded-host') || '';
     let forwarded = req.get('x-forwarded-for') || '';
+    let method = `\x1b[42m\x1b[30m${req.method}\x1b[0m`;
 
-    console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] < ${req.method} ${req.originalUrl}`);
+    console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] < ${method} ${req.originalUrl}`);
     res.on('finish', ()=>{
-        console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] > ${res.statusCode} ${res.statusMessage} ${res.get('Content-Length') || 0}b sent`);
+        let color = "";
+        switch(res.statusCode){
+            case 200: color = "\x1b[32m"; break;
+            case 304: color = "\x1b[36m"; break;
+            case 403:
+            case 404: color = "\x1b[33m"; break;
+            default: color = ""; break;
+        }
+        let status = `${color}${res.statusCode}\x1b[0m`;
+        console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] > ${status} ${res.statusMessage} ${res.get('Content-Length') || 0}b sent`);
     });
     return next();
 });
