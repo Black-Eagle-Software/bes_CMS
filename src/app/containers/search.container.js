@@ -160,8 +160,11 @@ export default class Search extends React.Component{
                         </div>
                     }
                     {this.state.query_results_media && this.state.query_results_media.length > 0 &&
-                        <div style={{flex: "1 1 auto"}}>
-                            Media:
+                        <>
+                        <div style={{ flex: "0 1 auto"}}>
+                            <h2 style={{margin: "0.5em"}}>Media ({this.state.query_results_media.length})</h2>
+                        </div>
+                        <div style={{flex: "1 0 auto", paddingLeft: "1em", paddingTop: "1em"}}>
                             {/* this breaks because our id isn't the media id for some query results*/}
                             <MediaTilesList media={this.state.query_results_media}
                                             onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
@@ -178,6 +181,7 @@ export default class Search extends React.Component{
                                 })}                        
                             </ul>*/}
                         </div>
+                        </>
                     }
                     {this.state.query_results_tags && this.state.query_results_tags.length > 0 &&
                         <div>Tags:
