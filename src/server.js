@@ -18,6 +18,8 @@ const axios = require('axios');
 const fs = require('fs');
 const { PerformanceObserver, performance } = require('perf_hooks');
 const User = require('./models/user');
+const ServerConsole = require('./helpers/serverConsole');
+const ConsoleColors = require('./helpers/consoleColors');
 
 const path = require('path');
 global.__basedir = path.resolve();
@@ -118,29 +120,31 @@ app.use((req, res, next)=>{
 app.use((req, res, next)=>{
     let host = req.get('x-forwarded-host') || '';
     let forwarded = req.get('x-forwarded-for') || '';
-    let method = `\x1b[42m\x1b[30m${req.method}\x1b[0m`;
+    let method = `${ConsoleColors.greenBg()}${ConsoleColors.blackFg()}${req.method}${ConsoleColors.reset()}`;
 
     console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] < ${method} ${req.originalUrl}`);
     res.on('finish', ()=>{
         let color = '';
         switch(res.statusCode){
-            case 200: color = '\x1b[32m'; break;
-            case 304: color = '\x1b[36m'; break;
+            case 200: color = ConsoleColors.greenFg(); break;
+            case 304: color = ConsoleColors.brightCyanFg(); break;
             case 403:
-            case 404: color = '\x1b[33m'; break;
-            case 500: color = '\x1b[41m'; break;
+            case 404: color = ConsoleColors.yellowFg(); break;
+            case 500: color = ConsoleColors.redBg(); break;
             default: color = ''; break;
         }
-        let status = `${color}${res.statusCode}\x1b[0m`;
-        console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] > ${status} ${res.statusMessage} ${res.get('Content-Length') || 0}b sent`);
+        let status = `${color}${res.statusCode}${ConsoleColors.reset()}`;
+        console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] > ${status} ${res.statusMessage} ${ConsoleColors.yellowFg()}${res.get('Content-Length') || 0}b${ConsoleColors.reset()} sent`);
     });
     return next();
 });
 
 //make sure there are no unauthorized attempts at direct media access
 app.use('/media', (req, res, next)=>{
-    console.log("Requesting item from /media directory");
-    console.log(req.isAuthenticated());
+    //console.log("Requesting item from /media directory");
+    //console.log(`Request is authenticated: ${req.isAuthenticated()}`);
+    ServerConsole.info('Requesting item from /media directory');
+    ServerConsole.debug(`Request is authenticated: ${req.isAuthenticated()}`);
     //if this is to the root /media endpoint, let it go 
     //since that's for all public media anyways
     if(req.url === '/'){
@@ -174,7 +178,7 @@ app.use('/media', (req, res, next)=>{
                             OR m.owner = (SELECT uuf.friendId FROM usersToUsersFriendMap uuf 
                                             WHERE uuf.userId = ?))`    
     res.locals.connection.query(qryString, [filePath, filename, user.id, user.id, user.id], (error, results, fields)=>{
-        console.log(results);
+        //console.log(results);
         if(error){
             res.status(404).send({'message': error.message});
             return;
@@ -198,5 +202,6 @@ let sockets = require('./sockets');
 sockets.socketServer(app, server, connection);
 
 server.listen(port, ()=>{
-    console.log(`Server now running on port: ${port}`);
+    //console.log(`Server now running on port: ${port}`);
+    ServerConsole.info(`Server now running on port: ${port}`);
 });
