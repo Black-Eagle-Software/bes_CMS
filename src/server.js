@@ -122,13 +122,14 @@ app.use((req, res, next)=>{
 
     console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] < ${method} ${req.originalUrl}`);
     res.on('finish', ()=>{
-        let color = "";
+        let color = '';
         switch(res.statusCode){
-            case 200: color = "\x1b[32m"; break;
-            case 304: color = "\x1b[36m"; break;
+            case 200: color = '\x1b[32m'; break;
+            case 304: color = '\x1b[36m'; break;
             case 403:
-            case 404: color = "\x1b[33m"; break;
-            default: color = ""; break;
+            case 404: color = '\x1b[33m'; break;
+            case 500: color = '\x1b[41m'; break;
+            default: color = ''; break;
         }
         let status = `${color}${res.statusCode}\x1b[0m`;
         console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] > ${status} ${res.statusMessage} ${res.get('Content-Length') || 0}b sent`);
