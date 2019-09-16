@@ -100,29 +100,7 @@ export default class UserHomeContainer extends React.Component{
     handleHideZoomMedia(){
         this.setState({show_media_zoom: false});
     }
-    handleZoomMediaNext(){  //just pass origin array here
-        let media_index = this.state.media_zoom_origin.indexOf(this.state.media_zoom_source);
-        if(media_index + 1 === this.state.media_zoom_origin.length){
-            media_index = 0;
-        }else{
-            media_index += 1;
-        }
-        this.setState({
-            media_zoom_source: this.state.media_zoom_origin[media_index]
-        });
-    }
-    handleZoomMediaPrevious(){  //just pass origin array here
-        let media_index = this.state.media_zoom_origin.indexOf(this.state.media_zoom_source);
-        if(media_index === 0){
-            media_index = this.state.media_zoom_origin.length - 1;
-        }else{
-            media_index -= 1;
-        }
-        this.setState({
-            media_zoom_source: this.state.media_zoom_origin[media_index]
-        });
-    }
-    
+        
     render(){
         const contStyle = {
             height: "100%",
@@ -148,9 +126,8 @@ export default class UserHomeContainer extends React.Component{
         return(
             <PageContent    show_media_zoom={this.state.show_media_zoom}
                             media_zoom_source={this.state.media_zoom_source}
-                            hideMediaZoom={()=>{this.handleHideZoomMedia()}}
-                            onMediaZoomPreviousClick={()=>{this.handleZoomMediaPrevious()}}
-                            onMediaZoomNextClick={()=>{this.handleZoomMediaNext()}}>
+                            media_list={this.state.media_zoom_origin}
+                            hideMediaZoom={()=>{this.handleHideZoomMedia()}}>
                 {this.state.show_delete_dialog && 
                     <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
                 }
