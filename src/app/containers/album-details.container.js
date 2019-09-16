@@ -124,29 +124,7 @@ export default class AlbumDetails extends React.Component{
     }
     handleHideZoomMedia(){
         this.setState({show_media_zoom: false});
-    }
-    handleZoomMediaNext(){
-        let media_index = this.state.media_zoom_origin.indexOf(this.state.media_zoom_source);
-        if(media_index + 1 === this.state.media_zoom_origin.length){
-            media_index = 0;
-        }else{
-            media_index += 1;
-        }
-        this.setState({
-            media_zoom_source: this.state.media_zoom_origin[media_index]
-        });
-    }
-    handleZoomMediaPrevious(){
-        let media_index = this.state.media_zoom_origin.indexOf(this.state.media_zoom_source);
-        if(media_index === 0){
-            media_index = this.state.media_zoom_origin.length - 1;
-        }else{
-            media_index -= 1;
-        }
-        this.setState({
-            media_zoom_source: this.state.media_zoom_origin[media_index]
-        });
-    }
+    }   
 
     render(){
         const contStyle = {
@@ -200,9 +178,8 @@ export default class AlbumDetails extends React.Component{
             <PageContent    isAutoSizerListContent={true}
                             show_media_zoom={this.state.show_media_zoom}
                             media_zoom_source={this.state.media_zoom_source}
-                            hideMediaZoom={()=>{this.handleHideZoomMedia()}}
-                            onMediaZoomPreviousClick={()=>{this.handleZoomMediaPrevious()}}
-                            onMediaZoomNextClick={()=>{this.handleZoomMediaNext()}} 
+                            media_list={this.state.media}
+                            hideMediaZoom={()=>{this.handleHideZoomMedia()}} 
                             hasViewToolbar={true}
                             toolbarChildren={
                                 <div>
