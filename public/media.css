@@ -1,3 +1,10 @@
+.active_media_thumbnail{
+    border: 4px solid #ffc801;
+}
+.inactive_media_thumbnail{
+    opacity: 0.35;
+}
+
 .media_tile-container{
     display: flex;
     position: relative;
