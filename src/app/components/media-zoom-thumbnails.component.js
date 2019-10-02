@@ -98,7 +98,7 @@ export default class MediaZoomThumbnails extends React.PureComponent{
             <div key={key} style={Object.assign({}, style, divStyle)}>
                 {this.props.media_list.map((media)=>{
                     const src = `/${media.filePath}/thumbnails/${media.thumbnailFilename}`;
-                    const className = media === this.props.selected_media ? 'active_media_thumbnail' : 'inactive_media_thumbnail';
+                    const className = media === this.props.selected_media ? 'active_media_thumbnail media_thumbnail' : 'inactive_media_thumbnail media_thumbnail';
                     return <img key={uuid()} className={className} style={thumbStyle} src={src} onClick={(e)=>this.handleThumbClick(e, media)}/>
                 })}
             </div>
