@@ -100,29 +100,7 @@ export default class UserHomeContainer extends React.Component{
     handleHideZoomMedia(){
         this.setState({show_media_zoom: false});
     }
-    handleZoomMediaNext(){  //just pass origin array here
-        let media_index = this.state.media_zoom_origin.indexOf(this.state.media_zoom_source);
-        if(media_index + 1 === this.state.media_zoom_origin.length){
-            media_index = 0;
-        }else{
-            media_index += 1;
-        }
-        this.setState({
-            media_zoom_source: this.state.media_zoom_origin[media_index]
-        });
-    }
-    handleZoomMediaPrevious(){  //just pass origin array here
-        let media_index = this.state.media_zoom_origin.indexOf(this.state.media_zoom_source);
-        if(media_index === 0){
-            media_index = this.state.media_zoom_origin.length - 1;
-        }else{
-            media_index -= 1;
-        }
-        this.setState({
-            media_zoom_source: this.state.media_zoom_origin[media_index]
-        });
-    }
-    
+        
     render(){
         const contStyle = {
             height: "100%",
@@ -148,9 +126,8 @@ export default class UserHomeContainer extends React.Component{
         return(
             <PageContent    show_media_zoom={this.state.show_media_zoom}
                             media_zoom_source={this.state.media_zoom_source}
-                            hideMediaZoom={()=>{this.handleHideZoomMedia()}}
-                            onMediaZoomPreviousClick={()=>{this.handleZoomMediaPrevious()}}
-                            onMediaZoomNextClick={()=>{this.handleZoomMediaNext()}}>
+                            media_list={this.state.media_zoom_origin}
+                            hideMediaZoom={()=>{this.handleHideZoomMedia()}}>
                 {this.state.show_delete_dialog && 
                     <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
                 }
@@ -189,94 +166,7 @@ export default class UserHomeContainer extends React.Component{
                                     showAll={true}/>
                 </MediaListUserHomeRow>
             </PageContent>
-        )
-        return(
-            <div style={contStyle}>
-                {this.state.show_delete_dialog && 
-                    <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
-                }
-                {this.state.show_album_delete_dialog &&
-                    <AlbumDeleteConfirmation album={this.state.request_delete_album} onCloseClick={()=>this.handleAlbumDeleteDialogCloseClick()} onConfirmClick={(album)=>this.handleDeleteAlbumConfirmButtonClick(album)}/>
-                }
-                <div style={pageStyle}>
-                    <MediaListUserHomeRow   rowHeader="Recent Albums" 
-                                            rowActions={<>
-                                                <div className="toolbar_btn" onClick={(e)=>this.handleAddAlbumClick(e)}>Add new album</div>
-                                                <div className="toolbar_btn" onClick={()=>this.handleUserShowAllAlbumsClick()}>Show all...</div>
-                                            </>}>
-                        <AlbumCoversList    albums={this.state.albums} 
-                                            onAlbumClick={(album)=>this.props.onAlbumClick(album)} 
-                                            can_delete={true}
-                                            onDeleteButtonClick={(album)=>this.handleAlbumDeleteButtonClick(album)}/>
-                    </MediaListUserHomeRow>
-                    {/*this.state.albums && this.state.albums.length > 0 &&
-                        <div style={paneStyle}>
-                            <div style={{ flex: "1 1 auto" }}>
-                                <h2>Recent Albums</h2>
-                                <button className="btn" onClick={(e)=>this.handleAddAlbumClick(e)}>Add new album...</button>
-                                <button className="btn" onClick={()=>this.handleUserShowAllAlbumsClick()}>Show all...</button>
-                            </div>
-                            <div style={{width: "100%", flex: "1 1 auto", minHeight: "36vh" }}>
-                                <AlbumCoversList    albums={this.state.albums} 
-                                                    onAlbumClick={(album)=>this.props.onAlbumClick(album)} 
-                                                    can_delete={true}
-                                                    onDeleteButtonClick={(album)=>this.handleAlbumDeleteButtonClick(album)}/>
-                            </div>
-                        </div>
-                    */}
-                    <MediaListUserHomeRow   rowHeader="Recent Media"
-                                            rowActions={<>
-                                                <div className="toolbar_btn" onClick={()=>this.handleUserShowAllMediaClick()}>Show all...</div>
-                                            </>}>
-                        <MediaTilesList media={this.state.media} 
-                                        onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                        onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)} 
-                                        can_delete={true} 
-                                        onMediaDeleteClick={(media)=>this.handleDeleteButtonClick(media)}
-                                        showAll={true}/>
-                    </MediaListUserHomeRow>
-                    {/*this.state.media && this.state.media.length > 0 &&
-                        <div style={paneStyle}>
-                            <div style={{ flex: "1 1 auto" }}>
-                                <h2>Recent Media</h2>
-                                <button className="btn" onClick={()=>this.handleUserShowAllMediaClick()}>Show all...</button>
-                            </div>
-                            <div style={{width: "100%", flex: "1 1 auto", minHeight: "36vh" }}>
-                                <MediaTilesList media={this.state.media} 
-                                                onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                                onMediaInfoClick={(media)=>this.handleMediaClick(media)} 
-                                                can_delete={true} 
-                                                onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)}/>
-                            </div>
-                        </div>
-                    */}
-                    <MediaListUserHomeRow rowHeader="Public Media"
-                                            rowActions={<>
-                                                <div className="toolbar_btn" onClick={()=>this.handlePublicShowAllMediaClick()}>Show all...</div>
-                                            </>}>
-                        <MediaTilesList media={this.state.public_media} 
-                                        onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                        onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)} 
-                                        can_delete={false}
-                                        showAll={true}/>
-                    </MediaListUserHomeRow>
-                    {/*this.state.public_media && this.state.public_media.length > 0 &&
-                        <div style={paneStyle}>
-                            <div style={{ flex: "1 1 auto" }}>
-                                <h2>Recent Public Media</h2>
-                                <button className="btn" onClick={()=>this.handlePublicShowAllMediaClick()}>Show all...</button>
-                            </div>
-                            <div style={{width: "100%", flex: "1 1 auto", minHeight: "36vh" }}>
-                                <MediaTilesList media={this.state.public_media} 
-                                                onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                                onMediaInfoClick={(media)=>this.handleMediaClick(media)} 
-                                                can_delete={false}/>
-                            </div>
-                        </div>
-                    */}
-                </div>
-            </div>
-        );
+        )        
     }
 
     updateMediaFromDatabase(){

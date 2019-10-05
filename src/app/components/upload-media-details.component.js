@@ -43,8 +43,8 @@ export default class UploadMediaDetails extends React.Component{
             display: "flex",
             flexDirection: "column",
             width: "50%",
-            background: "#1f1f1f",
-            color: "#f5f5f5",
+            background: "#f5f5f5",
+            color: "#1f1f1f",
             padding: "1em"
         };
         const closeStyle = {
@@ -56,7 +56,10 @@ export default class UploadMediaDetails extends React.Component{
         };
         const imgStyle = {
             maxHeight: "50%",
-            objectFit: "contain"
+            maxWidth: "100%",
+            objectFit: "contain",
+            //boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 12px 40px 0 rgba(0, 0, 0, 0.2)",
+            marginBottom: "1em"
         };
         const detailsHeaderStyle = {
             color: "#666666"

@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import TagList from './tags/tag-list.component';
+import MediaZoomThumbnails from './media-zoom-thumbnails.component';
 
 export default class MediaZoom extends React.PureComponent{
     constructor(props){
@@ -9,14 +10,20 @@ export default class MediaZoom extends React.PureComponent{
         this.state={
             tags: []
         };
+
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
     componentDidMount(){
         this.fetchData();
+        document.addEventListener("keydown", this.handleKeyDown);
     }
     componentDidUpdate(prevProps, prevState, snapshot){
         if(this.props.media_source !== prevProps.media_source){
             this.fetchData();
         }
+    }
+    componentWillUnmount(){
+        document.removeEventListener("keydown", this.handleKeyDown);
     }
     fetchData(){
         axios.get(`/api/m/${this.props.media_source.id}/t`)
@@ -26,6 +33,15 @@ export default class MediaZoom extends React.PureComponent{
     }
     handleCloseClick(){
         this.props.onCloseClick();
+    }
+    handleKeyDown(e){
+        if(e.key === 'ArrowLeft'){
+            this.props.onMediaZoomPreviousClick();
+        }else if(e.key === 'ArrowRight'){
+            this.props.onMediaZoomNextClick();
+        }else if(e.key === 'Escape'){
+            this.handleCloseClick();
+        }
     }
     render(){
         const contStyle = {
@@ -46,7 +62,7 @@ export default class MediaZoom extends React.PureComponent{
 
         const imgStyle = {
             maxWidth: "100%",
-            maxHeight: "100%",
+            maxHeight: "80%",
             boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 12px 40px 0 rgba(0, 0, 0, 0.2)"
         };
         const vidStyle = {
@@ -115,6 +131,7 @@ export default class MediaZoom extends React.PureComponent{
                         <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
                     </svg>
                 </div>
+                <div style={{flex: '1 1 auto'}}></div>
                 {!isVideo && 
                     <img style={imgStyle} src={src} alt={filename}/>
                 }
@@ -139,7 +156,6 @@ export default class MediaZoom extends React.PureComponent{
                             </svg>
                         </a>
                     </span>
-                    {/*TODO: this will want a link to the /media/id details page for this media item*/}
                 </div>
                 <span> 
                     {/*this.props.media_tags.map(tag=>{
@@ -150,6 +166,12 @@ export default class MediaZoom extends React.PureComponent{
                     <TagList    tags={this.state.tags}
                                 show_access_level_colors={true}/>
                 </span>
+                <div style={{flex: '1 1 auto'}}></div>
+                <MediaZoomThumbnails media_list={this.props.media_list} 
+                                    selected_media={this.props.media_source}
+                                    nextMedia={()=>this.props.onMediaZoomNextClick()}
+                                    previousMedia={()=>this.props.onMediaZoomPreviousClick()}
+                                    onThumbClick={(media)=>this.props.onMediaZoomThumbClick(media)}/>
             </div>
         );
     }

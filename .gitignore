@@ -7,3 +7,6 @@ server.js.map
 public/bundle.js
 public/bundle.js.map
 package-lock.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/3/v16/.suo

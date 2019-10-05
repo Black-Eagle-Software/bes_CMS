@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import PageContent from '../components/pages/page-component';
 import UploadMediaTilesList from '../components/media/upload-media-tiles-list.component';
 import UploadMediaDetails from '../components/upload-media-details.component';
 import Media from '../../models/media';
@@ -294,8 +295,8 @@ export default class UploadMedia extends React.Component{
         const uploadColStyle = {
             flex: "0 0 auto", 
             overflow: "auto", 
-            background: "#1f1f1f", 
-            color: "#f5f5f5", 
+            background: "#c6c6c6", 
+            color: "#1f1f1f", 
             height: "100%", 
             maxWidth: "15em",
             width: "15em", 
@@ -304,9 +305,9 @@ export default class UploadMedia extends React.Component{
         };
         const uploadImageTilesDivStyle = {
             flex: "1 1 auto", 
-            margin: "0em 0em 2.5em 1em", 
+            margin: "0em 0em 0em 1em", 
             overflow: "hidden", 
-            paddingTop: "1em"
+            //paddingTop: "1em"
         };
         const uploadInputStyle={
             width: "0.1px",
@@ -327,9 +328,8 @@ export default class UploadMedia extends React.Component{
             justifyContent: "flex-start"
         };
         const queueCountStyle={
-            //padding: "0.25em 0.5em",
             fontSize: "1.35em",
-            color: "#ffc801"
+            color: "#1f1f1f",
         };
         const queueCountLabelStyle = {
             flex: "1 1 auto"
@@ -344,6 +344,7 @@ export default class UploadMedia extends React.Component{
         //this needs a lot more work
 
         return(
+            <PageContent isAutoSizerListContent={true} disableContentMargins={true}>
             <div style={contStyle}>
                 {this.state.has_upload_error &&
                     <div style={errorBarStyle}>
@@ -367,7 +368,7 @@ export default class UploadMedia extends React.Component{
                                     </div>
                                     Create new album for upload(s)?
                                     <h3>Tags:</h3>
-                                    <button>Add new tag</button>                            
+                                    <button className="btn">Add new tag</button>                            
                                     {/*<TagsSelectableList tags={this.state.tags} selected_tags={this.state.global_tags} onTagClick={(tag, index, value)=>this.handleGlobalTagClick(tag, index, value)}/>*/}
                                     <TagConnectedLists  primaryTags={this.state.global_tags}
                                                         secondaryTags={this.state.tags}
@@ -400,6 +401,7 @@ export default class UploadMedia extends React.Component{
                     }
                 </div>                
             </div>
+            </PageContent>
         );
     }
     resetErrorBar(){

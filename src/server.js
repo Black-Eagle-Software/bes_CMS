@@ -15,10 +15,11 @@ require('dotenv').config();
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const axios = require('axios');
-//const io = require('socket.io').listen(server);
 const fs = require('fs');
 const { PerformanceObserver, performance } = require('perf_hooks');
 const User = require('./models/user');
+const ServerConsole = require('./helpers/serverConsole');
+const ConsoleColors = require('./helpers/consoleColors');
 
 const path = require('path');
 global.__basedir = path.resolve();
@@ -68,23 +69,12 @@ passport.use(new localStrategy(
             } else {
                 console.log(challenge.isDirty);
                 if(challenge.isDirty){
-                    //console.log('User must update password');
                     return done(null, user, {message: 'USER_PASS_UPDATE'});
                 }
-                //confirm user role for use later
-                /*let queryString = "SELECT userRoleId FROM userRolesToUsersMap ur INNER JOIN users u ON u.id = ur.userId WHERE u.email=?";
-                connection.query(queryString, [email], (error, results, fields)=>{
-                    //if(error) throw error;
-                    //console.log(results[0].userRoleId);
-                    results[0].userRoleId === 'Administrator' ? user.role = 'Administrator' : user.role = 'User';
-                    return done(null, user);
-                });*/
-                axios.get(`http://localhost:8080/api/auth/role?user=${user.id}`).then(results=>{
-                    //console.log(results.data);    
+                axios.get(`http://localhost:8080/api/auth/role?user=${user.id}`).then(results=>{   
                     user.role = results.data.role;
                     return done(null, user);
-                });         
-                //return done(null, user);
+                });
             }
         }).catch(error => done(error));
     }
@@ -94,12 +84,7 @@ passport.serializeUser((user, done)=>{
 });
 passport.deserializeUser((id, done)=>{
     axios.get(`http://localhost:8080/api/users/${id}`).then(results=>{
-        //console.log(results.data[0]);
-        //results = JSON.stringify(results.data[0]);
-        //console.log(results);
-        //done(null, results);
-        axios.get(`http://localhost:8080/api/auth/role?user=${id}`).then(results2=>{
-            //console.log(results.data);    
+        axios.get(`http://localhost:8080/api/auth/role?user=${id}`).then(results2=>{  
             results.data[0].role = results2.data.role;
             results = JSON.stringify(results.data[0]);
             return done(null, results);
@@ -115,8 +100,6 @@ var sessionStore = new mysqlSessionStore({clearExpired: true, expiration: 360000
 //add & configure sessions
 app.use(session({
     genid:(req)=>{
-        //console.log('Inside the session middleware');
-        //console.log(req.sessionID);
         return uuid();
     },
     name: 'besCMS.sid',
@@ -130,35 +113,86 @@ app.use(passport.session());
 
 //configure the database connection
 app.use((req, res, next)=>{
-    //from here: https://github.com/mysqljs/mysql#pooling-connections
-    //every result gets a reference to the dbase connection pool
-    //res.locals.connection.query("",(error, results, fields)=>{});
-    //if need multiple serial queries, do things by hand:
-    //res.locals.connection.getConnection((err, connection)=>{
-    //  if(err) throw err;
-    //  connection.query("", (error, results, fields)=>{
-    //      //make additional queries here    
-    //      connection.release();   //release connection when done
-    //      if(error) throw error;
-    //      //do any remaining tasks  
-    //  })        
-    //})
     res.locals.connection = connection;
-    next();
+    return next();
 });
 
 app.use((req, res, next)=>{
-    //req.uuid = uuid();
     let host = req.get('x-forwarded-host') || '';
     let forwarded = req.get('x-forwarded-for') || '';
+    let method = `${ConsoleColors.greenBg()}${ConsoleColors.blackFg()}${req.method}${ConsoleColors.reset()}`;
 
-    //console.log(req.headers);
-    console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] < ${req.method} ${req.originalUrl}`);
+    console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] < ${method} ${req.originalUrl}`);
     res.on('finish', ()=>{
-        console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] > ${res.statusCode} ${res.statusMessage} ${res.get('Content-Length') || 0}b sent`);
+        let color = '';
+        switch(res.statusCode){
+            case 200: color = ConsoleColors.greenFg(); break;
+            case 304: color = ConsoleColors.brightCyanFg(); break;
+            case 403:
+            case 404: color = ConsoleColors.yellowFg(); break;
+            case 500: color = ConsoleColors.redBg(); break;
+            default: color = ''; break;
+        }
+        let status = `${color}${res.statusCode}${ConsoleColors.reset()}`;
+        console.log(`${new Date().toISOString()} [${req.sessionID}, ${host}, ${forwarded}] > ${status} ${res.statusMessage} ${ConsoleColors.yellowFg()}${res.get('Content-Length') || 0}b${ConsoleColors.reset()} sent`);
     });
-    next();
+    return next();
 });
+
+//make sure there are no unauthorized attempts at direct media access
+app.use('/media', (req, res, next)=>{
+    //console.log("Requesting item from /media directory");
+    //console.log(`Request is authenticated: ${req.isAuthenticated()}`);
+    ServerConsole.info('Requesting item from /media directory');
+    ServerConsole.debug(`Request is authenticated: ${req.isAuthenticated()}`);
+    //if this is to the root /media endpoint, let it go 
+    //since that's for all public media anyways
+    if(req.url === '/'){
+        return next();
+    }
+    //make sure the user can actually access this file
+    if(!req.isAuthenticated()){
+        res.status(403).send({'message': `User is not authorized to view media item`});
+        return;
+    }
+    let user = JSON.parse(req.user);
+    let path = req.url[0] === '/' ? `media${req.url}` : `media/${req.url}`;
+    let filePath = path.substring(0, path.lastIndexOf('/'));
+    let filename = path.substring(path.lastIndexOf('/') + 1);
+    //we need to modify our query terms if we're requesting a thumbnail    
+    if(filePath.includes('thumbnails')){
+        filePath = filePath.substring(0, filePath.lastIndexOf('/'));    //this should remove /thumbnails from path
+        filenameSplit = filename.split('_thumb');                       //this will remove the _thumb suffix from filename
+        filename = `${filenameSplit[0]}${filenameSplit[1]}`;            //join our base filename and extension for use in sql query
+    }
+    let qryString  = `SELECT * FROM media m	
+                        LEFT JOIN tagsToMediaMap tmm 
+                        ON tmm.media = m.id 
+                        LEFT JOIN tagsToAccessLevelMap tam 
+                        ON tam.tagId = tmm.tag 
+                        WHERE (m.filePath = ? AND m.hashFilename = ?) 
+                        AND (m.owner = ? 
+                            OR tam.accessLevel = 'Public' 
+                            OR m.owner = (SELECT uuf.userId FROM usersToUsersFriendMap uuf 
+                                            WHERE uuf.friendId = ?) 
+                            OR m.owner = (SELECT uuf.friendId FROM usersToUsersFriendMap uuf 
+                                            WHERE uuf.userId = ?))`    
+    res.locals.connection.query(qryString, [filePath, filename, user.id, user.id, user.id], (error, results, fields)=>{
+        //console.log(results);
+        if(error){
+            res.status(404).send({'message': error.message});
+            return;
+        }
+        //if we have a result, then we should be able to show it
+        if(results.length > 0){
+            return next();
+        }else{
+            res.status(403).send({'message': `User is not authorized to view media item`});
+            return;
+        }
+    });
+    //return next();
+}, express.static("media"));
 
 app.use(express.static("public"));
 
@@ -166,69 +200,8 @@ app.use('/', routes);
 
 let sockets = require('./sockets');
 sockets.socketServer(app, server, connection);
-//most of this is from here: https://code.tutsplus.com/tutorials/how-to-create-a-resumable-video-uploader-in-nodejs--net-25445
-/*let upload_files = {};
-let buffer = 10485760;
-let chunk = 524288;
-io.on('connection', (socket)=>{
-    let id = uuid();
-    console.log(`A new socket.io connection was established [${id}]`);
-    socket.on('disconnect', ()=>{
-        console.log(`Socket [${id}] disconnected`);
-    });
-    socket.on('start_upload', (data) => {
-        let name = data.name;
-        upload_files[name] = {
-            filename    : `/tmp/${name}`,
-            fileSize    : data.size,
-            data        : "",
-            downloaded  : 0,
-            start       : performance.now()
-        };
-        let place = 0;
-        try{
-            let stat = fs.statSync(upload_files[name].filename);
-            if(stat.isFile()){
-                upload_files[name].downloaded = stat.size;
-                place = stat.size / chunk;     //send file in .5 MB chunks
-            }
-        } catch(err){}  //new file
-        fs.open(upload_files[name].filename, "a", "0755", (err, fd)=>{
-            if(err){
-                console.log(err);
-                return;
-            }
-            upload_files[name].handler = fd;
-            socket.emit(`next_upload_chunk_${name}`, {'place' : place, 'percent' : 0});
-        });
-    });
-    socket.on('upload', (data) => {
-        let name = data.name;
-        let file = upload_files[name];
-        file.downloaded += data.data.length;
-        file.data += data.data;
-        if(file.downloaded === file.fileSize){
-            fs.write(file.handler, file.data, null, 'Binary', (err, written) => {
-                //do something
-                let time = (performance.now() - file.start) / 1000; //elapsed time in seconds
-                let speed = (file.fileSize / 1000000) / time            //transer speed in Mbps
-                socket.emit(`upload_done_${name}`, {'tmp_file' : file.filename, 'elapsed_time' : time, 'transfer_speed' : speed});
-            });
-        } else if(file.data.length > buffer){ //buffer is 10 MB and it's full
-            fs.write(file.handler, file.data, null, 'Binary', (err, written) => {
-                file.data = "";
-                let place = file.downloaded / chunk;
-                let percent = (file.downloaded / file.fileSize) * 100;
-                socket.emit(`next_upload_chunk_${name}`, {'place' : place, 'percent' : percent});
-            });
-        } else {
-            let place = file.downloaded / chunk;
-            let percent = (file.downloaded / file.fileSize) * 100;
-            socket.emit(`next_upload_chunk_${name}`, {'place' : place, 'percent' : percent});
-        }
-    });
-});*/
 
 server.listen(port, ()=>{
-    console.log(`Server now running on port: ${port}`);
+    //console.log(`Server now running on port: ${port}`);
+    ServerConsole.info(`Server now running on port: ${port}`);
 });

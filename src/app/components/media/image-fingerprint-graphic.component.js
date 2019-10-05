@@ -48,7 +48,7 @@ export default class ImageFingerprintGraphic extends React.Component{
             minHeight: "0.5em"
         };
         return(
-            <div style={contStyle}>
+            <div style={contStyle} title={`Hash (hex):\n${this.props.hash}`}>
                 {this.state.bits.map(bit=>{
                     if(bit === '1'){
                         return <div key={uuid()} style={bitStyleOn}></div>

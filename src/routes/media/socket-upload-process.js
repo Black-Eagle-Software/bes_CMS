@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const async = require('async');
 const gm = require('gm').subClass({imageMagick: true});
 const pHash = require('../../helpers/perceptualHashing');
+const getImagePixels = require('../../helpers/getImagePixels');
 const { PerformanceObserver, performance } = require('perf_hooks');
 
 module.exports = (socket, dbase) => {
@@ -53,16 +54,23 @@ module.exports = (socket, dbase) => {
                 socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing', 'status' : 'starting'});
                 if(item.mimetype.includes('image')){
                     let s = fs.ReadStream(item.filename);
-                    pHash.pHashImageStream(s, (err, phash)=>{
-                        if(err) {
+                    let size = 32;
+                    getImagePixels.fromImageStream(s, size, (err, pixels)=>{
+                        if(err){
                             callback(err);
                             return;
                         }
                         s.destroy();
-                        socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing (image)', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
-                        //callback(null, {fileHash: data, pHash: phash});
-                        callback(null, {fileHash: item.hash, pHash: phash});
-                    });
+                        pHash.pHashPixelArray(pixels, size, (err, phash)=>{
+                            if(err) {
+                                callback(err);
+                                return;
+                            }                            
+                            socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing (image)', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
+                            //callback(null, {fileHash: data, pHash: phash});
+                            callback(null, {fileHash: item.hash, pHash: phash});
+                        });
+                    });                    
                 }else{
                     //TODO: this is a video, so do *something*
                     socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing (video)', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
@@ -126,7 +134,7 @@ module.exports = (socket, dbase) => {
             (data, callback)=>{
                 socket.emit(`process_status_${id}`, {'step' : 'Creating folders and moving files into place', 'status' : 'starting'});
                 let basePath = path.join('media', item.owner.toString(), time.toString());
-                let fullPath = path.join(__basedir, 'public', basePath);
+                let fullPath = path.join(__basedir, basePath);
                 let thumb_path = path.join(fullPath, 'thumbnails');
                 let filename = `${data.fileHash}.${item.extension}`;
                 let fullFilename = path.join(fullPath, filename);
