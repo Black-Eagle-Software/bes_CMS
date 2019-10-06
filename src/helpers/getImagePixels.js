@@ -21,7 +21,7 @@ class getImagePixels{
                 //buffer should contain pixel data
                 //need to put that data into an array
                 let pixels = [];
-                for(let i=0; i < imgSize; i++){
+                for(let i=0; i < buffer.length; i++){
                     pixels.push(buffer.readUInt8(i));
                 }
                 callback(null, pixels);
@@ -45,7 +45,7 @@ class getImagePixels{
                 //buffer should contain pixel data
                 //need to put that data into an array
                 let pixels = [];
-                for(let i=0; i < imgSize; i++){
+                for(let i=0; i < buffer.length; i++){
                     pixels.push(buffer.readUInt8(i));
                 }
                 callback(null, pixels);
