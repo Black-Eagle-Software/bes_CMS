@@ -335,7 +335,8 @@ export default class UploadMedia extends React.Component{
                                     </div>
                                     Create new album for upload(s)?
                                     <h3>Tags:</h3>
-                                    <button className="btn">Add new tag</button>                            
+                                    {/*Add new tag UX not yet implemented*/}
+                                    {/*<button className="btn">Add new tag</button>*/}
                                     {/*<TagsSelectableList tags={this.state.tags} selected_tags={this.state.global_tags} onTagClick={(tag, index, value)=>this.handleGlobalTagClick(tag, index, value)}/>*/}
                                     <TagConnectedLists  primaryTags={this.state.global_tags}
                                                         secondaryTags={this.state.tags}
