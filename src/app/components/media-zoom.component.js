@@ -38,9 +38,9 @@ export default class MediaZoom extends React.PureComponent{
     }
     handleKeyDown(e){
         if(e.key === 'ArrowLeft'){
-            this.props.onMediaZoomPreviousClick();
+            this.handleZoomMediaPrevious();
         }else if(e.key === 'ArrowRight'){
-            this.props.onMediaZoomNextClick();
+            this.handleZoomMediaNext();
         }else if(e.key === 'Escape'){
             this.handleCloseClick();
         }
@@ -134,7 +134,6 @@ export default class MediaZoom extends React.PureComponent{
             height: "24px"
         };
 
-        //console.log(this.props.media_source);
         //this gets in a type as props.image_source.file.type
         //type is either "image" or "video"
         //can use that to determine whether to show image 
@@ -186,11 +185,6 @@ export default class MediaZoom extends React.PureComponent{
                     </span>
                 </div>
                 <span> 
-                    {/*this.props.media_tags.map(tag=>{
-                        return <a key={uuid()} className={"tag gray"} href={`/search?t=${tag.description}`}>
-                                    {tag.description}
-                                </a>
-                    })*/}
                     <TagList    tags={this.state.tags}
                                 show_access_level_colors={true}/>
                 </span>
