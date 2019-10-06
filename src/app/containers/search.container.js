@@ -125,6 +125,7 @@ export default class Search extends React.Component{
             <PageContent    isAutoSizerListContent={true}
                             show_media_zoom={this.state.show_media_zoom}
                             media_zoom_source={this.state.media_zoom_source}
+                            media_list={this.state.query_results_media}
                             hideMediaZoom={()=>{this.handleHideZoomMedia()}}
                             onMediaZoomPreviousClick={()=>{this.handleZoomMediaPrevious(this.state.query_results_media)}}
                             onMediaZoomNextClick={()=>{this.handleZoomMediaNext(this.state.query_results_media)}} 
