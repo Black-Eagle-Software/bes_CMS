@@ -79,7 +79,7 @@ export default class AlbumDetails extends React.Component{
         e.preventDefault();
         e.stopPropagation();
         let temp = {'album_name': this.state.album_name};
-        temp.media = this.state.temp_album_media.map(m=>{return {'id': m.file.id};});
+        temp.media = this.state.temp_album_media.map(m=>{return {'id': m.id};});
         if(this.props.match.params.id){
             axios.put(`/api/a/${this.state.album.id}`, temp)
             .then(response=>{
