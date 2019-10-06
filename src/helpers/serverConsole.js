@@ -2,8 +2,10 @@ const ConsoleColors = require('./consoleColors');
 
 class ServerConsole {
     //this makes it easier to output strings to the node server's console
-    //whiel making use of colors for types of output
+    //while making use of colors for types of output
     static debug(string){
+        //requires setting the VERBOSE_LOGGING environment variable to true
+        if(!this.verboseLogging) return;
         console.log(ConsoleColors.yellowFg() + string + ConsoleColors.reset());
     }
     static error(string){
@@ -14,6 +16,11 @@ class ServerConsole {
     }
     static warning(string){
         console.log(ConsoleColors.yellowBg() + ConsoleColors.blackFg() + string + ConsoleColors.reset());
+    }
+
+    static setEnvironment(args){
+        if(this.verboseLogging !== undefined) return;
+        this.verboseLogging = args.verboseLogging;
     }
 }
 

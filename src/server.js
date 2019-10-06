@@ -28,11 +28,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var env = process.env;
+let isProduction = env.IS_PRODUCTION === 'true';
+ServerConsole.setEnvironment({verboseLogging: env.VERBOSE_LOGGING === 'true' && isProduction});
 
 var port = env.PORT || 8080;    //set our port
 
 //configure mysql connection to database
-let config = env.IS_PRODUCTION === "true" ? {   //.env variables are always string
+let config = isProduction ? {   //.env variables are always string
     host: env.DBASE_HOST_PROD,
     user: env.DBASE_USER_PROD,
     password: env.DBASE_PASSWORD_PROD,
@@ -63,11 +65,10 @@ passport.use(new localStrategy(
             results = JSON.stringify(results.data[0]);
             let user = new User(results);
             let challenge = user.verifyPassword(password);
-            console.log(challenge);
+            ServerConsole.debug(challenge);
             if(!challenge.allowed){
                 return done(null, false, {message: 'Wrong or invalid password specified'});
             } else {
-                console.log(challenge.isDirty);
                 if(challenge.isDirty){
                     return done(null, user, {message: 'USER_PASS_UPDATE'});
                 }
@@ -141,8 +142,6 @@ app.use((req, res, next)=>{
 
 //make sure there are no unauthorized attempts at direct media access
 app.use('/media', (req, res, next)=>{
-    //console.log("Requesting item from /media directory");
-    //console.log(`Request is authenticated: ${req.isAuthenticated()}`);
     ServerConsole.info('Requesting item from /media directory');
     ServerConsole.debug(`Request is authenticated: ${req.isAuthenticated()}`);
     //if this is to the root /media endpoint, let it go 
@@ -178,7 +177,6 @@ app.use('/media', (req, res, next)=>{
                             OR m.owner = (SELECT uuf.friendId FROM usersToUsersFriendMap uuf 
                                             WHERE uuf.userId = ?))`    
     res.locals.connection.query(qryString, [filePath, filename, user.id, user.id, user.id], (error, results, fields)=>{
-        //console.log(results);
         if(error){
             res.status(404).send({'message': error.message});
             return;
@@ -191,7 +189,6 @@ app.use('/media', (req, res, next)=>{
             return;
         }
     });
-    //return next();
 }, express.static("media"));
 
 app.use(express.static("public"));
@@ -202,6 +199,5 @@ let sockets = require('./sockets');
 sockets.socketServer(app, server, connection);
 
 server.listen(port, ()=>{
-    //console.log(`Server now running on port: ${port}`);
     ServerConsole.info(`Server now running on port: ${port}`);
 });
