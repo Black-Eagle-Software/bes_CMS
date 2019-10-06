@@ -65,7 +65,7 @@ passport.use(new localStrategy(
             results = JSON.stringify(results.data[0]);
             let user = new User(results);
             let challenge = user.verifyPassword(password);
-            ServerConsole.debug(challenge);
+            ServerConsole.debug(`Server get user from email password verfiy challenge: ${challenge}`);
             if(!challenge.allowed){
                 return done(null, false, {message: 'Wrong or invalid password specified'});
             } else {
