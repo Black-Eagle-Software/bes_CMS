@@ -3,49 +3,6 @@ import MediaZoom from '../media-zoom.component';
 import ViewToolbar from '../view-toolbar.component';
 
 export default class PageContent extends React.Component{
-    constructor(props){
-        super(props);
-
-        this.state={
-            media_list: {},
-            media_zoom_source: {}
-        };
-    }
-    componentWillReceiveProps(newProps){
-        if(newProps.media_list === this.state.media_list && newProps.media_zoom_source === this.state.media_zoom_source) return;
-        this.setState({
-            media_list: newProps.media_list,
-            media_zoom_source: newProps.media_zoom_source
-        });
-    }
-
-    handleZoomMediaNext(){  //just pass origin array here
-        let media_index = this.state.media_list.indexOf(this.state.media_zoom_source);
-        if(media_index + 1 === this.state.media_list.length){
-            media_index = 0;
-        }else{
-            media_index += 1;
-        }
-        this.setState({
-            media_zoom_source: this.state.media_list[media_index]
-        });
-    }
-    handleZoomMediaPrevious(){  //just pass origin array here
-        let media_index = this.state.media_list.indexOf(this.state.media_zoom_source);
-        if(media_index === 0){
-            media_index = this.state.media_list.length - 1;
-        }else{
-            media_index -= 1;
-        }
-        this.setState({
-            media_zoom_source: this.state.media_list[media_index]
-        });
-    }
-    handleZoomMediaThumbClick(media){
-        //set our new zoomed media to passed-in argument
-        this.setState({media_zoom_source: media});
-    }
-
     render(){
         const contStyle = {
             //height: "100%",
@@ -85,8 +42,8 @@ export default class PageContent extends React.Component{
                     </ViewToolbar>
                 }
                 {this.props.show_media_zoom &&
-                    <MediaZoom  media_source={this.state.media_zoom_source}
-                                media_list={this.state.media_list}
+                    <MediaZoom  media_source={this.props.media_zoom_source}
+                                media_list={this.props.media_list}
                                 onCloseClick={()=>this.props.hideMediaZoom()}
                                 onMediaZoomPreviousClick={()=>this.handleZoomMediaPrevious()}
                                 onMediaZoomNextClick={()=>this.handleZoomMediaNext()}
