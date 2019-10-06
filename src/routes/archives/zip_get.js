@@ -1,7 +1,7 @@
 const fs = require('fs');
+const ServerConsole = require('../../helpers/serverConsole');
 
 module.exports = (req, res)=>{
-    console.log(req.params.file);
     if(!req.params.file){
         res.status(403).send({'message':'Request file was undefined', 'req':req});
         return;
@@ -12,7 +12,7 @@ module.exports = (req, res)=>{
         return;
     }
     res.on('finish', ()=>{
-        console.log(`Deleting temporary archive file: ${file_path}`);
+        ServerConsole.debug(`Deleting temporary archive file: ${file_path}`);
         fs.unlink(file_path, (err)=>{
             if(err && err.code !== 'ENOENT'){
                 throw err;

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const async = require('async');
+const ServerConsole = require('../../helpers/serverConsole');
 
 module.exports = (req, res)=>{
     //confirm user making request is the owner of the media
@@ -10,7 +11,7 @@ module.exports = (req, res)=>{
     //delete media from the filesystem
     if(!req.isAuthenticated()) return;  //don't do this if not a valid user
     let user = JSON.parse(req.user);
-    console.log(`User ${user.id} is trying to delete media item ${req.params.id}`);    
+    ServerConsole.debug(`User ${user.id} is trying to delete media item ${req.params.id}`);    
     async.waterfall([
         //1. get the media in question and confirm ownership
         (callback)=>{
@@ -20,7 +21,6 @@ module.exports = (req, res)=>{
                     callback(error);
                     return;
                 }
-                //console.log(results[0].owner);
                 if(user.id !== results[0].owner){
                     callback(new Error(`User is not authorized to delete media item ${req.params.id}`));
                     return;

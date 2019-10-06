@@ -1,4 +1,5 @@
 const async = require('async');
+const ServerConsole = require('../../../helpers/serverConsole');
 
 module.exports = (req, res)=>{
     //update our database with a new set of tags for this media item
@@ -6,8 +7,8 @@ module.exports = (req, res)=>{
     //with new mappings
     if(!req.isAuthenticated()) return;  //don't do this if not a valid user
     let user = JSON.parse(req.user);
-    console.log(`User ${user.id} is trying to edit media item ${req.params.id} tags`);
-    console.log(req.body);
+    ServerConsole.debug(`User ${user.id} is trying to edit media item ${req.params.id} tags`);
+    ServerConsole.debug(`Media tags update request body: ${req.body}`);
     async.waterfall([
         //1. get the media in question and confirm ownership
         (callback)=>{
@@ -66,30 +67,4 @@ module.exports = (req, res)=>{
             res.status(200).send({'message':'Media tags successfully updated'});
         }
     });    
-    /*let queryString = "DELETE FROM tagsToMediaMap tmm WHERE tmm.media=?";
-    res.locals.connection.query(queryString, [req.params.id], (error, results, fields)=>{
-        if(error) {
-            res.status(500).send({'message':`An error occurred: ${error.message}`});
-            return;
-        }
-        
-        if(req.body.length === 0) {
-            res.status(200).send({'message':`Removed all tags for media item ${req.params.id}`});
-            return;
-        }
-        //get our data setup
-        let tags = [];
-        req.body.forEach(tag => {
-            tags.push([req.params.id, tag.id]);
-        });
-        queryString = "INSERT INTO tagsToMediaMap tmm (tmm.media, tmm.tag) VALUES ?";
-        res.locals.connection.query(queryString, [tags], (error, results, fields)=>{
-            if(error) {
-                res.status(500).send({'message':`An error occurred: ${error.message}`});
-                return;
-            }
-            res.status(200).send({'message':`Tags updated for media ${req.params.id}`});
-            return;
-        });
-    });*/    
 };

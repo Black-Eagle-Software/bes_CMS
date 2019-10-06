@@ -5,8 +5,6 @@ class User{
         let inputs = JSON.parse(props)[0];
         if(!inputs) inputs = JSON.parse(props);
         if(!inputs) throw error(`Can not initialize User object from given props: ${props}`);
-        //console.log(inputs);
-        //console.log(JSON.parse(props));
         this.id = inputs.id;
         this.name = inputs.name;
         this.email = inputs.email;
@@ -14,7 +12,6 @@ class User{
         this.salt = inputs.salt;
         this.requiresPasswordReset = inputs.requiresPasswordReset;
         this.role = "User";
-        //console.log(`ID: ${this.id} name: ${this.name} email: ${this.email} password: ${this.password} salt: ${this.salt}`);
     }
     verifyPassword(input){
         if(this.password === null || this.password === "" || this.salt === null || this.salt === ""
@@ -23,7 +20,6 @@ class User{
         }        
         let saltedInput = this.salt + input;
         let hash = crypto.createHash('sha512').update(saltedInput).digest('hex');
-        //console.log(`Input: ${input}, hash: ${hash}, password: ${this.password}, match?: ${hash === this.password}`);
         let match = hash === this.password;
         return {allowed: match, isDirty: this.requiresPasswordReset === 'true'};    //hacky string vs boolean handling
     }
@@ -31,7 +27,6 @@ class User{
         this.salt = crypto.randomBytes(32).toString('hex');
         let saltedPass = this.salt + input;
         this.password = crypto.createHash('sha512').update(saltedPass).digest('hex');
-        //console.log(`Input: ${input}, salt: ${salt}, password: ${this.password}`);
     }
 }
 

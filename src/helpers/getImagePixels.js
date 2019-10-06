@@ -38,9 +38,6 @@ export default class getImagePixels{
                 callback(err, null);
                 return;
             }
-            //console.log(buffer);
-            //console.log(buffer.length);
-            //console.log(buffer.byteLength);
             //fs.writeFile('test.png', buffer, (err)=>{});
             let str = new PNG();
             str.end(buffer);

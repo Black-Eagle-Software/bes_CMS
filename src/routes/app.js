@@ -5,6 +5,8 @@ const ReactDOMServer = require('react-dom/server');
 const ReactRouterDOM = require('react-router-dom');
 const App = require('../app/app').default;
 
+const ServerConsole = require('../helpers/serverConsole');
+
 const routes = [
     {
         path: '/',
@@ -61,16 +63,14 @@ app_routes.get('*', (req, res, next)=>{
     }
     const activeRoute = routes.find((route)=>ReactRouterDOM.matchPath(url, route)) || {};
 
-    console.log(`Attempting to go to URL: ${url}`);
-    console.log(`Route requires authorization: ${activeRoute.req_authorization}`);
-    //console.log(req.user);
+    ServerConsole.debug(`Attempting to go to URL: ${url}`);
+    ServerConsole.debug(`Route requires authorization: ${activeRoute.req_authorization}`);
     let can_proceed = true;
     let is_authorized = false;
     if(activeRoute.req_authorization){
         can_proceed = false;
         if(req.isAuthenticated()){
             //need to handle requiring administrator user role
-            //next();
             can_proceed = true;
             is_authorized = true;
         }else{
@@ -99,8 +99,7 @@ app_routes.get('*', (req, res, next)=>{
                 <App />
             </ReactRouterDOM.StaticRouter>
         );
-        //console.log(html);
-        console.log(context);
+        ServerConsole.debug(`App route context data: ${JSON.stringify(context)}`);
         res.status(200).send(`
         <!DOCTYPE html>
         <html>

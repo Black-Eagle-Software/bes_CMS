@@ -27,7 +27,6 @@ export default class Tags extends React.Component{
     handleAddTag(data){        
         axios.post('/api/t', data, {headers: {'Content-Type':'application/json'}})
         .then(res=>{
-            console.log(res);
             this.updateTagsFromDatabase();
         });
         this.setState({show_add_form: false});
@@ -54,7 +53,6 @@ export default class Tags extends React.Component{
     }
     handleDeleteConfirmButtonClick(tag){
         axios.delete(`/api/t/${tag.id}`).then(res=>{
-            console.log(res);
             this.setState({
                 show_delete_dialog: false,
                 request_delete_tag: {}
@@ -152,56 +150,6 @@ export default class Tags extends React.Component{
                     </div>
                 </div>
             </PageContent>
-        );
-        return(
-            <div style={contStyle}>
-                {this.state.show_delete_dialog && 
-                    <TagDeleteConfirmation tag={this.state.request_delete_tag} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(tag)=>this.handleDeleteConfirmButtonClick(tag)}/>
-                }                
-                <div style={pageStyle}>
-                    <span className={"tag gray"} title="Add new tag" onClick={()=>this.handleAddNewTagClick()}>Add new tag</span>                
-                    {this.state.show_add_form && 
-                        <TagAddForm onAddTag={(data)=>this.handleAddTag(data)} onCancelClick={()=>this.handleAddTagCancelClick()}/>
-                    }
-                    <div>
-                        User Tags: 
-                        <div>
-                            {/* color the tags based on access level */}
-                            {/*this.state.user_tags.map(tag=>{
-                                return  <a key={uuid()} className={`tag ${tag.accessLevel}`} href={`/search?t=${tag.description}`}>                                            
-                                            <div style={tagLinkStyle}>
-                                                <span>{tag.description}</span>
-                                                <div style={buttonStyle} className={"tile_deleteBtn"} onClick={(e)=>this.handleButtonClick(e, tag)} title={"Delete tag"}>
-                                                    &#x2716;
-                                                </div>
-                                            </div>
-                                        </a>
-                                                                            
-                            })*/}
-                            <TagList    tags={this.state.user_tags}
-                                        show_access_level_colors={true}
-                                        canAdd={false}
-                                        canRemove={true}
-                                        onRemoveTag={(tag)=>this.handleRemoveTag(tag)}/>
-                        </div>
-                    </div>
-                    <br/>
-                    <div>
-                        Public Tags:
-                        <div>
-                            {/*this.state.public_tags.map(tag=>{
-                                return <a key={uuid()} className={"tag"} href={`/search?t=${tag.description}`}>
-                                            {tag.description}
-                                        </a>
-                            })*/}
-                            <TagList    tags={this.state.public_tags}
-                                        show_access_level_colors={false}
-                                        canAdd={false}
-                                        canRemove={false}/>
-                        </div>
-                    </div>
-                </div>
-            </div>
         );
     }
     updateTagsFromDatabase(){

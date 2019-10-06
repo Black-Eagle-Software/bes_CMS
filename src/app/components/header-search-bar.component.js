@@ -45,7 +45,6 @@ export default class HeaderSearchBar extends React.Component{
             axios.get(`/api/search?s=${val}&limit=5`)
             .then(res=>{
                 //relevant bits are in res.data
-                console.log(res);
                 this.setState({
                     show_query_results: true,
                     query_results: res.data

@@ -24,9 +24,6 @@ export default class MediaZoomThumbnails extends React.PureComponent{
         window.addEventListener('resize', this.updateDivDims);
         this.updateDivDims();
     }
-    /*componentWillReceiveProps(){
-        this.updateDivDims();
-    }*/
     componentDidUpdate(prevProps, prevState, snapshot){
         if(snapshot !== null){
             this.setState({divWidth: snapshot});
@@ -47,8 +44,6 @@ export default class MediaZoomThumbnails extends React.PureComponent{
         this.props.onThumbClick(media);
     }
     handleWheel(e){
-        //console.log(e.deltaX);
-        //console.log(e.deltaY);
         //+X, +Y next
         //-X, -Y previous
         if(e.deltaX > 0 || e.deltaY > 0){
@@ -60,23 +55,10 @@ export default class MediaZoomThumbnails extends React.PureComponent{
     render(){        
         const medIndex = this.props.media_list.indexOf(this.props.selected_media);
         const leftPos = this.state.divWidth * 0.5 - ((medIndex + 1) * this.item_size) + this.item_size * 0.5;
-        //console.log(leftPos);
 
-        const listStyle2={
-            display: 'flex',
-            flexFlow: 'row nowrap',
-            width: 128 * this.props.media_list.length + 'px',
-            justifyContent: 'center'
-        };
         const listStyle = {
             outline: "none",
             left: `${leftPos}px`
-        };
-        const thumbStyle={
-            width: '128px',
-            height: '128px',
-            padding: '0px 0px',
-            objectFit: 'cover'
         };
 
         return(
@@ -104,7 +86,6 @@ export default class MediaZoomThumbnails extends React.PureComponent{
             padding: '0px 0px',
             objectFit: 'cover'
         };
-        //change this to move left position of the entire row/list instead of scrolling to mimic picasa
         return(
             <div key={key} style={Object.assign({}, style, divStyle)}>
                 {this.props.media_list.map((media)=>{

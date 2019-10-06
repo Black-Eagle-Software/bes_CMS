@@ -6,6 +6,7 @@ const gm = require('gm').subClass({imageMagick: true});
 const pHash = require('../../helpers/perceptualHashing');
 const getImagePixels = require('../../helpers/getImagePixels');
 const { PerformanceObserver, performance } = require('perf_hooks');
+const ServerConsole = require('../../helpers/serverConsole');
 
 module.exports = (socket, dbase) => {
     let queue = {};
@@ -27,29 +28,9 @@ module.exports = (socket, dbase) => {
         };
         let time = Date.now();
         let item = queue[id];
-        console.log(item);
+        ServerConsole.debug(`Media socket upload item: ${item}`);
         async.waterfall([
-            //1. hash the media's first 10 MB
-            //this will be the file's hash name within the dbase
-            /*(callback)=>{
-                socket.emit(`process_status_${id}`, {'step' : 'File hashing', 'status' : 'Starting'});
-                let shasum = crypto.createHash('sha1');
-                let s = fs.ReadStream(item.filename);                
-                let size = item.size > 10000000 ? 10000000 : item.size;
-                s.on('readable', ()=>{
-                    s.read(size);                    
-                });
-                s.on('data', d=>{ shasum.update(d); });
-                s.on('end', ()=>{ 
-                    let d = shasum.digest('hex');
-                    console.log(d);
-                    s.destroy();
-                    socket.emit(`process_status_${id}`, {'step' : 'File hashing', 'status' : 'Complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
-                    callback(null, d);
-                });
-            },*/
-            //1a. create the perceptual hash of the media (if an image)
-            //(data, callback)=>{
+            //1. create the perceptual hash of the media (if an image)
             (callback)=>{
                 socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing', 'status' : 'starting'});
                 if(item.mimetype.includes('image')){
@@ -67,14 +48,12 @@ module.exports = (socket, dbase) => {
                                 return;
                             }                            
                             socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing (image)', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
-                            //callback(null, {fileHash: data, pHash: phash});
                             callback(null, {fileHash: item.hash, pHash: phash});
                         });
                     });                    
                 }else{
                     //TODO: this is a video, so do *something*
                     socket.emit(`process_status_${id}`, {'step' : 'Perceptual hashing (video)', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
-                    //callback(null, {fileHash: data, pHash: ""});
                     callback(null, {fileHash: item.hash, pHash: ""});
                 }
             },
@@ -88,9 +67,8 @@ module.exports = (socket, dbase) => {
                         callback(error);
                         return;
                     }
-                    console.log(`pHash hamming distance calculation results: ${JSON.stringify(results)}`);
-                    if(results.length > 0){
-                        console.log(results);                        
+                    ServerConsole.debug(`pHash hamming distance calculation results: ${JSON.stringify(results)}`);
+                    if(results.length > 0){                        
                         let message = `Could not upload media item ${item.originalName}: Media duplicates an item already in the database`;
                         if(results[0].owner !== item.owner * 1){
                             dbase.query("SELECT name FROM users WHERE id=?", results[0].owner, (error, results2, fields)=>{
@@ -231,7 +209,6 @@ module.exports = (socket, dbase) => {
                 socket.emit(`process_status_${id}`, {'step' : 'Inserting media in database', 'status' : 'starting'});
                 //now that we've got our files on disk, we need to add them
                 //into the database
-                console.log(data);
                 let query = "INSERT INTO media SET type=?, dateAdded=?, pHash=?, fileDate=?, width=?, height=?, filePath=?, originalFilename=?, hashFilename=?, thumbnailFilename=?, owner=?";
                 dbase.query(
                     query, 
@@ -263,13 +240,11 @@ module.exports = (socket, dbase) => {
             (data, callback)=>{
                 socket.emit(`process_status_${id}`, {'step' : 'Mapping media to tags in the database', 'status' : 'starting'});
                 //now map our new media item to its tags
-                console.log(data);
                 //need to restructure our data a bit to make the dbase query simpler
                 let temp = [];
                 for(let i = 0; i < data.tags.length; i++){
                     temp.push([data.mediaId, data.tags[i].id]);
                 }
-                console.log(temp);
                 if(temp.length === 0) {
                     socket.emit(`process_status_${id}`, {'step' : 'Mapping media to tags in the database', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
                     callback(null);   //no tags selected for media, that's fine, i guess

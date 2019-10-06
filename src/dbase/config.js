@@ -2,7 +2,6 @@ require('dotenv').config();
 
 class dBase_Config{
     getConfig(production = false){
-        console.log(production);
         let env = process.env;
         if(production){
             return {

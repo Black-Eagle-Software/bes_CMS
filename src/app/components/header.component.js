@@ -247,13 +247,7 @@ export default class Header extends React.Component{
                             onClick: ()=>this.handleBtnClick('logout')
                         }
                     ]}/>
-                    /*<div className={"headerBtn"} onClick={()=>this.handleBtnClick('profile')}>{this.props.username}</div>*/
                 }
-                {/*this.state.show_profile_menu &&
-                    <div>
-                        <div className={"headerBtn"} onClick={()=>this.handleBtnClick('logout')}>Log out</div>
-                    </div>
-                */}
                 {!this.props.isAuthenticated &&
                     <div className={"headerBtn"} onClick={()=>this.handleBtnClick('login')}>Login</div>
                 }

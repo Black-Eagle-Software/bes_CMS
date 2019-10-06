@@ -29,7 +29,6 @@ export default class PublicMedia extends React.PureComponent{
     handleDownloadSelectionClick(){
         axios.post(`/api/archive/zip`, {media: this.state.media.filter(media=>media.selected)}, {headers: {'Content-Type':'application/json'}})
         .then(res=>{
-            console.log(res);
             window.location = `/api/archive/zip/${res.data.file}`;
         });
     }
@@ -117,32 +116,13 @@ export default class PublicMedia extends React.PureComponent{
                 </div>
             </PageContent>
         );
-        return(            
-            <div style={contStyle}>
-                <div style={pageStyle}>
-                    {this.state.media &&
-                        <div style={outerDivStyle}>
-                            <h2>All Public Media</h2>
-                            <div style={{flex: "1 1 auto"}}>
-                                <MediaTilesList media={this.state.media} 
-                                            onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                            onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)}
-                                            can_delete={false}/>
-                            </div>
-                        </div>
-                    }                    
-                </div>
-            </div>
-        );
     }
     updateMediaFromDatabase(){
         //read our media from the dbase
         axios.get(`/api/m`)
         .then(response=>{
-            let temp_media = [];
             let res = response.data;
             for(let i = 0; i < res.length; i++){
-                //temp_media.push({file: res[i], src_file: `/${res[i].filePath}/${res[i].hashFilename}`, thumb: `/${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
                 res[i].selected = false;
             }
             this.setState({media: response.data});

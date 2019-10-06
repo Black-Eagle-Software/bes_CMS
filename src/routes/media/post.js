@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const async = require('async');
 const gm = require('gm').subClass({imageMagick: true});
 const pHash = require('../../helpers/perceptualHashing');
+const ServerConsole = require('../../helpers/serverConsole');
 
 module.exports = (req, res)=>{
     //we will be posting media data via formdata
@@ -12,8 +13,8 @@ module.exports = (req, res)=>{
     //metadata is in req.body
     //TODO: this should confirm that a file is either an image or a video prior to commencing
     //TODO: this should also not break all uploads if one upload has an error
-    console.log(req.body);
-    console.log(req.files);
+    ServerConsole.debug(`Media post request body: ${req.body}`);
+    ServerConsole.debug(`Meida post requst files: ${req.files}`);
     //each item in the req.body object can be an array if we've multiple uploads
     //need to turn them each into arrays to make things easier?
     let body = req.body;
@@ -52,10 +53,7 @@ module.exports = (req, res)=>{
             });
         }
     }
-    console.log(contents);
-    /*console.log(contents[0].body.extension);
-    res.status(500).send();
-    return;*/
+    ServerConsole.debug(`Media post file contents: ${contents}`);
     //let time = Math.floor(new Date()/1000); //want this to be a common time/folder for a bank of uploads
     let time = Date.now();
     async.each(contents, (item, eachCallback)=>{
@@ -75,7 +73,6 @@ module.exports = (req, res)=>{
                 s.on('data', d=>{ shasum.update(d); });
                 s.on('end', ()=>{ 
                     let d = shasum.digest('hex');
-                    console.log(d);
                     s.destroy();
                     callback(null, d);
                 });
@@ -100,18 +97,14 @@ module.exports = (req, res)=>{
             //2. check if the media duplicates an existing database entry
             (data, callback)=>{
                 //check if the hash exists in the database already
-                //let hashFilename = `${data.fileHash}.${item.body.extension}`;
-                //let query = "SELECT * FROM media WHERE hashFilename = ?";
                 let query = "SELECT *, BIT_COUNT(CONV(pHash, 16, 10) ^ CONV(?, 16, 10)) as hamming_distance FROM media HAVING hamming_distance < 10 ORDER BY hamming_distance ASC";
                 res.locals.connection.query(query, [data.pHash], (error, results, fields)=>{
                     if(error) {
                         callback(error);
                         return;
                     }
-                    console.log(`pHash hamming distance calculation results: ${JSON.stringify(results)}`);
-                    if(results.length > 0){
-                        //res.status(403).send("Media duplicates an item already in the database");
-                        console.log(results);                        
+                    ServerConsole.debug(`pHash hamming distance calculation results: ${JSON.stringify(results)}`);
+                    if(results.length > 0){                        
                         let message = `Could not upload media item ${item.file.originalname}: Media duplicates an item already in the database`;
                         if(results[0].owner !== item.body.owner * 1){
                             res.locals.connection.query("SELECT name FROM users WHERE id=?", results[0].owner, (error, results2, fields)=>{
@@ -125,13 +118,11 @@ module.exports = (req, res)=>{
                                     name: results2[0].name,
                                     upload_filename: item.file.originalname
                                 }
-                                //message += `.  You currently do not have access to the existing file.  Perhaps make friends with [url${url} ${results2[0].name}/url]`;
                                 message += `.  You currently do not have access to the existing file.  Perhaps make friends with ${JSON.stringify(obj)}`;
                                 callback(new Error(message)); 
                             });                              
                         }else{
-                            //let url = `${results[0].filePath}/${results[0].hashFilename}`;
-                            let url = `/media_details/${results[0].id}`;    //TODO: this will need to be created as a details page showing tags, where used, etc.
+                            let url = `/media_details/${results[0].id}`;
                             let obj = {
                                 src: url,
                                 name: results[0].originalFilename,
@@ -155,7 +146,6 @@ module.exports = (req, res)=>{
             //3g. create thumbnail & write thumbnail to thumbnails folder
             (data, callback)=>{
                 let basePath = path.join('media', item.body.owner.toString(), time.toString());
-                //let fullPath = path.join(__basedir, 'public', basePath);
                 //change to make media library a touch more secure with access controls
                 let fullPath = path.join(__basedir, basePath);
                 let thumb_path = path.join(fullPath, 'thumbnails');
@@ -250,7 +240,6 @@ module.exports = (req, res)=>{
             (data, callback)=>{
                 //now that we've got our files on disk, we need to add them
                 //into the database
-                console.log(data);
                 let query = "INSERT INTO media SET type=?, dateAdded=?, pHash=?, fileDate=?, width=?, height=?, filePath=?, originalFilename=?, hashFilename=?, thumbnailFilename=?, owner=?";
                 res.locals.connection.query(
                     query, 
@@ -279,13 +268,11 @@ module.exports = (req, res)=>{
             //5. map tags to media in the database
             (data, callback)=>{
                 //now map our new media item to its tags
-                console.log(data);
                 //need to restructure our data a bit to make the dbase query simpler
                 let temp = [];
                 for(let i = 0; i < data.tags.length; i++){
                     temp.push([data.mediaId, data.tags[i].id]);
                 }
-                console.log(temp);
                 if(temp.length === 0) {
                     callback(null);   //no tags selected for media, that's fine, i guess
                     return;

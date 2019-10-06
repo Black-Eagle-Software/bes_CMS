@@ -1,4 +1,5 @@
 const async = require('async');
+const ServerConsole = require('../../helpers/serverConsole');
 
 //this is a bit messy, not sure there's a better way
 module.exports = (req, res)=>{
@@ -7,8 +8,8 @@ module.exports = (req, res)=>{
     //easiest to blow away existing mappings and replace(?)
     if(!req.isAuthenticated()) return;  //don't do this if not a valid user
     let user = JSON.parse(req.user);
-    console.log(`User ${user.id} is trying to edit album ${req.params.id}`);
-    console.log(req.body);
+    ServerConsole.debug(`User ${user.id} is trying to edit album ${req.params.id}`);
+    ServerConsole.debug(`Album update request body: ${req.body}`);
     async.waterfall([
         //1. get the album in question and confirm ownership
         (callback)=>{

@@ -43,15 +43,12 @@ export default class UserPassUpdateForm extends React.PureComponent{
         }
         this.setState({error_msg: ''});
         let data = {email: this.state.email, old_password: this.state.old_password, new_password: this.state.new_password};
-        //console.log(data);
         axios.post("/api/auth/passwordChange", data).then(res=>{
-            //console.log(res);
             if(res.status === 200){
-                //this.setState({redirectTo: '/home'});
                 this.props.onUpdatePass();
-                //res.redirect('/home');
             }
         }).catch((error)=>{
+            //TODO: need to do something more robust with this error handling
             console.log(error);
             this.setState({error_msg: error.response.data.message});
         });

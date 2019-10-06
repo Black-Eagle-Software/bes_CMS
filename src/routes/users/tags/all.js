@@ -1,5 +1,7 @@
+const ServerConsole = require('../../../helpers/serverConsole');
+
 module.exports = (req, res)=>{
-    console.log(req.query);
+    ServerConsole.debug(`User tags all request query: ${req.query}`);
     let all = req.query.all;
     let queryString = "SELECT * FROM tags t INNER JOIN tagsToAccessLevelMap tal ON tal.tagId = t.Id WHERE owner=?";
     if(all){

@@ -46,7 +46,6 @@ export default class UserMedia extends React.Component{
     }
     handleDeleteConfirmButtonClick(media){
         axios.delete(`/api/m/${media.file.id}`).then(res=>{
-            console.log(res);
             this.setState({
                 show_delete_dialog: false,
                 request_delete_media: {}
@@ -56,7 +55,6 @@ export default class UserMedia extends React.Component{
     }
     handleDeleteSelection(queue){
         axios.delete(`/api/m/${queue.next().file.id}`).then(res=>{
-            console.log(res);
             if(queue.length() > 0){
                 this.handleDeleteSelection(queue);
             }else{
@@ -87,7 +85,6 @@ export default class UserMedia extends React.Component{
     handleDownloadSelectionClick(){
         axios.post(`/api/archive/zip`, {media: this.state.media.filter(media=>media.selected)}, {headers: {'Content-Type':'application/json'}})
         .then(res=>{
-            console.log(res);
             window.location = `/api/archive/zip/${res.data.file}`;
         });
     }
@@ -196,78 +193,16 @@ export default class UserMedia extends React.Component{
                     </div>
                 }
             </PageContent>
-        )
-        
-        return(
-            <div style={outerDivStyle}>
-                {this.state.media.some(media=>media.selected) &&
-                    <ViewToolbar>
-                        <div>
-                            <div className={"toolbar_btn"} onClick={()=>this.handleDownloadSelectionClick()}>
-                                <svg style={svgStyle} viewBox={"0 0 24 24"}>
-                                    <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
-                                </svg>
-                                Download as zip
-                            </div>
-                            <div className={"toolbar_btn"} onClick={()=>this.handleDeleteSelectionClick()}>
-                                &#x2716;
-                                Delete selected media 
-                            </div>
-                            {/* will want things like download all media as a .zip file */}
-                            <div style={deselectStyle} className={"toolbar_btn"} onClick={()=>this.handleDeselectClick()} title={"Deselect"}>                                
-                                <svg style={svgStyle} viewBox={"0 0 24 24"}>
-                                    <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12C4,13.85 4.63,15.55 5.68,16.91L16.91,5.68C15.55,4.63 13.85,4 12,4M12,20A8,8 0 0,0 20,12C20,10.15 19.37,8.45 18.32,7.09L7.09,18.32C8.45,19.37 10.15,20 12,20Z" />
-                                </svg>
-                                {this.state.media.filter(media=>media.selected).length} selected
-                            </div>
-                        </div>
-                    </ViewToolbar>
-                }
-                <div style={contStyle}>
-                    {this.state.show_delete_dialog && 
-                        <MediaDeleteConfirmation media={this.state.request_delete_media} onCloseClick={()=>this.handleDeleteDialogCloseClick()} onConfirmClick={(media)=>this.handleDeleteConfirmButtonClick(media)}/>
-                    }
-                    {this.state.show_delete_selection_dialog &&
-                        <MediaDeleteSelectionConfirmation count={this.getSelectionCount()} onCloseClick={()=>this.handleDeleteSelectionDialogCloseClick()} onConfirmClick={()=>this.handleDeleteSelectionConfirmButtonClick()}/>
-                    }
-                    
-                    <div style={pageStyle}>
-                        {this.state.media &&
-                            <div style={outerDivStyle}>
-                                <h2>All Media for {this.props.username} ({this.state.media.length})</h2>
-                                <div style={{flex: "1 1 auto"}}>
-                                    <MediaTilesList media={this.state.media} 
-                                                    onMediaClick={(media)=>this.props.onMediaInfoClick(media)}
-                                                    onMediaInfoClick={(media)=>this.props.onZoomMediaClick(media)} 
-                                                    can_delete={true}
-                                                    include_show_all_button={false}
-                                                    allow_selection={true} 
-                                                    onMediaSelect={(media)=>this.handleMediaSelect(media)}
-                                                    onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)} />
-                                </div>
-                            </div>
-                        }                    
-                    </div>
-                </div>
-            </div>
         );
     }
     updateMediaFromDatabase(){
         //read our media from the dbase
         axios.get(`/api/u/${this.props.id}/m`)
         .then(response=>{
-            let temp_media = [];
             let res = response.data;
             for(let i = 0; i < res.length; i++){
-                /*temp_media.push({
-                    file: res[i], 
-                    src_file: `/${res[i].filePath}/${res[i].hashFilename}`, 
-                    thumb: `/${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`, 
-                    selected: false
-                });*/
                 res[i].selected = false;
             }
-            //this.setState({media: temp_media});
             this.setState({media: response.data});
         });
     }

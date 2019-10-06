@@ -22,7 +22,6 @@ class Media{
         if(this.width === size.width && this.height === size.height) return;
         this.width = size.width;
         this.height = size.height;
-        //console.log(this);
     }
     updateStatus(status, percent){
         this.status_text = status;

@@ -46,14 +46,9 @@ export default class RegisterForm extends React.Component{
             return;
         }
         let data = {name: this.state.name, email: this.state.email, password: this.state.password};
-        console.log(data);
-        //return;
-        //we don't have the api sorted out just yet
         axios.post("/api/auth/register", data).then(res=>{
             if(res.status === 200){
-                //this.setState({redirectTo: '/home'});
                 this.props.onRegister();
-                //res.redirect('/home');
             }
         });
         event.preventDefault();

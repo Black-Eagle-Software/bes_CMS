@@ -1,4 +1,5 @@
 const search = require('express').Router();
+const ServerConsole = require('../../helpers/serverConsole');
 
 search.get('/', (req, res)=>{
     //determine what we're searching for here
@@ -6,9 +7,8 @@ search.get('/', (req, res)=>{
     let user = JSON.parse(req.user);
     if(req.query.t){
         //tags are submitted as multiple queries
-        //console.log(req.query.t);
         let tags = req.query.t;
-        console.log(tags);
+        ServerConsole.debug(`Search get request tags query: ${tags}`);
         if(!Array.isArray(tags)){
             let t = [];
             t.push(tags);
@@ -57,9 +57,8 @@ search.get('/', (req, res)=>{
                 return;
             });
         }
-        //res.status(200).send({'mesage':'This will return all media with tags specified'});
     }else if(req.query.s){
-        console.log(req.query.s);
+        ServerConsole.debug(`Search get request string query: ${req.query.s}`);
         let inQuery = `%${req.query.s}%`;   //reformat for partial string matching
         let limit = req.query.limit * 1;
         if(user.role === 'Administrator'){
@@ -161,7 +160,6 @@ search.get('/', (req, res)=>{
                 });
             });
         }
-        //res.status(200).send({'mesage':'This will return all media with string specified'});
     }else if(req.query.m){
         if(user.role === 'Administrator'){
             let queryString = "SELECT * FROM albums a INNER JOIN albumsToMediaMap amm ON amm.album = a.id WHERE amm.media = ?";
@@ -192,9 +190,8 @@ search.get('/', (req, res)=>{
                 return;
             });                                    
         }
-        //res.status(200).send({'mesage':'This will return all albums with media specified'});
     }else if(req.query.phash){
-        console.log(req.query.phash);
+        ServerConsole.debug(`Search get request phash query: ${req.query.phash}`);
         if(user.role === 'Administrator'){
             let queryString = `SELECT *, BIT_COUNT(CONV(pHash, 16, 10) ^ CONV(?, 16, 10)) 
                                 as hamming_distance FROM media HAVING 

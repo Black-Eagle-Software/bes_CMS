@@ -19,7 +19,6 @@ export default class MediaDetails extends React.Component{
     componentDidMount(){
         axios.get(`/api/m/${this.props.match.params.id}`)
         .then(res=>{
-            //console.log(res);
             if(res){
                 this.setState({image_source: res.data});
             }
@@ -104,7 +103,6 @@ export default class MediaDetails extends React.Component{
         //with the current set of this.state.temp_tags
         axios.put(`/api/m/${this.props.match.params.id}/t`, this.state.temp_tags)
         .then(res=>{
-            console.log(res);
             //confirm that our tags are in the database properly
             axios.get(`/api/m/${this.props.match.params.id}/t`)
             .then(res=>{
@@ -182,6 +180,7 @@ export default class MediaDetails extends React.Component{
 
         const editTagsClass = this.state.disable_edit_tags_button ? "toolbar_btn active" : "toolbar_btn";
 
+        //TODO: Update this to use page-component???
         return(
             <div style={outerDivStyle}>
                 <ViewToolbar>
@@ -210,13 +209,7 @@ export default class MediaDetails extends React.Component{
                 </ViewToolbar>
                 <div style={contStyle}>                
                     {this.state.image_source &&
-                        <div> 
-                            {/*Media details for: {this.props.match.params.id}*/}                            
-                            {/*<a className={"downloadLink"} href={`../${this.state.image_source.filePath}/${this.state.image_source.hashFilename}`} download={this.state.image_source.originalFilename} title={"Download media"}>
-                                <svg style={svgStyle}>
-                                    <path d={"M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"} />
-                                </svg>
-                            </a>*/}
+                        <div>
                             <div style={contentStyle}>
                                 {this.state.image_source.type !== "video" && 
                                     <img ref={this.imgRef} style={imgStyle} src={`../${this.state.image_source.filePath}/${this.state.image_source.hashFilename}`} alt={this.state.image_source.originalFilename}/>
@@ -237,18 +230,6 @@ export default class MediaDetails extends React.Component{
                                         <li style={liStyle}><span style={liLabelStyle}>Owner: </span><span style={liItemStyle}>{this.state.image_source.owner}</span></li>
                                         <li style={liStyle}>
                                             <span style={liLabelStyle}>Tags: </span>
-                                            {/*this.state.tags.map(tag=>{
-                                                return <a key={uuid()} className={"tag"} href={`/search?t=${tag.description}`}>
-                                                            {tag.description}
-                                                        </a>
-                                            })*/}
-                                            {/*<TagSearchButtonList tags={this.state.show_edit_tags ? this.state.temp_tags : this.state.tags} 
-                                                                is_editing={this.state.show_edit_tags}
-                                                                all_tags={this.state.possible_tags}
-                                                                onAddTag={(tag)=>this.handleAddTag(tag)}
-                                                                onRemoveTag={(tag)=>this.handleRemoveTag(tag)}
-                                                                onSearch={(tag)=>Search.searchTagQuery([tag])}/>
-                                        */}
                                             <TagConnectedLists  primaryTags={this.state.show_edit_tags ? this.state.temp_tags : this.state.tags}
                                                                 secondaryTags={this.state.possible_tags}
                                                                 is_editing={this.state.show_edit_tags}

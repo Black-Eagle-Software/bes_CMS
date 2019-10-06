@@ -33,9 +33,7 @@ export default class LoginForm extends React.PureComponent{
             return;
         }
         let data = {email: this.state.email, password: this.state.password};
-        //console.log(data);
         axios.post("/api/auth/login", data).then(res=>{
-            //console.log(res);
             if(res.data === 'USER_PASS_UPDATE'){
                 //I don't always use magic strings, but when I do, it's here...
                 this.props.onUpdateRequired();
@@ -45,6 +43,7 @@ export default class LoginForm extends React.PureComponent{
                 //res.redirect('/home');
             }
         }).catch((error)=>{
+            //TODO: need to do something more robust with this error handling
             console.log(error);
         });
         event.preventDefault();

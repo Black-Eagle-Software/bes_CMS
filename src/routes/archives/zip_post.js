@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
+const ServerConsole = require('../../helpers/serverConsole');
 
 //most of this is from the archiver readme: https://www.npmjs.com/package/archiver
 
 module.exports = (req, res) => {
-    console.log(req.body);        
+    ServerConsole.debug(`Archive post request body: ${req.body}`);        
     if(!req.body){
         res.status(403).send({'message':'Request body was undefined', 'req':req});
         return;
@@ -19,11 +20,11 @@ module.exports = (req, res) => {
     });
 
     output.on('close', ()=>{
-        console.log(`archiver has created an archive: ${archive.pointer()} total bytes`);
+        ServerConsole.debug(`archiver has created an archive: ${archive.pointer()} total bytes`);
         //res.download(output_file);
         res.status(200).send({'file': output_filename});
         setTimeout(()=>{                //delete the file after 10 minutes if it's still around
-            console.log(`Deleting temporary archive file: ${output_file}`);
+            ServerConsole.debug(`Deleting temporary archive file: ${output_file}`);
             fs.unlink(output_file, (err)=>{
                 if(err && err.code !== 'ENOENT'){
                     throw err;
@@ -37,7 +38,7 @@ module.exports = (req, res) => {
 
     archive.on('warning', (err)=>{
         if(err.code === 'ENOENT'){
-            console.log(err.message);
+            ServerConsole.error(err.message);
         }else{
             throw err;
         }
@@ -52,7 +53,7 @@ module.exports = (req, res) => {
     //append files to the stream
     for(let i = 0; i < req.body.media.length; i++){
         let fullpath = path.join(__basedir, req.body.media[i].src_file);
-        console.log(fullpath);
+        ServerConsole.debug(`Appending file to archive stream: ${fullpath}`);
         archive.append(fs.createReadStream(fullpath), {name: req.body.media[i].file.originalFilename});
     }
     archive.finalize();

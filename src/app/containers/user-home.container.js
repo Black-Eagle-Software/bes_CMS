@@ -45,7 +45,6 @@ export default class UserHomeContainer extends React.Component{
     }
     handleDeleteConfirmButtonClick(media){
         axios.delete(`/api/m/${media.id}`).then(res=>{
-            console.log(res);
             this.setState({
                 show_delete_dialog: false,
                 request_delete_media: {}
@@ -82,7 +81,6 @@ export default class UserHomeContainer extends React.Component{
     handleDeleteAlbumConfirmButtonClick(album){
         axios.delete(`/api/a/${album.id}`)
         .then(response=>{
-            console.log(response);
             this.setState({
                 show_album_delete_dialog: false,
                 request_delete_album: {}
@@ -178,7 +176,6 @@ export default class UserHomeContainer extends React.Component{
             for(let i = 0; i < res.length; i++){
                 temp_media.push({file: res[i], src_file: `${res[i].filePath}/${res[i].hashFilename}`, thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
             }
-            //this.setState({public_media: temp_media});
             this.setState({public_media: response.data});
         });
 
@@ -189,14 +186,12 @@ export default class UserHomeContainer extends React.Component{
             for(let i = 0; i < res.length; i++){
                 temp_media.push({file: res[i], src_file: `${res[i].filePath}/${res[i].hashFilename}`, thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
             }
-            //this.setState({media: temp_media});
             this.setState({media: response.data});
         });
 
         //read our albums from the database
         axios.get(`/api/u/${this.props.id}/a?limit=10`)
         .then(response=>{
-            //console.log(response);
             this.setState({albums:response.data});
         });
     }

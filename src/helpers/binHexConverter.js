@@ -11,7 +11,6 @@ class binHexConverter{
         let hex = '';
         for(let i = 0; i < binaryString.length; i+=4){
             let nibble = binaryString.substr(i, 4);
-            //console.log(nibble);
             hex += bin2hexTable[nibble];
         }
         return hex;

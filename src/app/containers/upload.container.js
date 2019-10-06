@@ -34,11 +34,9 @@ export default class UploadMedia extends React.Component{
         //get our tags list
         axios.get(`/api/u/${this.props.id}/t?all=true`)
         .then(res=>{
-            //let tag_bools = this.initTagBoolArray(res.data.length);
             this.setState({
                 all_tags: [].concat(res.data),
-                tags: res.data,
-                //global_tags: tag_bools
+                tags: res.data
             });
         });
     }
@@ -59,13 +57,7 @@ export default class UploadMedia extends React.Component{
         let selected_media = this.state.media_selected;
         let tag_index = index;
         let media_index = temp_media.indexOf(selected_media);
-        /*if(temp_media[media_index].tags[tag_index] !== tag){
-            //need to find the tag since the index doesn't match
-            tag_index = temp_media[media_index].tags.indexOf(tag);
-        }*/
-        //let val = temp_media[i].tags[tag_index];
         temp_media[media_index].tags[tag_index] = value;
-        //selected_media = media_index && media_index !== -1 ? temp_media[media_index] : null;
         this.setState({
             media: temp_media,
             media_selected: selected_media
@@ -180,16 +172,10 @@ export default class UploadMedia extends React.Component{
         let selected_media = this.state.media_selected;
         let tag_index = index;
         let media_index = temp_media.indexOf(selected_media);
-        /*if(temp_media[0].tags[tag_index] !== tag){
-            //need to find the tag since the index doesn't match
-            tag_index = temp_media[0].tags.indexOf(tag);
-        }*/
         for(let i = 0; i < temp_media.length; i++){
-            //let val = temp_media[i].tags[tag_index];
             temp_media[i].tags[tag_index] = value;
         }
         global_tags[tag_index] = value;
-        //selected_media = media_index && media_index !== -1 ? temp_media[media_index] : null;
         this.setState({
             media: temp_media,
             media_selected: selected_media,
@@ -198,7 +184,6 @@ export default class UploadMedia extends React.Component{
     }
     handleMediaClick(media){
         let temp = this.regenerateRemainingTagsForMedia(media);
-        //console.log(temp);
         this.setState({
             media_selected: media,
             media_selected_remaining_tags: temp
@@ -214,20 +199,7 @@ export default class UploadMedia extends React.Component{
         });
         return temp;
     }
-    /*handleImageDimensionsChange(media, size){
-        //save the dimensions into the media item so we can send them during upload
-        let temp_media = this.state.media;
-        let media_index = temp_media.indexOf(media);
-        if(temp_media[media_index].width === size.width && temp_media[media_index].height === size.height){
-            return;
-        }
-        temp_media[media_index].width = size.width;
-        temp_media[media_index].height = size.height;
-        console.log(temp_media[media_index]);
-        this.setState({media: temp_media});
-    }*/
     handleUploadClick(media){
-        //this.uploadMedia([media]);
         this.uploadMediaViaSocket(media);
     }
     handleRemoveClick(media){
@@ -261,16 +233,11 @@ export default class UploadMedia extends React.Component{
         for(let i = 0; i < files.length; i++){
             if(!files[i].type.includes('image') && !files[i].type.includes('video')) continue;
             let url = URL.createObjectURL(files[i]);
-            //let media = {file: files[i], url: url, tags: [].concat(tag_inputs), data: null, index: i, updateData: (newData)=>{this.data = newData;}};
-            //let media = new Media({file: files[i], url: url, tags: [].concat(tag_inputs), data: null});
             let media = new Media({file: files[i], url: url, tags: [], data: null});
             temp_media.push(media);
-            //console.log(files[i]);
         }
-        //let tag_bools = this.initTagBoolArray(tags.length);
         this.setState({
-            media: temp_media,
-            //global_tags: tag_bools
+            media: temp_media
         });
     }
     mapTagSelectionsForMediaToTagIndex(media){
@@ -432,46 +399,28 @@ export default class UploadMedia extends React.Component{
         axios.post('/api/media', formData, { onUploadProgress: (e)=>{
             if(e.loaded && e.total){
                 const progress = (e.loaded / e.total) * 100;
-                console.log(progress);
             }
         }})
         .then(res=>{
             //this needs to remove items from the upload list
-            console.log(res.status);
             if(res.status !== 200) return;  //more details?
             for(let i=0; i < arr.length; i++){
                 this.handleRemoveClick(arr[i]);
             }            
         })
         .catch(err=>{
-            //console.log(`${err.message} - ${err.response.data.message}`);
             //our error message will come in with a URL attached at the end
             //to any duplicate database entries
             //will want to parse message for [url /url] tags
             //there's a space between the url and the filename
             let message = err.response.data.message;
             let dupe = {src: "", name: "", upload_filename: ""};
-            /*console.log(message.includes("[url"));
-            if(message.includes("[url")){
-                let start = message.indexOf("[url");
-                let url = message.substr(start);
-                message = message.slice(0, start);
-                url = url.substr(4);    //remove the opening tag
-                url = url.substr(0, url.length - 5);   //remove the closing tag
-                console.log(url);
-                let spcIndx = url.indexOf(" ");                
-                let name = url.substr(spcIndx + 1);
-                url = url.slice(0, spcIndx);
-                console.log(name);
-                console.log(url);
-                dupe = {src: url, name: name};
-            }else*/ if(message.includes("{")){
+            if(message.includes("{")){
                 //serialized object included
                 let start = message.indexOf("{");
                 let objString = message.substr(start);
                 message = message.slice(0, start);
                 let obj = JSON.parse(objString);
-                console.log(obj);
                 dupe = obj;
             }
             this.setState({
@@ -496,7 +445,6 @@ export default class UploadMedia extends React.Component{
         let name = uuid();
         let chunk = 524288;
         let temp_media = this.state.media;
-        //let media_index = temp_media.indexOf(media);
         
         reader.onload = (e) => {
             socket.emit('upload', {'name' : name, 'data' : e.target.result});
@@ -523,22 +471,18 @@ export default class UploadMedia extends React.Component{
                 mimetype    : media.file.type,
                 originalName: media.file.name,
                 owner       : this.props.id,
-                size        : media.file.size,
-                //tags        : JSON.stringify(this.mapTagSelectionsForMediaToTagIndex(media)),            
+                size        : media.file.size,            
                 tags        : media.tags,
                 width       : media.width,
             };
             socket.on(`process_status_${name}`, (data)=>{
                 let message = `${data.step} - ${data.status}`;
                 if(data.elapsed_time) message += ` (${data.elapsed_time.toFixed(3)} s)`;
-                console.log(message);
                 temp_media[temp_media.indexOf(media)].appendStatus(data.step); 
                 this.setState({media: temp_media});
             });
-            socket.on(`process_done_${name}`, (data)=>{                
-                console.log(data.result);
+            socket.on(`process_done_${name}`, (data)=>{
                 if(data.message) {
-                    console.log(data.message);
                     let message = data.message;
                     let dupe = {src: "", name: "", upload_filename: ""};
                     if(message.includes("{")){
@@ -547,7 +491,6 @@ export default class UploadMedia extends React.Component{
                         let objString = message.substr(start);
                         message = message.slice(0, start);
                         let obj = JSON.parse(objString);
-                        console.log(obj);
                         dupe = obj;
                     }
                     temp_media[temp_media.indexOf(media)].updateStatus("", -1);     //reset our status
