@@ -38,9 +38,9 @@ export default class MediaZoom extends React.PureComponent{
     }
     handleKeyDown(e){
         if(e.key === 'ArrowLeft'){
-            this.props.onMediaZoomPreviousClick();
+            this.handleZoomMediaPrevious();
         }else if(e.key === 'ArrowRight'){
-            this.props.onMediaZoomNextClick();
+            this.handleZoomMediaNext();
         }else if(e.key === 'Escape'){
             this.handleCloseClick();
         }

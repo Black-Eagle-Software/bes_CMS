@@ -44,10 +44,7 @@ export default class PageContent extends React.Component{
                 {this.props.show_media_zoom &&
                     <MediaZoom  media_source={this.props.media_zoom_source}
                                 media_list={this.props.media_list}
-                                onCloseClick={()=>this.props.hideMediaZoom()}
-                                onMediaZoomPreviousClick={()=>this.handleZoomMediaPrevious()}
-                                onMediaZoomNextClick={()=>this.handleZoomMediaNext()}
-                                onMediaZoomThumbClick={(media)=>this.handleZoomMediaThumbClick(media)}/>
+                                onCloseClick={()=>this.props.hideMediaZoom()}/>
                 }
                 {/* isAutoSizerListContent is a fix for an autosizer on a page, like user-media.container */}
                 <div style={Object.assign({}, contStyle, this.props.isAutoSizerListContent ? {height: "100%", display: "flex"} : {})}>                                   
