@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 
 var env = process.env;
 let isProduction = env.IS_PRODUCTION === 'true';
-ServerConsole.setEnvironment({verboseLogging: env.VERBOSE_LOGGING === 'true' && isProduction});
+ServerConsole.setEnvironment({verboseLogging: env.VERBOSE_LOGGING === 'true' && !isProduction});
 
 var port = env.PORT || 8080;    //set our port
 
