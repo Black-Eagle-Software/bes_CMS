@@ -8,7 +8,9 @@ export default class MediaZoom extends React.PureComponent{
         super(props);
 
         this.state={
-            tags: []
+            tags: [],
+            media_list: this.props.media_list,
+            media_source: this.props.media_source
         };
 
         this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -42,6 +44,32 @@ export default class MediaZoom extends React.PureComponent{
         }else if(e.key === 'Escape'){
             this.handleCloseClick();
         }
+    }
+    handleZoomMediaNext(){  //just pass origin array here
+        let media_index = this.state.media_list.indexOf(this.state.media_source);
+        if(media_index + 1 === this.state.media_list.length){
+            media_index = 0;
+        }else{
+            media_index += 1;
+        }
+        this.setState({
+            media_source: this.state.media_list[media_index]
+        });
+    }
+    handleZoomMediaPrevious(){  //just pass origin array here
+        let media_index = this.state.media_list.indexOf(this.state.media_source);
+        if(media_index === 0){
+            media_index = this.state.media_list.length - 1;
+        }else{
+            media_index -= 1;
+        }
+        this.setState({
+            media_source: this.state.media_list[media_index]
+        });
+    }
+    handleZoomMediaThumbClick(media){
+        //set our new zoomed media to passed-in argument
+        this.setState({media_source: media});
     }
     render(){
         const contStyle = {
@@ -112,21 +140,21 @@ export default class MediaZoom extends React.PureComponent{
         //can use that to determine whether to show image 
         //or video here in the zoomed viewer
 
-        const filename = this.props.media_source.originalFilename;
-        const src = `/${this.props.media_source.filePath}/${this.props.media_source.hashFilename}`;
-        const isVideo = this.props.media_source.type === "video";
+        const filename = this.state.media_source.originalFilename;
+        const src = `/${this.state.media_source.filePath}/${this.state.media_source.hashFilename}`;
+        const isVideo = this.state.media_source.type === "video";
 
         return(
             <div  style={contStyle}>
                 <div className={"expand_close"} onClick={()=>this.handleCloseClick()}></div>
                 <div style={{display: "flex", alignItems: "center", width: "2em", height: "4em", position: "absolute", zIndex: "10", left: "-6px", background: "#1f1f1f", border: "1px solid #c6c6c6", fill: "#f5f5f5"}}
-                        onClick={()=>this.props.onMediaZoomPreviousClick()}>
+                        onClick={()=>this.handleZoomMediaPrevious()}>
                     <svg style={svgStyle2} viewBox={"0 0 24 24"}>
                         <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
                     </svg>
                 </div>
                 <div style={{display: "flex", alignItems: "center", width: "2em", height: "4em", position: "absolute", zIndex: "10", right: "-6px", background: "#1f1f1f", border: "1px solid #c6c6c6", fill: "#f5f5f5"}}
-                        onClick={()=>this.props.onMediaZoomNextClick()}>
+                        onClick={()=>this.handleZoomMediaNext()}>
                     <svg style={svgStyle2} viewBox={"0 0 24 24"}>
                         <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
                     </svg>
@@ -150,7 +178,7 @@ export default class MediaZoom extends React.PureComponent{
                         </a>
                     </span>
                     <span>
-                        <a className={"downloadLink"} href={`/media_details/${this.props.media_source.id}`} title={"Media details"}>
+                        <a className={"downloadLink"} href={`/media_details/${this.state.media_source.id}`} title={"Media details"}>
                             <svg style={svgStyle}>
                                 <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
                             </svg>
@@ -167,11 +195,11 @@ export default class MediaZoom extends React.PureComponent{
                                 show_access_level_colors={true}/>
                 </span>
                 <div style={{flex: '1 1 auto'}}></div>
-                <MediaZoomThumbnails media_list={this.props.media_list} 
-                                    selected_media={this.props.media_source}
-                                    nextMedia={()=>this.props.onMediaZoomNextClick()}
-                                    previousMedia={()=>this.props.onMediaZoomPreviousClick()}
-                                    onThumbClick={(media)=>this.props.onMediaZoomThumbClick(media)}/>
+                <MediaZoomThumbnails media_list={this.state.media_list} 
+                                    selected_media={this.state.media_source}
+                                    nextMedia={()=>this.handleZoomMediaNext()}
+                                    previousMedia={()=>this.handleZoomMediaPrevious()}
+                                    onThumbClick={(media)=>this.handleZoomMediaThumbClick(media)}/>
             </div>
         );
     }
