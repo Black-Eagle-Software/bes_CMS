@@ -3,7 +3,7 @@ const PNG = require('pngjs').PNG;
 
 //with a lot of help from https://blog.iconfinder.com/detecting-duplicate-images-using-python-cb240b05a3b6
 //and modifications from https://github.com/jenssegers/imagehash
-export default class getImagePixels{
+class getImagePixels{
     static fromImageStream(imageStream, imgSize, callback){
         //ballsy...stupid, but ballsy
         //it seems like a comparison value <10 could be considered a match
@@ -54,3 +54,5 @@ export default class getImagePixels{
         });
     }
 }
+
+module.exports = getImagePixels;
