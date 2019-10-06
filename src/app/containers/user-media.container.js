@@ -32,7 +32,7 @@ export default class UserMedia extends React.Component{
     handleDeleteButtonClick(media){
         //need to tell the server to delete the media
         //confirm?
-        console.log(`Trying to delete: (${media.file.id}) ${media.file.originalFilename}`);
+        console.log(`Trying to delete: (${media.id}) ${media.originalFilename}`);
         this.setState({
             show_delete_dialog: true,
             request_delete_media: media
@@ -45,7 +45,7 @@ export default class UserMedia extends React.Component{
         });
     }
     handleDeleteConfirmButtonClick(media){
-        axios.delete(`/api/m/${media.file.id}`).then(res=>{
+        axios.delete(`/api/m/${media.id}`).then(res=>{
             this.setState({
                 show_delete_dialog: false,
                 request_delete_media: {}
@@ -54,7 +54,7 @@ export default class UserMedia extends React.Component{
         });
     }
     handleDeleteSelection(queue){
-        axios.delete(`/api/m/${queue.next().file.id}`).then(res=>{
+        axios.delete(`/api/m/${queue.next().id}`).then(res=>{
             if(queue.length() > 0){
                 this.handleDeleteSelection(queue);
             }else{
@@ -188,7 +188,7 @@ export default class UserMedia extends React.Component{
                                             include_show_all_button={false}
                                             allow_selection={true} 
                                             onMediaSelect={(media)=>this.handleMediaSelect(media)}
-                                            onDeleteButtonClick={(media)=>this.handleDeleteButtonClick(media)} />
+                                            onMediaDeleteClick={(media)=>this.handleDeleteButtonClick(media)} />
                         </div>
                     </div>
                 }
