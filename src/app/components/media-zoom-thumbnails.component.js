@@ -24,11 +24,22 @@ export default class MediaZoomThumbnails extends React.PureComponent{
         window.addEventListener('resize', this.updateDivDims);
         this.updateDivDims();
     }
-    componentWillReceiveProps(){
+    /*componentWillReceiveProps(){
         this.updateDivDims();
+    }*/
+    componentDidUpdate(prevProps, prevState, snapshot){
+        if(snapshot !== null){
+            this.setState({divWidth: snapshot});
+        }
     }
     componentWillUnmount(){
         window.removeEventListener('resize', this.updateDivDims);
+    }
+    getSnapshotBeforeUpdate(prevProps, prevState){
+        if(prevState.divWidth !== this.state.divWidth){
+            return this.divRef.current.offsetWidth;
+        }
+        return null;
     }
     handleThumbClick(e, media){
         e.preventDefault();
