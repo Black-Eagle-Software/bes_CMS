@@ -10,8 +10,7 @@ export default class HeaderMenu extends React.Component{
         this.state={
             show_menu: false
         };
-    }
-    componentWillMount(){
+
         if(typeof window !== 'undefined'){
             document.addEventListener('click', this.handleGlobalClick.bind(this));
         }

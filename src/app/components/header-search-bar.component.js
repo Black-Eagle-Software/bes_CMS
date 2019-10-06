@@ -12,14 +12,13 @@ export default class HeaderSearchBar extends React.Component{
             show_query_results: false,
             query_results: {}
         }
-    }
-    componentDidMount(){
-        this.resetSearchState();
-    }
-    componentWillMount(){
+
         if(typeof window !== 'undefined'){
             document.addEventListener('click', this.handleGlobalClick.bind(this));
         }
+    }
+    componentDidMount(){
+        this.resetSearchState();
     }
     componentWillUnmount(){
         if(typeof window !== 'undefined'){
