@@ -1,4 +1,6 @@
-import binHexConverter from './binHexConverter';
+//import binHexConverter from './binHexConverter';
+const binHexConverter = require('./binHexConverter');
+const ServerConsole = require('./serverConsole');
 
 //with a lot of help from https://blog.iconfinder.com/detecting-duplicate-images-using-python-cb240b05a3b6
 //and modifications from https://github.com/jenssegers/imagehash
@@ -11,7 +13,7 @@ class dHash{
         //left and right neighbors
         //--this is only intended for use on images--
         //a comparison value < 5 could be considered a match        
-        console.log("Perceptual Hashing: difference hash algorithm...");
+        ServerConsole.debug("Perceptual Hashing: difference hash algorithm...");
         let bits = [];
         for(let y = 0; y < imgSize; y++){
             let idx = ((imgSize + 1) * y + 0) << 2;
@@ -21,13 +23,10 @@ class dHash{
                 idx = ((imgSize + 1) * y + x) << 2;
                 let right =  Math.floor((pixels[idx] * 0.299) + (pixels[idx + 1] * 0.587) + (pixels[idx + 2] * 0.114));
                 bits.push(left > right);
-                left = right;
-                //console.log(`rgb val: ${buffer.readUInt8(idx)}, ${buffer.readUInt8(idx + 1)}, ${buffer.readUInt8(idx + 2)}`);                        
+                left = right;                       
             }
         }
-        //console.log(bits);
-        //convert our array of booleans into a hex string
-        //let dec = 0;
+        //convert our array of booleans into a hex string        
         let hex = '';
         let bin = '';
         for(let i = bits.length - 1; i >= 0; i--){
