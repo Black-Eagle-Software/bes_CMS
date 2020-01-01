@@ -6,6 +6,7 @@ import MediaDeleteConfirmation from '../components/media/media-delete-confirmati
 import AlbumCoversList from '../components/albums/album-covers-list.component';
 import AlbumDeleteConfirmation from '../components/albums/album-delete-confirmation.component';
 import MediaListUserHomeRow from '../components/pages/media-list-user-home-row.component';
+import { AlbumListFilterable } from './album-list-filterable';
 
 export default class UserHomeContainer extends React.Component{
     constructor(props){
@@ -132,6 +133,7 @@ export default class UserHomeContainer extends React.Component{
                 {this.state.show_album_delete_dialog &&
                     <AlbumDeleteConfirmation album={this.state.request_delete_album} onCloseClick={()=>this.handleAlbumDeleteDialogCloseClick()} onConfirmClick={(album)=>this.handleDeleteAlbumConfirmButtonClick(album)}/>
                 }
+                <AlbumListFilterable albums={this.state.albums}/>
                 <MediaListUserHomeRow   rowHeader="Recent Albums" 
                                         rowActions={<>
                                             <div className="toolbar_btn" onClick={(e)=>this.handleAddAlbumClick(e)}>Add new album</div>

@@ -55,6 +55,10 @@ export default class Landing extends React.PureComponent{
                             Welcome to the Black Eagle Software CMS.  
                             <br/>
                             Please login or register to continue.
+                            <div>
+                                <button className='btn-primary' onClick={()=>this.props.handleLoginClick()}>Login</button>
+                                <button className='btn-primary' onClick={()=>this.props.handleRegisterClick()}>Register</button>
+                            </div>
                         </div>
                     }
                     {this.props.show_login &&
