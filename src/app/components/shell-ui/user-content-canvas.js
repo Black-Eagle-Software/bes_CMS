@@ -9,7 +9,7 @@ export class UserContentCanvas extends React.Component{
         return(
             <div className={styles.container}>
                 <UserToolbar id={this.props.id} username={this.props.username}/>
-                <MediaCanvas media={this.props.media}/>
+                <MediaCanvas media={this.props.media} onZoomClick={(media, origin)=>this.props.onZoomClick(media, origin)}/>
             </div>
         );
     }

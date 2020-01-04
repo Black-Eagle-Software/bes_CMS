@@ -1,15 +1,34 @@
 import React from 'react';
 import { ContentCanvas } from './content-canvas';
 import DateHelper from '../../../helpers/date';
+import { CanvasToolbar } from './canvas-toolbar';
+import { MediaCanvasRow } from './media-canvas-row';
 
 import styles from './media-canvas.css';
+
 
 export class MediaCanvas extends React.Component{
     constructor(props){
         super(props);
 
+        this.state = {
+            media: this.props.media,
+            isFiltered: false,
+            sortCol: '',
+            sortDir: ''
+        };
+
         this.generateMediaRow = this.generateMediaRow.bind(this);
         this.generateMediaTile = this.generateMediaTile.bind(this);
+        this.sortContent = this.sortContent.bind(this);
+        this.handleFilterChange = this.handleFilterChange.bind(this);
+    }
+    
+    componentDidUpdate(){
+        //may need to rework this a bit in the future
+        if(this.props.media.length > 0 && this.state.media.length === 0 && !this.state.isFiltered){
+            this.setState({media: this.props.media});
+        }
     }
     generateMediaRow(media, uuid){
         //console.log(media);
@@ -21,7 +40,7 @@ export class MediaCanvas extends React.Component{
                     <span className={styles.rowDate}>{DateHelper.formatDateForMillisecondDate(media.dateAdded)}</span>
                     <span className={styles.row50w}>{media.height}</span>
                     <span className={styles.row50w}>{media.width}</span>
-                    <div className={styles.rowButton}>
+                    <div className={styles.rowButton} onClick={()=>this.props.onZoomClick(media, this.props.media)}>
                         <span className='codicon codicon-eye'/>
                     </div>
                     <div className={styles.rowButton}>
@@ -31,6 +50,22 @@ export class MediaCanvas extends React.Component{
     }
     generateMediaTile(media, uuid){
         return <div key={uuid}></div>;
+    }
+    handleFilterChange(filter){
+        if(filter === ''){
+            this.setState({
+                media: this.props.media,
+                isFiltered: false
+            }, ()=>{
+                this.sortContent(this.state.sortCol, this.state.sortDir);
+            });            
+            return;
+        }
+        let temp = this.props.media.filter(media=>{return media.originalFilename.indexOf(filter.toLowerCase()) !== -1});
+        this.setState({
+            media: temp,
+            isFiltered: true
+        });
     }
     render(){
         //we need to create a map of column headers->object properties to 
@@ -44,6 +79,7 @@ export class MediaCanvas extends React.Component{
             {property: 'height', header: 'Height', sortable: true},
             {property: 'width', header: 'Width', sortable: true}
         ];
+        const title = this.state.isFiltered ? `Media (${this.state.media.length} items match filter)` : `Media (${this.state.media.length} items)`;
         return(
             <div className={styles.container}>
                 {/*
@@ -54,8 +90,48 @@ export class MediaCanvas extends React.Component{
                     --sortable would be nice
                     --as would resizing
                 */}
-                <ContentCanvas contentSource={this.props.media} showAsRows={true} rowComponent={this.generateMediaRow} columns={columns} tileComponent={this.generateMediaTile}/>
+                <CanvasToolbar title={title} onFilterChange={this.handleFilterChange}/>
+                <ContentCanvas contentSource={this.state.media} 
+                                showAsRows={true} 
+                                rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)}/>} 
+                                columns={columns} 
+                                tileComponent={this.generateMediaTile}
+                                sortContent={this.sortContent}/>
             </div>
         );
+    }
+    sortContent(column, direction){
+        let temp = this.state.media;
+        let col = column;
+        if(col === 'filename') col = 'originalFilename';
+        if(col === 'date') col = 'fileDate';        
+        temp.sort((a, b)=>{
+            if(direction === 'down'){
+                if(column === 'filename' || column === 'type'){
+                    let af = a[col].toLowerCase();
+                    let bf = b[col].toLowerCase();
+                    if(bf < af) return -1;
+                    if(bf > af) return 1;
+                    return 0;
+                }else{
+                    return b[col] - a[col];
+                }
+            }else{
+                if(column === 'filename' || column === 'type'){
+                    let af = a[col].toLowerCase();
+                    let bf = b[col].toLowerCase();
+                    if(af < bf) return -1;
+                    if(af > bf) return 1;
+                    return 0;
+                }else{
+                    return a[col] - b[col];
+                }
+            }
+        });
+        this.setState({
+            media: temp,
+            sortCol: column,
+            sortDir: direction
+        });
     }
 }

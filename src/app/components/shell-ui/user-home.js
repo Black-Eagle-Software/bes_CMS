@@ -1,10 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 import { Menu } from './menu';
-
-import styles from './user-home.css';
 import { AlbumListFilterable } from '../../containers/album-list-filterable';
 import { UserContentCanvas } from './user-content-canvas';
+import MediaZoom from '../media-zoom.component';
+
+import styles from './user-home.css';
 
 export class UserHome extends React.Component{
     constructor(props){
@@ -13,21 +14,40 @@ export class UserHome extends React.Component{
         this.state={
             albums: [],
             media: [],
-            public_media: []
+            public_media: [],
+            showMediaZoom: false,
+            zoomSource: {},
+            zoomList: []
         };
     }
     componentDidMount(){
         this.updateMediaFromDatabase();
     }
+    handleZoomMediaClick(media, origin){    //don't need to save origin here
+        this.setState({
+            showMediaZoom: true,
+            zoomSource: media,
+            zoomList: origin
+        });
+    }
+    hideMediaZoom(){
+        this.setState({showMediaZoom: false});
+    }
     render(){
         return(
             <div className={styles.container}>
+                {this.state.showMediaZoom &&
+                    <MediaZoom media_source={this.state.zoomSource}
+                                media_list={this.state.zoomList}
+                                onCloseClick={()=>this.hideMediaZoom()}/>
+                }
                 <Menu />
                 <div className={styles.albumList}>
                     <div className={styles.albumListHeader}>Albums (should this be the filter box?)</div>
                     <AlbumListFilterable albums={this.state.albums}/>
                 </div>
-                <UserContentCanvas id={this.props.id} username={this.props.username} media={this.state.media}/>                
+                {/*Pass in the origin from the content canvas to support zooming within a filtered list of media*/}
+                <UserContentCanvas id={this.props.id} username={this.props.username} media={this.state.media} onZoomClick={(media, origin)=>this.handleZoomMediaClick(media, origin)}/>                
             </div>
         )
     }

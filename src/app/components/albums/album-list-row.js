@@ -10,13 +10,17 @@ export class AlbumListRow extends React.Component {
         super(props);
 
         this.state = {
-            media:[]
+            media:[],
+            isMounted: false
         };
     }
     componentDidMount(){
+        this.setState({isMounted: true});
         axios.get(`/api/a/${this.props.album.id}/m?limit=4`)
         .then(response=>{
-            this.setState({media: response.data});
+            if(this.state.isMounted){
+                this.setState({media: response.data});
+            }
         });
     }
     render(){

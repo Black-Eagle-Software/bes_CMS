@@ -1,0 +1,102 @@
+.table{
+    width: 100%;
+}
+.header{
+    height: 24px;
+    font-size: 12px;
+    display: flex;
+    flex-flow: row nowrap;
+    padding-right: 96px;
+    align-items: center;
+    padding-bottom: 1px;
+    background: #f5f5f5;
+}
+.headerCell{
+    border: 1px solid #ebebeb;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+}
+.sortable:hover{
+    background: #f5f5f5;
+}
+th{
+    border: 1px solid #666666;
+    border-top-width: 0px;
+}
+.thumbCol{
+    width: 56px;
+    padding: 0px 8px;
+    height: 100%;
+    -webkit-user-select: none;
+}
+.idCol{
+    width: 50px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.filenameCol{
+    min-width: 50px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    flex: 1;
+    -webkit-user-select: none;
+}
+.typeCol{
+    width: 50px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.dateCol{
+    width: 150px;
+    font-size: 12px;
+    min-width: 150px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.widthCol{
+    width: 50px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.heightCol{
+    width: 50px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.tagsCol{
+    min-width: 50px;
+}
+.albumCol{
+    width: 25px;
+}
+.toolbarCol{
+    display: flex;
+    flex-flow: row nowrap;
+    min-width: 80px;
+    justify-content: center;
+    -webkit-user-select: none;    
+}
+.hideCol{
+    display: none;
+}
+td{
+    -webkit-user-select: none;
+    height: 100%;
+}
+.thumb{
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+}
+.rowsContainer{
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}

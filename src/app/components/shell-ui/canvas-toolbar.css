@@ -2,13 +2,9 @@
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    justify-content: flex-end;
     height: 40px;
-    min-height: 40px;
     width: 100%;
-    background: #f5f5f5;
-    color: #1f1f1f;
-    border-bottom: 1px solid #ebebeb;    
+    border-bottom: 1px solid #f5f5f5;
 }
 .button{
     display: flex;
@@ -25,4 +21,17 @@
 .button:active{
     background: #4091c9;
     color: #b8d6eb;
+}
+.spacer{
+    flex: 1;
+}
+.title{
+    padding: 0px 8px;
+    color: #666666;
+    font-size: 18px;
+}
+.viewToolbar{
+    display: flex;
+    flex-flow: row nowrap;
+    height: 100%;
 }
