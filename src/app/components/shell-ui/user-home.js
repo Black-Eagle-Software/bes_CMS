@@ -6,6 +6,7 @@ import { UserContentCanvas } from './user-content-canvas';
 import MediaZoom from '../media-zoom.component';
 
 import styles from './user-home.css';
+import { ContextMenuWrapper } from './context-menu-wrapper';
 
 export class UserHome extends React.Component{
     constructor(props){
@@ -17,11 +18,37 @@ export class UserHome extends React.Component{
             public_media: [],
             showMediaZoom: false,
             zoomSource: {},
-            zoomList: []
+            zoomList: [],
+            showMediaDetails: false,
+            focusedMedia: {}
         };
+
+        this.handleContextMenuClose = this.handleContextMenuClose.bind(this);
     }
     componentDidMount(){
         this.updateMediaFromDatabase();
+    }
+    handleContextMenu(loc, menu){
+        this.setState({
+            showContextMenu: true,
+            contextMenuLocation: loc,
+            contextMenu: menu
+        });
+    }
+    handleContextMenuClose(){
+        this.setState({
+            showContextMenu: false,
+            contextMenuLocation: {},
+            contextMenu: {}
+        });
+    }
+    handleMediaDetailsClick(media){
+        //set a flag in the state
+        //show details overlay if flag set (similar to zoom)
+        this.setState({
+            showMediaDetails: true,
+            focusedMedia: media
+        });
     }
     handleZoomMediaClick(media, origin){    //don't need to save origin here
         this.setState({
@@ -29,6 +56,9 @@ export class UserHome extends React.Component{
             zoomSource: media,
             zoomList: origin
         });
+    }
+    hideMediaDetails(){
+        this.setState({showMediaDetails: false});
     }
     hideMediaZoom(){
         this.setState({showMediaZoom: false});
@@ -41,13 +71,21 @@ export class UserHome extends React.Component{
                                 media_list={this.state.zoomList}
                                 onCloseClick={()=>this.hideMediaZoom()}/>
                 }
+                {this.state.showContextMenu &&
+                    <ContextMenuWrapper location={this.state.contextMenuLocation} menu={this.state.contextMenu} onMenuClose={this.handleContextMenuClose}/>
+                }
                 <Menu />
                 <div className={styles.albumList}>
                     <div className={styles.albumListHeader}>Albums (should this be the filter box?)</div>
                     <AlbumListFilterable albums={this.state.albums}/>
                 </div>
                 {/*Pass in the origin from the content canvas to support zooming within a filtered list of media*/}
-                <UserContentCanvas id={this.props.id} username={this.props.username} media={this.state.media} onZoomClick={(media, origin)=>this.handleZoomMediaClick(media, origin)}/>                
+                <UserContentCanvas id={this.props.id} 
+                                    username={this.props.username} 
+                                    media={this.state.media} 
+                                    onZoomClick={(media, origin)=>this.handleZoomMediaClick(media, origin)}
+                                    onDetailsClick={(media)=>this.handleMediaDetailsClick(media)}
+                                    handleContextMenu={(loc, menu)=>this.handleContextMenu(loc, menu)}/>                
             </div>
         )
     }

@@ -46,7 +46,7 @@ var browserConfig = {
       __isBrowser__: "true"
     }),
     new MiniCssExtractPlugin({
-      filename: './public/css/styles.css'
+      filename: './css/styles.css'
     })
   ],
   watchOptions:{

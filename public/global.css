@@ -123,3 +123,9 @@ input:invalid{
     width: 50%;
     max-width: 50%;
 }
+
+/*prevent outline around react-virtualized list
+    when it gets focus*/
+.ReactVirtualized__List:focus{
+    outline: none;
+}

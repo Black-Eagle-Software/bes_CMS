@@ -22,6 +22,11 @@
     background: #4091c9;
     color: #b8d6eb;
 }
+.buttonLabel{
+    font-size: 12px;
+    padding-left: 4px;
+    cursor: default;
+}
 .spacer{
     flex: 1;
 }

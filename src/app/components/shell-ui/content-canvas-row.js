@@ -5,6 +5,8 @@
     Note that this will not be used for tiles view (???)
 */
 import React from 'react';
+import { ContentCanvasRowCommandButton } from './content-canvas-row-cmd-btn';
+import { ContentCanvasRowPopupMenu } from './content-canvas-row-popup-menu';
 
 import styles from './content-canvas-row.css';
 import tableStyles from './content-canvas.css';
@@ -19,11 +21,18 @@ export class ContentCanvasRow extends React.Component{
 
         this.handleRowClick = this.handleRowClick.bind(this);
         this.handleZoomClick = this.handleZoomClick.bind(this);
+        this.handleContextMenu = this.handleContextMenu.bind(this);
+    }
+    handleContextMenu(event){
+        event.preventDefault();
+        event.stopPropagation();
+        let pt = {x: event.clientX, y: event.clientY};
+        this.props.handleContextMenu(pt, <ContentCanvasRowPopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={()=>this.props.onDetailsClick()}/>);
     }
     handleRowClick(event){
         event.preventDefault();
         event.stopPropagation();
-        //this.setState(prevState=>({isSelected:!prevState.isSelected}));
+        //this.setState(prevState=>({isSelected:!prevState.isSelected}));        
         this.props.onRowClick();
     }
     handleZoomClick(event){
@@ -52,7 +61,7 @@ export class ContentCanvasRow extends React.Component{
         const contStyle = isSelected ? `${styles.row} ${styles.selected}` : `${styles.row}`;
 
         return(
-            <div className={contStyle} onClick={this.handleRowClick}>
+            <div className={contStyle} onClick={this.handleRowClick} style={this.props.style} onContextMenu={this.handleContextMenu}>
                 <span className={tableStyles.thumbCol}>{thumbnail}</span>
                 <span className={tableStyles.idCol}>{id}</span>
                 <span className={tableStyles.filenameCol}>{filename}</span>
@@ -64,33 +73,12 @@ export class ContentCanvasRow extends React.Component{
                 <div className={styles.rowButton} onClick={this.handleZoomClick}>
                     <span className='codicon codicon-zoom-in'/>
                 </div>
-                <div className={styles.rowButton}>
-                    <span className='codicon codicon-more'/>
-                </div>
+                <ContentCanvasRowCommandButton buttonClass={styles.rowButton}
+                                                buttonContents={<span className='codicon codicon-more'/>}
+                                                popupChildren={
+                                                    <ContentCanvasRowPopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={()=>this.props.onDetailsClick()}/>
+                                                }/>                
             </div>
-        );
-
-        return(
-            <tr className={styles.row}>
-                <td className={tableStyles.thumbCol}>{thumbnail}</td>
-                <td className={tableStyles.idCol}>{id}</td>
-                <td className={tableStyles.filenameCol}>{filename}</td>
-                <td className={tableStyles.typeCol}>{type}</td>
-                <td className={tableStyles.dateCol}>{fileDate}</td>
-                <td className={tableStyles.dateCol}>{dateAdded}</td>
-                <td className={tableStyles.widthCol}>{width}</td>
-                <td className={tableStyles.heightCol}>{height}</td>
-                <td className={tableStyles.tagsCol}>{tags}</td>
-                <td className={tableStyles.albumCol}>{inAlbum}</td>
-                <td className={tableStyles.toolbarCol}>
-                    <div className={styles.rowButton} onClick={()=>this.props.onZoomClick(media, this.props.media)}>
-                        <span className='codicon codicon-eye'/>
-                    </div>
-                    <div className={styles.rowButton}>
-                        <span className='codicon codicon-more'/>
-                    </div>
-                </td>
-            </tr>
         );
     }
 }

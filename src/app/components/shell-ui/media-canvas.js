@@ -15,13 +15,16 @@ export class MediaCanvas extends React.Component{
             media: this.props.media,
             isFiltered: false,
             sortCol: '',
-            sortDir: ''
+            sortDir: '',
+            update: false,
+            showSelectionToolbarControls: false
         };
 
         this.generateMediaRow = this.generateMediaRow.bind(this);
         this.generateMediaTile = this.generateMediaTile.bind(this);
         this.sortContent = this.sortContent.bind(this);
         this.handleFilterChange = this.handleFilterChange.bind(this);
+        this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);
     }
     
     componentDidUpdate(){
@@ -53,19 +56,26 @@ export class MediaCanvas extends React.Component{
     }
     handleFilterChange(filter){
         if(filter === ''){
-            this.setState({
+            this.setState(prevState=>({
                 media: this.props.media,
-                isFiltered: false
-            }, ()=>{
+                isFiltered: false,
+                update: !prevState.update  
+            }), ()=>{
                 this.sortContent(this.state.sortCol, this.state.sortDir);
             });            
             return;
         }
         let temp = this.props.media.filter(media=>{return media.originalFilename.indexOf(filter.toLowerCase()) !== -1});
-        this.setState({
+        this.setState(prevState=>({
             media: temp,
-            isFiltered: true
+            isFiltered: true,
+            update: !prevState.update
+        }), ()=>{
+            this.sortContent(this.state.sortCol, this.state.sortDir);
         });
+    }
+    handleRowSelectionChanged(count){
+        this.setState({showSelectionToolbarControls: count > 0});
     }
     render(){
         //we need to create a map of column headers->object properties to 
@@ -90,13 +100,17 @@ export class MediaCanvas extends React.Component{
                     --sortable would be nice
                     --as would resizing
                 */}
-                <CanvasToolbar title={title} onFilterChange={this.handleFilterChange}/>
+                <CanvasToolbar title={title} onFilterChange={this.handleFilterChange} showSelectionToolbarControls={this.state.showSelectionToolbarControls}/>
                 <ContentCanvas contentSource={this.state.media} 
                                 showAsRows={true} 
-                                rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)}/>} 
+                                rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
+                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)} 
+                                                                handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}/>} 
                                 columns={columns} 
                                 tileComponent={this.generateMediaTile}
-                                sortContent={this.sortContent}/>
+                                sortContent={this.sortContent}
+                                update={this.state.update}
+                                onRowSelectionChanged={this.handleRowSelectionChanged}/>
             </div>
         );
     }
@@ -128,10 +142,11 @@ export class MediaCanvas extends React.Component{
                 }
             }
         });
-        this.setState({
+        this.setState(prevState=>({
             media: temp,
             sortCol: column,
-            sortDir: direction
-        });
+            sortDir: direction,
+            update: !prevState.update
+        }));
     }
 }
