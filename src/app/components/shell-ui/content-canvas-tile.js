@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContentCanvasRowPopupMenu } from './content-canvas-row-popup-menu';
+import { ContentCanvasTilePopupMenu } from './content-canvas-tile-popup-menu';
 
 import styles from './content-canvas-tile.css';
 
@@ -24,7 +24,7 @@ export class ContentCanvasTile extends React.Component{
         event.preventDefault();
         event.stopPropagation();
         let pt = {x: event.clientX, y: event.clientY};
-        this.props.handleContextMenu(pt, <ContentCanvasRowPopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={()=>this.props.onDetailsClick()}/>);
+        this.props.handleContextMenu(pt, <ContentCanvasTilePopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={()=>this.props.onDetailsClick()}/>);
     }
     handleTileClick(event){
         event.preventDefault();

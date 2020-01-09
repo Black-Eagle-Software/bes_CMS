@@ -56,8 +56,7 @@ export class ContentCanvas extends React.Component {
     render(){        
         return(
             <>
-                {this.props.showAsRows && 
-                    <div style={{width: '100%', overflow: 'hidden'}}>
+                <div style={{width: '100%', overflow: 'hidden'}}>
                         <div className={styles.header}>
                             <ContentCanvasColumnHeader colClass={styles.thumbCol}/>
                             <ContentCanvasColumnHeader name='id' colClass={styles.idCol} content='ID' sortable={true} sortDir={this.state.sortCol==='id' ? this.state.sortDir : ''} onClick={this.handleColumnHeaderClick}/>
@@ -69,7 +68,6 @@ export class ContentCanvas extends React.Component {
                             <ContentCanvasColumnHeader name='height' colClass={styles.heightCol} content='Height' sortable={true} sortDir={this.state.sortCol==='height' ? this.state.sortDir : ''} onClick={this.handleColumnHeaderClick}/>
                         </div>
                     </div>
-                }
                 <div className={styles.rowsContainer}>
                     <AutoSizer>
                         {({height, width})=>{
