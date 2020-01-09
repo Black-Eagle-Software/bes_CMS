@@ -29,10 +29,10 @@ export class CanvasToolbar extends React.Component{
                 }
                 <ContentFilter onChange={(event)=>this.props.onFilterChange(event)}/>
                 <div className={styles.viewToolbar}>
-                    <div className={styles.button} title="List view">
+                    <div className={styles.button} title="List view" onClick={()=>this.props.onViewChange('rows')}>
                         <span className='codicon codicon-list-unordered'/>
                     </div>
-                    <div className={styles.button} title="Tiles view">
+                    <div className={styles.button} title="Tiles view" onClick={()=>this.props.onViewChange('tiles')}>
                         <span className='codicon codicon-gripper'/>
                     </div>
                 </div>

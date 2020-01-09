@@ -1,8 +1,8 @@
 import React from 'react';
 import { ContentCanvas } from './content-canvas';
-import DateHelper from '../../../helpers/date';
 import { CanvasToolbar } from './canvas-toolbar';
 import { MediaCanvasRow } from './media-canvas-row';
+import { MediaCanvasTile } from './media-canvas-tile';
 
 import styles from './media-canvas.css';
 
@@ -17,10 +17,10 @@ export class MediaCanvas extends React.Component{
             sortCol: '',
             sortDir: '',
             update: false,
-            showSelectionToolbarControls: false
+            showSelectionToolbarControls: false,
+            showContentAsRows: true
         };
 
-        this.generateMediaRow = this.generateMediaRow.bind(this);
         this.generateMediaTile = this.generateMediaTile.bind(this);
         this.sortContent = this.sortContent.bind(this);
         this.handleFilterChange = this.handleFilterChange.bind(this);
@@ -32,24 +32,6 @@ export class MediaCanvas extends React.Component{
         if(this.props.media.length > 0 && this.state.media.length === 0 && !this.state.isFiltered){
             this.setState({media: this.props.media});
         }
-    }
-    generateMediaRow(media, uuid){
-        //console.log(media);
-        return <div key={uuid} className={styles.row}>
-                    <img src={`/${media.filePath}/thumbnails/${media.thumbnailFilename}`} className={styles.rowThumb}/>
-                    <span className={styles.row50w}>{media.id}</span>
-                    <span className={styles.rowFilename}>{media.originalFilename}</span>
-                    <span className={styles.rowDate}>{DateHelper.formatDateForMillisecondDate(media.fileDate)}</span>
-                    <span className={styles.rowDate}>{DateHelper.formatDateForMillisecondDate(media.dateAdded)}</span>
-                    <span className={styles.row50w}>{media.height}</span>
-                    <span className={styles.row50w}>{media.width}</span>
-                    <div className={styles.rowButton} onClick={()=>this.props.onZoomClick(media, this.props.media)}>
-                        <span className='codicon codicon-eye'/>
-                    </div>
-                    <div className={styles.rowButton}>
-                        <span className='codicon codicon-more'/>
-                    </div>
-                </div>;
     }
     generateMediaTile(media, uuid){
         return <div key={uuid}></div>;
@@ -77,18 +59,14 @@ export class MediaCanvas extends React.Component{
     handleRowSelectionChanged(count){
         this.setState({showSelectionToolbarControls: count > 0});
     }
+    handleViewChange(view){
+        if(view === 'tiles'){
+            this.setState({showContentAsRows: false});
+        }else{
+            this.setState({showContentAsRows: true});
+        }
+    }
     render(){
-        //we need to create a map of column headers->object properties to 
-        //pass to ContentCanvas
-        const columns = [
-            {property: null, header: 'Thumbnail', sortable: false},
-            {property: 'id', header: 'id', sortable: true},
-            {property: 'originalFilename', header: 'Filename', sortable: true},
-            {property: 'fileDate', header: 'File Date', sortable: true},
-            {property: 'dateAdded', header: 'Date Added', sortable: true},
-            {property: 'height', header: 'Height', sortable: true},
-            {property: 'width', header: 'Width', sortable: true}
-        ];
         const title = this.state.isFiltered ? `Media (${this.state.media.length} items match filter)` : `Media (${this.state.media.length} items)`;
         return(
             <div className={styles.container}>
@@ -100,14 +78,15 @@ export class MediaCanvas extends React.Component{
                     --sortable would be nice
                     --as would resizing
                 */}
-                <CanvasToolbar title={title} onFilterChange={this.handleFilterChange} showSelectionToolbarControls={this.state.showSelectionToolbarControls}/>
+                <CanvasToolbar title={title} onFilterChange={this.handleFilterChange} showSelectionToolbarControls={this.state.showSelectionToolbarControls} onViewChange={(view)=>this.handleViewChange(view)}/>
                 <ContentCanvas contentSource={this.state.media} 
-                                showAsRows={true} 
+                                showAsRows={this.state.showContentAsRows} 
                                 rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
                                                                 onDetailsClick={(media)=>this.props.onDetailsClick(media)} 
                                                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}/>} 
-                                columns={columns} 
-                                tileComponent={this.generateMediaTile}
+                                tileComponent={<MediaCanvasTile onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
+                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)} 
+                                                                handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}/>}
                                 sortContent={this.sortContent}
                                 update={this.state.update}
                                 onRowSelectionChanged={this.handleRowSelectionChanged}/>

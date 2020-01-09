@@ -73,12 +73,17 @@ export class ContentCanvas extends React.Component {
                 <div className={styles.rowsContainer}>
                     <AutoSizer>
                         {({height, width})=>{
+                            const itemsPerRow = this.props.showAsRows ? 1 : Math.floor(width/(200 + 16));
+                            const rowCount = this.props.showAsRows ? this.props.contentSource.length : Math.ceil(this.props.contentSource.length/itemsPerRow);
+                            const rowHeight = this.props.showAsRows ? 40 : 200 + 16;
+                            //if (!this.props.showAsRows) height = rowCount * (200 + 16);
+
                             return(
                                 <List 
                                     width={width}
                                     height={height}
-                                    rowCount={this.props.contentSource.length}
-                                    rowHeight={40}
+                                    rowCount={rowCount}
+                                    rowHeight={rowHeight}
                                     rowRenderer={this.rowRenderer}
                                     overscanRowCount={3}
                                     update={this.props.update}
@@ -102,8 +107,25 @@ export class ContentCanvas extends React.Component {
                 let item = this.props.contentSource[index];
                 let selected = this.state.selectedRows.indexOf(item) !== -1;
                 return React.cloneElement(this.props.rowComponent, {key:uuid(), media: item,  style: style, onRowClick:(media)=>this.handleRowClick(media),  isSelected: selected});
-            }else{
-                return tileComponent(this.props.contentSource[index], uuid());
+            }else{                
+                const itemsPerRow = Math.floor(parent.props.width/(200 + 16));
+                const fromIndex = index * itemsPerRow;
+                const toIndex = Math.min(fromIndex + itemsPerRow, this.props.contentSource.length);
+                const divStyle = {
+                    display: 'flex',
+                    paddingLeft: '16px'
+                };
+                return(
+                    <div key={key} style={Object.assign({}, style, divStyle)}>
+                        {this.props.contentSource.map((item, index)=>{
+                            if(index >= fromIndex && index < toIndex){
+                                let selected = this.state.selectedRows.indexOf(item) !== -1;
+                                return React.cloneElement(this.props.tileComponent, {key:uuid(), media: item,  style: style, onTileClick:(media)=>this.handleRowClick(media),  isSelected: selected});
+                            }
+                        })}
+                    </div>
+                );
+                
             }
         }
     }    
