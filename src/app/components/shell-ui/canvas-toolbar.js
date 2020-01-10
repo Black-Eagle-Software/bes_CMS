@@ -27,7 +27,7 @@ export class CanvasToolbar extends React.Component{
                         </div>                    
                     </div>
                 }
-                <ContentFilter onChange={(event)=>this.props.onFilterChange(event)}/>
+                <ContentFilter onChange={(event)=>this.props.onFilterChange(event)} placeholder={'Filter filenames'}/>
                 <div className={styles.viewToolbar}>
                     <div className={styles.button} title="List view" onClick={()=>this.props.onViewChange('rows')}>
                         <span className='codicon codicon-list-unordered'/>
