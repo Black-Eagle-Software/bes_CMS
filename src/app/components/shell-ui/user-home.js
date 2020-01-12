@@ -97,7 +97,7 @@ export class UserHome extends React.Component{
                 {this.state.showContextMenu &&
                     <ContextMenuWrapper location={this.state.contextMenuLocation} menu={this.state.contextMenu} onMenuClose={this.handleContextMenuClose}/>
                 }
-                <Menu />
+                <Menu onMediaClick={()=>this.handleShowAllMedia()}/>
                 <AlbumsList albums={this.state.albums} onRowClick={(album)=>this.handleAlbumClick(album)}/>                
                 {/*Pass in the origin from the content canvas to support zooming within a filtered list of media*/}
                 <UserContentCanvas id={this.props.id} 

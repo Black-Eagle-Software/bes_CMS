@@ -9,18 +9,26 @@ export class  ContextMenuWrapper extends React.Component {
         this.popupRef = React.createRef();
 
         this.handleGlobalClick = this.handleGlobalClick.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
     componentDidMount(){
         document.addEventListener('click', this.handleGlobalClick);
+        document.addEventListener("keydown", this.handleKeyDown);
     }
     componentWillUnmount(){
         document.removeEventListener('click', this.handleGlobalClick);
+        document.removeEventListener("keydown", this.handleKeyDown);
     }
     handleGlobalClick(e){
         if(this.popupRef.current){
             if(!this.popupRef.current.contains(e.target)){
                 this.props.onMenuClose();
             }
+        }
+    }
+    handleKeyDown(e){
+        if(e.key === 'Escape'){
+            this.props.onMenuClose();
         }
     }
     render(){
