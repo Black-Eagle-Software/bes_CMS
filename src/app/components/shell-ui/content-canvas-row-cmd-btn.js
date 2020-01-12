@@ -14,6 +14,7 @@ export class ContentCanvasRowCommandButton extends  React.Component{
         };
 
         this.btnRef = React.createRef();
+        this.containerRef = React.createRef();
 
         this.handleButtonClick = this.handleButtonClick.bind(this);
         this.handleGlobalClick = this.handleGlobalClick.bind(this);
@@ -40,9 +41,8 @@ export class ContentCanvasRowCommandButton extends  React.Component{
         }));
     }
     handleGlobalClick(e){
-        if(this.state.popupOpen){
-            const elmt = ReactDOM.findDOMNode(this);
-            if(!elmt.contains(e.target)){
+        if(this.state.popupOpen && this.containerRef.current){
+            if(!this.containerRef.current.contains(e.target)){
                 this.setState({popupOpen: false});
             }
         }
@@ -51,7 +51,7 @@ export class ContentCanvasRowCommandButton extends  React.Component{
         const {buttonClass, buttonContents, popupChildren} = this.props;
         const popupStyle= this.state.openPaneUp ? { right: '0px', bottom: '40px'} : { right: '0px' };
         return(
-            <div className={styles.container}>
+            <div className={styles.container} ref={this.containerRef}>
                 <div ref={this.btnRef} className={buttonClass} onClick={this.handleButtonClick}>
                     {buttonContents}
                 </div>

@@ -6,6 +6,8 @@ export class  ContextMenuWrapper extends React.Component {
     constructor(props){
         super(props);
 
+        this.popupRef = React.createRef();
+
         this.handleGlobalClick = this.handleGlobalClick.bind(this);
     }
     componentDidMount(){
@@ -15,9 +17,10 @@ export class  ContextMenuWrapper extends React.Component {
         document.removeEventListener('click', this.handleGlobalClick);
     }
     handleGlobalClick(e){
-        const elmt = ReactDOM.findDOMNode(this);
-        if(!elmt.contains(e.target)){
-            this.props.onMenuClose();
+        if(this.popupRef.current){
+            if(!this.popupRef.current.contains(e.target)){
+                this.props.onMenuClose();
+            }
         }
     }
     render(){
@@ -49,7 +52,7 @@ export class  ContextMenuWrapper extends React.Component {
 
         return(
             <>
-                <Popup style={menuStyle}>
+                <Popup style={menuStyle} ref={this.popupRef}>
                     {menu}
                 </Popup>
             </>
