@@ -7,6 +7,7 @@ import MediaZoom from '../media-zoom.component';
 
 import styles from './user-home.css';
 import { ContextMenuWrapper } from './context-menu-wrapper';
+import { AlbumsList } from './albums-list';
 
 export class UserHome extends React.Component{
     constructor(props){
@@ -15,6 +16,9 @@ export class UserHome extends React.Component{
         this.state={
             albums: [],
             media: [],
+            contentCanvasMedia: [],
+            contentCanvasTitle: 'Media',
+            contentCanvasShowBackButton: false,
             public_media: [],
             showMediaZoom: false,
             zoomSource: {},
@@ -27,6 +31,18 @@ export class UserHome extends React.Component{
     }
     componentDidMount(){
         this.updateMediaFromDatabase();
+    }
+    handleAlbumClick(album){
+        //need to make the album show up in the content canvas
+        const title = `Albums / ${album.name}`;
+        axios.get(`/api/a/${album.id}/m`)
+        .then(response=>{
+            this.setState({
+                contentCanvasMedia: response.data,
+                contentCanvasTitle: title,
+                contentCanvasShowBackButton: true
+            });
+        });
     }
     handleContextMenu(loc, menu){
         this.setState({
@@ -48,6 +64,13 @@ export class UserHome extends React.Component{
         this.setState({
             showMediaDetails: true,
             focusedMedia: media
+        });
+    }
+    handleShowAllMedia(){
+        this.setState({
+            contentCanvasMedia: this.state.media,
+            contentCanvasTitle: 'Media',
+            contentCanvasShowBackButton: false,
         });
     }
     handleZoomMediaClick(media, origin){    //don't need to save origin here
@@ -75,17 +98,17 @@ export class UserHome extends React.Component{
                     <ContextMenuWrapper location={this.state.contextMenuLocation} menu={this.state.contextMenu} onMenuClose={this.handleContextMenuClose}/>
                 }
                 <Menu />
-                <div className={styles.albumList}>
-                    <div className={styles.albumListHeader}>Albums (should this be the filter box?)</div>
-                    <AlbumListFilterable albums={this.state.albums}/>
-                </div>
+                <AlbumsList albums={this.state.albums} onRowClick={(album)=>this.handleAlbumClick(album)}/>                
                 {/*Pass in the origin from the content canvas to support zooming within a filtered list of media*/}
                 <UserContentCanvas id={this.props.id} 
                                     username={this.props.username} 
-                                    media={this.state.media} 
+                                    media={this.state.contentCanvasMedia} 
                                     onZoomClick={(media, origin)=>this.handleZoomMediaClick(media, origin)}
                                     onDetailsClick={(media)=>this.handleMediaDetailsClick(media)}
-                                    handleContextMenu={(loc, menu)=>this.handleContextMenu(loc, menu)}/>                
+                                    handleContextMenu={(loc, menu)=>this.handleContextMenu(loc, menu)}
+                                    title={this.state.contentCanvasTitle}
+                                    showBackButton={this.state.contentCanvasShowBackButton}
+                                    onShowAllMedia={()=>this.handleShowAllMedia()}/>                
             </div>
         )
     }
@@ -114,7 +137,10 @@ export class UserHome extends React.Component{
             for(let i = 0; i < res.length; i++){
                 temp_media.push({file: res[i], src_file: `${res[i].filePath}/${res[i].hashFilename}`, thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
             }
-            this.setState({media: response.data});
+            this.setState({
+                media: response.data,
+                contentCanvasMedia: response.data
+            });
         });
 
         //read our albums from the database

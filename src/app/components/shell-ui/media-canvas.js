@@ -21,7 +21,6 @@ export class MediaCanvas extends React.Component{
             showContentAsRows: true
         };
 
-        this.generateMediaTile = this.generateMediaTile.bind(this);
         this.sortContent = this.sortContent.bind(this);
         this.handleFilterChange = this.handleFilterChange.bind(this);
         this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);
@@ -29,12 +28,13 @@ export class MediaCanvas extends React.Component{
     
     componentDidUpdate(){
         //may need to rework this a bit in the future
-        if(this.props.media.length > 0 && this.state.media.length === 0 && !this.state.isFiltered){
-            this.setState({media: this.props.media});
+        if(this.props.media.length > 0){ 
+            if(this.state.media.length === 0 && !this.state.isFiltered){
+                this.setState({media: this.props.media});
+            }else if(this.state.media.length !== this.props.media.length && !this.state.isFiltered){
+                this.setState({media: this.props.media});
+            }
         }
-    }
-    generateMediaTile(media, uuid){
-        return <div key={uuid}></div>;
     }
     handleFilterChange(filter){
         if(filter === ''){
@@ -47,7 +47,7 @@ export class MediaCanvas extends React.Component{
             });            
             return;
         }
-        let temp = this.props.media.filter(media=>{return media.originalFilename.indexOf(filter.toLowerCase()) !== -1});
+        let temp = this.props.media.filter(media=>{return media.originalFilename.toLowerCase().indexOf(filter.toLowerCase()) !== -1});
         this.setState(prevState=>({
             media: temp,
             isFiltered: true,
@@ -67,7 +67,7 @@ export class MediaCanvas extends React.Component{
         }
     }
     render(){
-        const title = this.state.isFiltered ? `Media (${this.state.media.length} items match filter)` : `Media (${this.state.media.length} items)`;
+        const title = this.state.isFiltered ? `${this.props.title} (${this.state.media.length} items match filter)` : `${this.props.title} (${this.state.media.length} items)`;
         return(
             <div className={styles.container}>
                 {/*
@@ -78,7 +78,12 @@ export class MediaCanvas extends React.Component{
                     --sortable would be nice
                     --as would resizing
                 */}
-                <CanvasToolbar title={title} onFilterChange={this.handleFilterChange} showSelectionToolbarControls={this.state.showSelectionToolbarControls} onViewChange={(view)=>this.handleViewChange(view)}/>
+                <CanvasToolbar title={title} 
+                                onFilterChange={this.handleFilterChange} 
+                                showSelectionToolbarControls={this.state.showSelectionToolbarControls} 
+                                onViewChange={(view)=>this.handleViewChange(view)}
+                                showBackButton={this.props.showBackButton}
+                                onShowAllMedia={()=>this.props.onShowAllMedia()}/>
                 <ContentCanvas contentSource={this.state.media} 
                                 showAsRows={this.state.showContentAsRows} 
                                 rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 

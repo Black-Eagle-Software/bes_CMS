@@ -7,6 +7,11 @@ export class CanvasToolbar extends React.Component{
     render(){
         return(
             <div className={styles.container}>
+                {this.props.showBackButton &&
+                    <div className={styles.button} title="Show all media" onClick={()=>this.props.onShowAllMedia()}>
+                        <span className='codicon codicon-arrow-left'/>
+                    </div>
+                }
                 <div className={styles.title}>
                     {this.props.title}
                 </div>

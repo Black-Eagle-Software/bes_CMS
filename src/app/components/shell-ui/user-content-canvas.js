@@ -12,7 +12,10 @@ export class UserContentCanvas extends React.Component{
                 <MediaCanvas media={this.props.media} 
                                 onZoomClick={(media, origin)=>this.props.onZoomClick(media, origin)}
                                 onDetailsClick={(media)=>this.props.onDetailsClick(media)}
-                                handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}/>
+                                handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}
+                                title={this.props.title}
+                                showBackButton={this.props.showBackButton}
+                                onShowAllMedia={()=>this.props.onShowAllMedia()}/>
             </div>
         );
     }

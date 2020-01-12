@@ -1,0 +1,31 @@
+.container{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    position: relative;
+    height: 32px;
+    width: 100%;
+    justify-content: space-between;
+}
+.container:hover{
+    background: #b8d6eb;
+    color: #1f1f1f;
+}
+.imageContainer{
+    height: 100%;
+    /*min-width: 128px;*/
+}
+.image{
+    height: 100%;
+    width: 32px;
+    object-fit: cover;
+}
+.title{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 14px;
+    padding-left: 4px;
+    cursor: default;
+    flex: 1;
+}
