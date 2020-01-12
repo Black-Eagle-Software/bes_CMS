@@ -12,7 +12,7 @@ export class MediaCanvasTile extends React.Component{
                                 id={media.id}
                                 filename={media.originalFilename}                                
                                 onZoomClick={()=>this.props.onZoomClick(media)}
-                                onTileClick={()=>this.props.onTileClick(media)}
+                                onTileClick={(event)=>this.props.onTileClick(media, event)}
                                 onDetailsClick={()=>this.props.onDetailsClick(media)}
                                 isSelected={this.props.isSelected}
                                 style={this.props.style}

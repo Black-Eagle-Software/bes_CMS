@@ -25,11 +25,7 @@ export class CanvasToolbar extends React.Component{
                         <div className={styles.button} >
                             <span className='codicon codicon-trash'/>
                             <span className={styles.buttonLabel}>Delete selected media</span>
-                        </div>
-                        <div className={styles.button} >
-                            <span className='codicon codicon-circle-slash'/>
-                            <span className={styles.buttonLabel}>Clear selection</span>
-                        </div>                    
+                        </div>                   
                     </div>
                 }
                 <ContentFilter onChange={(event)=>this.props.onFilterChange(event)} placeholder={'Filter filenames'}/>

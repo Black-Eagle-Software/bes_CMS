@@ -33,7 +33,7 @@ export class ContentCanvasRow extends React.Component{
         event.preventDefault();
         event.stopPropagation();
         //this.setState(prevState=>({isSelected:!prevState.isSelected}));        
-        this.props.onRowClick();
+        this.props.onRowClick(event);
     }
     handleZoomClick(event){
         event.preventDefault();

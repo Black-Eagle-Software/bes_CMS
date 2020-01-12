@@ -18,7 +18,7 @@ export class MediaCanvasRow extends React.Component{
                                 width={media.width}
                                 height={media.height}
                                 onZoomClick={()=>this.props.onZoomClick(media)}
-                                onRowClick={()=>this.props.onRowClick(media)}
+                                onRowClick={(event)=>this.props.onRowClick(media, event)}
                                 onDetailsClick={()=>this.props.onDetailsClick(media)}
                                 isSelected={this.props.isSelected}
                                 style={this.props.style}

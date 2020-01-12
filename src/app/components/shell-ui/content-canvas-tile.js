@@ -12,13 +12,22 @@ export class ContentCanvasTile extends React.Component{
         };
 
         this.handleTileClick = this.handleTileClick.bind(this);
-        //this.handleTileDoubleClick = this.handleTileDoubleClick.bind(this);
+        this.handleTileDoubleClick = this.handleTileDoubleClick.bind(this);
         this.handleZoomClick = this.handleZoomClick.bind(this);
         this.handleContextMenu = this.handleContextMenu.bind(this);
 
         /*this.timer = {}
         this.delay = 200;
         this.prevent = false;*/
+
+        /*
+            Need to redo selection
+            click - select
+            click another tile - deselect this on, select the other
+            click outside tile - deselect
+            double-click - zoom
+            ctrl-click - select this tile in addition to others
+        */
     }
     handleContextMenu(event){
         event.preventDefault();
@@ -29,8 +38,9 @@ export class ContentCanvasTile extends React.Component{
     handleTileClick(event){
         event.preventDefault();
         event.stopPropagation();
+        //console.log(event.detail);
         //this.setState(prevState=>({isSelected:!prevState.isSelected}));
-        this.props.onTileClick(); 
+        this.props.onTileClick(event);
         /*this.timer = setTimeout(()=>{
             if(!this.prevent){
                 this.props.onTileClick();
@@ -38,12 +48,12 @@ export class ContentCanvasTile extends React.Component{
             this.prevent = false;
         }, this.delay);*/        
     }
-    /*handleTileDoubleClick(event){
-        clearTimeout(this.timer);
-        this.prevent = true;
+    handleTileDoubleClick(event){
+        //clearTimeout(this.timer);
+        //this.prevent = true;
         //this will zoom by default
         this.handleZoomClick(event);
-    }*/
+    }
     handleZoomClick(event){
         event.preventDefault();
         event.stopPropagation();
@@ -59,7 +69,7 @@ export class ContentCanvasTile extends React.Component{
                 {isSelected && 
                     <div className={styles.overlay} />
                 }
-                <div className={contStyle} onClick={this.handleTileClick} onContextMenu={this.handleContextMenu}>
+                <div className={contStyle} onClick={this.handleTileClick} onContextMenu={this.handleContextMenu} onDoubleClick={this.handleTileDoubleClick}>
                     <div className={styles.thumbContainer}>
                         <div className={styles.thumbMask}>
                             {thumbnail}
