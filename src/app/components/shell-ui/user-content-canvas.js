@@ -15,7 +15,9 @@ export class UserContentCanvas extends React.Component{
                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}
                                 title={this.props.title}
                                 showBackButton={this.props.showBackButton}
-                                onShowAllMedia={()=>this.props.onShowAllMedia()}/>
+                                onShowAllMedia={()=>this.props.onShowAllMedia()}
+                                onDownloadClick={(media)=>this.props.onDownloadClick(media)}
+                                onDeleteClick={(media)=>this.props.onDeleteClick(media)}/>
             </div>
         );
     }

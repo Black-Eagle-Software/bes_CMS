@@ -35,7 +35,7 @@ export class ContentCanvas extends React.Component {
             selectedItems: temp,
             selectionChange: !prevState.selectionChange
         }), ()=>{
-            this.props.onRowSelectionChanged(this.state.selectedItems.length);
+            this.props.onRowSelectionChanged(this.state.selectedItems);
         });
     }
     componentDidMount(){
@@ -110,7 +110,7 @@ export class ContentCanvas extends React.Component {
             selectedItems: temp,
             selectionChange: !prevState.selectionChange
         }), ()=>{
-            this.props.onRowSelectionChanged(this.state.selectedItems.length);
+            this.props.onRowSelectionChanged(this.state.selectedItems);
         });
     }
     render(){        

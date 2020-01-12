@@ -18,6 +18,7 @@ export class MediaCanvas extends React.Component{
             sortDir: '',
             update: false,
             showSelectionToolbarControls: false,
+            selectedItems: [],
             showContentAsRows: true
         };
 
@@ -56,8 +57,11 @@ export class MediaCanvas extends React.Component{
             this.sortContent(this.state.sortCol, this.state.sortDir);
         });
     }
-    handleRowSelectionChanged(count){
-        this.setState({showSelectionToolbarControls: count > 0});
+    handleRowSelectionChanged(selections){
+        this.setState({
+            showSelectionToolbarControls: selections.length > 0,
+            selectedItems: selections
+        });
     }
     handleViewChange(view){
         if(view === 'tiles'){
@@ -83,7 +87,9 @@ export class MediaCanvas extends React.Component{
                                 showSelectionToolbarControls={this.state.showSelectionToolbarControls} 
                                 onViewChange={(view)=>this.handleViewChange(view)}
                                 showBackButton={this.props.showBackButton}
-                                onShowAllMedia={()=>this.props.onShowAllMedia()}/>
+                                onShowAllMedia={()=>this.props.onShowAllMedia()}
+                                onDownloadClick={()=>this.props.onDownloadClick(this.state.selectedItems)}
+                                onDeleteClick={()=>this.props.onDeleteClick(this.state.selectedItems)}/>
                 <ContentCanvas contentSource={this.state.media} 
                                 showAsRows={this.state.showContentAsRows} 
                                 rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 

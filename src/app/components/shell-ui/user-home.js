@@ -58,6 +58,12 @@ export class UserHome extends React.Component{
             contextMenu: {}
         });
     }
+    handleDeleteClick(media){
+        console.log(media);
+    }
+    handleDownloadClick(media){
+        console.log(media);
+    }
     handleMediaDetailsClick(media){
         //set a flag in the state
         //show details overlay if flag set (similar to zoom)
@@ -108,7 +114,9 @@ export class UserHome extends React.Component{
                                     handleContextMenu={(loc, menu)=>this.handleContextMenu(loc, menu)}
                                     title={this.state.contentCanvasTitle}
                                     showBackButton={this.state.contentCanvasShowBackButton}
-                                    onShowAllMedia={()=>this.handleShowAllMedia()}/>                
+                                    onShowAllMedia={()=>this.handleShowAllMedia()}
+                                    onDownloadClick={(media)=>this.handleDownloadClick(media)}
+                                    onDeleteClick={(media)=>this.handleDeleteClick(media)}/>                
             </div>
         )
     }

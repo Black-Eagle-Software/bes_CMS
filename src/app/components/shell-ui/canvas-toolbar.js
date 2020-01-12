@@ -18,11 +18,11 @@ export class CanvasToolbar extends React.Component{
                 <div className={styles.spacer}/>
                 {this.props.showSelectionToolbarControls &&
                     <div className={styles.viewToolbar}>
-                        <div className={styles.button} >
+                        <div className={styles.button} onClick={()=>this.props.onDownloadClick()}>
                             <span className='codicon codicon-cloud-download'/>
                             <span className={styles.buttonLabel}>Download as zip</span>
                         </div>
-                        <div className={styles.button} >
+                        <div className={styles.button} onClick={()=>this.props.onDeleteClick()}>
                             <span className='codicon codicon-trash'/>
                             <span className={styles.buttonLabel}>Delete selected media</span>
                         </div>                   
