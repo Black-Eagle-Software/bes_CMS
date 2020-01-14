@@ -10,7 +10,7 @@ module.exports = (req, res)=>{
                                         INNER JOIN tagsToAccessLevelMap tam 
                                         ON tam.tagId = tmm.tag
                                         WHERE m.owner = ? 
-                                            OR tam.accessLevel = 'Public'`;
+                                            OR tam.accessLevel = 'Public' GROUP BY id ORDER BY id DESC`;
         if(limit){
             res.locals.connection.query(queryString + " LIMIT ?", [req.params.id, limit], (error, results, fields)=>{
                 if(error) throw error;
