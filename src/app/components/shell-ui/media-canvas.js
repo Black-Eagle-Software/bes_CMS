@@ -15,8 +15,8 @@ export class MediaCanvas extends React.Component{
         this.state = {
             media: this.props.media,
             isFiltered: false,
-            sortCol: '',
-            sortDir: '',
+            sortCol: 'id',
+            sortDir: 'down',
             update: false,
             showSelectionToolbarControls: false,
             selectedItems: [],
@@ -32,9 +32,13 @@ export class MediaCanvas extends React.Component{
         //may need to rework this a bit in the future
         if(this.props.media.length > 0){ 
             if(this.state.media.length === 0 && !this.state.isFiltered){
-                this.setState({media: this.props.media});
+                this.setState({media: this.props.media}, ()=>{
+                    this.sortContent(this.state.sortCol, this.state.sortDir);
+                });
             }else if(this.state.media.length !== this.props.media.length && !this.state.isFiltered){
-                this.setState({media: this.props.media});
+                this.setState({media: this.props.media}, ()=>{
+                    this.sortContent(this.state.sortCol, this.state.sortDir);
+                });
             }
         }
     }
