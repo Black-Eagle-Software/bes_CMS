@@ -47,8 +47,8 @@ search.get('/', (req, res)=>{
                                     OR m.owner = (SELECT uuf.userId FROM usersToUsersFriendMap uuf 
                                                     WHERE uuf.friendId = ?) 
                                     OR m.owner = (SELECT uuf.friendId FROM usersToUsersFriendMap uuf 
-                                                    WHERE uuf.userId = ?))`;
-            res.locals.connection.query(queryString, [[tags], user.id, user.id, user.id], (error, results, fields)=>{
+                                                    WHERE uuf.userId = ?)) GROUP BY id HAVING COUNT(*)=?`;
+            res.locals.connection.query(queryString, [[tags], user.id, user.id, user.id, tags.length], (error, results, fields)=>{
                 if(error){
                     res.status(404).send({'message': error.message});
                     return;
