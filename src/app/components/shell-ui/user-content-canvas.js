@@ -9,7 +9,8 @@ export class UserContentCanvas extends React.Component{
         return(
             <div className={styles.container}>
                 <UserToolbar id={this.props.id} username={this.props.username}/>
-                <MediaCanvas media={this.props.media} 
+                <MediaCanvas media={this.props.media}
+                                tags={this.props.tags} 
                                 onZoomClick={(media, origin)=>this.props.onZoomClick(media, origin)}
                                 onDetailsClick={(media)=>this.props.onDetailsClick(media)}
                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}

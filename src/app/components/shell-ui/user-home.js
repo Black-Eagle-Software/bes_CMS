@@ -16,10 +16,12 @@ export class UserHome extends React.Component{
         this.state={
             albums: [],
             media: [],
+            tags: [],
             contentCanvasMedia: [],
             contentCanvasTitle: 'Media',
             contentCanvasShowBackButton: false,
             public_media: [],
+            public_tags: [],
             showMediaZoom: false,
             zoomSource: {},
             zoomList: [],
@@ -108,7 +110,8 @@ export class UserHome extends React.Component{
                 {/*Pass in the origin from the content canvas to support zooming within a filtered list of media*/}
                 <UserContentCanvas id={this.props.id} 
                                     username={this.props.username} 
-                                    media={this.state.contentCanvasMedia} 
+                                    media={this.state.contentCanvasMedia}
+                                    tags={this.state.tags} 
                                     onZoomClick={(media, origin)=>this.handleZoomMediaClick(media, origin)}
                                     onDetailsClick={(media)=>this.handleMediaDetailsClick(media)}
                                     handleContextMenu={(loc, menu)=>this.handleContextMenu(loc, menu)}
@@ -128,7 +131,7 @@ export class UserHome extends React.Component{
             those objects later.  Having separate arrays for user vs. public may not be what
             we want in the end.  For now, don't change anything.
         */
-        axios.get("/api/m")
+        /*axios.get("/api/m")
         .then(response=>{
             let temp_media = [];
             let res = response.data;
@@ -136,9 +139,9 @@ export class UserHome extends React.Component{
                 temp_media.push({file: res[i], src_file: `${res[i].filePath}/${res[i].hashFilename}`, thumb: `${res[i].filePath}/thumbnails/${res[i].thumbnailFilename}`});
             }
             this.setState({public_media: response.data});
-        });
+        });*/
 
-        axios.get(`/api/u/${this.props.id}/m`)
+        axios.get(`/api/u/${this.props.id}/m?all=true`)
         .then(response=>{
             let temp_media = [];
             let res = response.data;
@@ -156,5 +159,19 @@ export class UserHome extends React.Component{
         .then(response=>{
             this.setState({albums:response.data});
         });
+
+        //read our tags from the database
+        axios.get(`/api/u/${this.props.id}/t?all=true`)
+        .then(res=>{
+            this.setState({
+                tags: res.data
+            });
+        });
+        /*axios.get('/api/t')
+        .then(res=>{
+            this.setState({
+                public_tags: res.data
+            });
+        });*/
     }
 }

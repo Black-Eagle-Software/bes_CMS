@@ -1,0 +1,20 @@
+.container{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+.button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+.button:hover{
+    background: #e6f1f8;
+    color: #006cb7;
+}
+.button:active{
+    background: #4091c9;
+    color: #b8d6eb;    
+}

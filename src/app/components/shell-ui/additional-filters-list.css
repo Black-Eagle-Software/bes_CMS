@@ -1,0 +1,9 @@
+.container{
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: flex-end;
+    width: 180px;
+    height: 24px;
+    font-size: 14px;
+}

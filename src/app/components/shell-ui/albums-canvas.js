@@ -1,7 +1,7 @@
 import React from 'react';
+import { AlbumsCanvasRow } from './albums-canvas-row';
 
 import styles from './albums-canvas.css';
-import { AlbumsCanvasRow } from './albums-canvas-row';
 
 const {AutoSizer, List} = require('react-virtualized');
 const uuid = require('uuid/v4');

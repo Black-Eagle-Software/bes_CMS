@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContentFilter } from './content-filter';
+import { ComplexContentFilters } from '../../containers/complex-content-filters';
 
 import styles from './canvas-toolbar.css';
 
@@ -25,10 +25,16 @@ export class CanvasToolbar extends React.Component{
                         <div className={styles.button} onClick={()=>this.props.onDeleteClick()}>
                             <span className='codicon codicon-trash'/>
                             <span className={styles.buttonLabel}>Delete selected media</span>
-                        </div>                   
+                        </div>
+                        <div className={styles.separator}/>                   
                     </div>
                 }
-                <ContentFilter onChange={(event)=>this.props.onFilterChange(event)} placeholder={'Filter filenames'}/>
+                {/*<ContentFilter onChange={(event)=>this.props.onFilterChange(event)} placeholder={'Filter filenames'} tags={this.props.tags}/>*/}
+                <ComplexContentFilters onChange={(event)=>this.props.onFilterChange(event)} 
+                                        placeholder={'Filter filenames'} 
+                                        tags={this.props.tags}
+                                        onTagFiltersChanged={(filters)=>this.props.onTagFiltersChanged(filters)}/>
+                <div className={styles.separator}/>
                 <div className={styles.viewToolbar}>
                     <div className={styles.button} title="List view" onClick={()=>this.props.onViewChange('rows')}>
                         <span className='codicon codicon-list-unordered'/>

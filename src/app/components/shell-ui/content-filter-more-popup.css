@@ -1,0 +1,19 @@
+.container{
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    padding: 16px;
+}
+.section{
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    min-width: 200px;
+}
+.sectionHeader{
+    color: #006cb7;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+    cursor: default;
+}

@@ -18,8 +18,8 @@ export class Menu extends React.Component {
     render(){
         return(
             <div className={styles.menu}>
-                <MenuButton title={"Media"} onClick={this.handleMediaClick}>
-                    <span className={`codicon codicon-device-camera-video ${styles.menuCodicon}`}/>
+                <MenuButton title={"Show all media"} onClick={this.handleMediaClick}>
+                    <span className={`codicon codicon-device-camera ${styles.menuCodicon}`}/>
                 </MenuButton>
                 <MenuButton title={"Upload media"} onClick={this.handleUploadClick}>
                     <span className={`codicon codicon-cloud-upload ${styles.menuCodicon}`}/>

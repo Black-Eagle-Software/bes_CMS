@@ -12,7 +12,7 @@
     justify-content: center;
     height: 100%;
     min-width: 40px;
-    padding: 0px 4px;
+    padding: 0px 8px;
 }
 .button:hover{
     background: #e6f1f8;
@@ -27,6 +27,11 @@
     padding-left: 4px;
     cursor: default;
 }
+.separator{
+    border-right: 1px solid #ebebeb;
+    margin: 0px 8px;
+    height: 32px;
+}
 .spacer{
     flex: 1;
 }
@@ -39,5 +44,6 @@
 .viewToolbar{
     display: flex;
     flex-flow: row nowrap;
+    align-items: center;
     height: 100%;
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { ContentCanvas } from './content-canvas';
 import { CanvasToolbar } from './canvas-toolbar';
 import { MediaCanvasRow } from './media-canvas-row';
@@ -63,6 +64,49 @@ export class MediaCanvas extends React.Component{
             selectedItems: selections
         });
     }
+    handleTagFiltersChanged(filters){
+        if(filters.length === 0) {
+            //assuming we've filtered before, reset things
+            this.setState(prevState=>({
+                media: this.props.media,
+                isFiltered: false,
+                update: !prevState.update  
+            }), ()=>{
+                this.sortContent(this.state.sortCol, this.state.sortDir);
+            });            
+            return;
+        };
+        //build our tag query
+        let query = "?t=";
+        for(let i = 0; i < filters.length; i++){
+            if(i !== 0){
+                query += '&t=';
+            }
+            query += `${filters[i].description}`;
+        }
+        axios.get(`/api/search${query}`)
+        .then(response=>{                
+            if(response.data.media){                
+                let res = response.data.media;
+                if(res){
+                    //this.setState({query_results_media: res});
+                    //console.log(res);
+                    let temp = this.props.media.filter(media=>{
+                        return res.filter(resMedia=>{
+                            return resMedia.id === media.id;
+                        }).length > 0;
+                    });
+                    this.setState(prevState=>({
+                        media: temp,
+                        isFiltered: true,
+                        update: !prevState.update
+                    }), ()=>{
+                        this.sortContent(this.state.sortCol, this.state.sortDir);
+                    });
+                }
+            }               
+        });
+    }
     handleViewChange(view){
         if(view === 'tiles'){
             this.setState({showContentAsRows: false});
@@ -89,7 +133,9 @@ export class MediaCanvas extends React.Component{
                                 showBackButton={this.props.showBackButton}
                                 onShowAllMedia={()=>this.props.onShowAllMedia()}
                                 onDownloadClick={()=>this.props.onDownloadClick(this.state.selectedItems)}
-                                onDeleteClick={()=>this.props.onDeleteClick(this.state.selectedItems)}/>
+                                onDeleteClick={()=>this.props.onDeleteClick(this.state.selectedItems)}
+                                tags={this.props.tags}
+                                onTagFiltersChanged={(filters)=>this.handleTagFiltersChanged(filters)}/>
                 <ContentCanvas contentSource={this.state.media} 
                                 showAsRows={this.state.showContentAsRows} 
                                 rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
