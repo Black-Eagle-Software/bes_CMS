@@ -18,7 +18,7 @@ export class AdditionalFilter extends React.Component{
         return(
             <div className={styles.filter}>
                 {this.props.children}
-                <span className={closeClass} onClick={this.handleCloseClick}/>
+                <span className={closeClass} onClick={this.handleCloseClick} title="Remove filter"/>
             </div>
         );
     }

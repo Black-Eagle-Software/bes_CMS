@@ -3,12 +3,14 @@
     flex-flow: column nowrap;
     align-items: center;
     padding: 16px;
+    max-width: 300px;
 }
 .section{
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
     min-width: 200px;
+    margin-bottom: 16px;
 }
 .sectionHeader{
     color: #006cb7;

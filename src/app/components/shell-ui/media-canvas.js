@@ -4,6 +4,7 @@ import { ContentCanvas } from './content-canvas';
 import { CanvasToolbar } from './canvas-toolbar';
 import { MediaCanvasRow } from './media-canvas-row';
 import { MediaCanvasTile } from './media-canvas-tile';
+import DateHelper from '../../../helpers/date';
 
 import styles from './media-canvas.css';
 
@@ -80,36 +81,66 @@ export class MediaCanvas extends React.Component{
             });            
             return;
         };
+        let dates = [];        
         //build our tag query
         let query = "?t=";
+        let t = 0;
         for(let i = 0; i < filters.length; i++){
-            if(i !== 0){
-                query += '&t=';
-            }
-            query += `${filters[i].description}`;
-        }
-        axios.get(`/api/search${query}`)
-        .then(response=>{                
-            if(response.data.media){                
-                let res = response.data.media;
-                if(res){
-                    //this.setState({query_results_media: res});
-                    //console.log(res);
-                    let temp = this.props.media.filter(media=>{
-                        return res.filter(resMedia=>{
-                            return resMedia.id === media.id;
-                        }).length > 0;
-                    });
-                    this.setState(prevState=>({
-                        media: temp,
-                        isFiltered: true,
-                        update: !prevState.update
-                    }), ()=>{
-                        this.sortContent(this.state.sortCol, this.state.sortDir);
-                    });
+            if(filters[i].month) {
+                dates.push(filters[i]);
+            }else{
+                if(t !== 0){
+                    query += '&t=';
                 }
-            }               
-        });
+                query += `${filters[i].description}`;
+                t += 1;
+            }
+        }        
+        if(query.length > 3){
+            axios.get(`/api/search${query}`)
+            .then(response=>{                
+                if(response.data.media){                
+                    let res = response.data.media;
+                    if(res){
+                        //need to rework this because it's overwriting our date filter
+                        let temp = this.props.media.filter(media=>{
+                            let dateMatch = true;
+                            if(dates.length > 0){
+                                let date = DateHelper.getMonthYearFromMillisecondDate(media.fileDate);
+                                dateMatch = dates.filter(d=>{
+                                    return d.month === date.month && d.year === date.year;
+                                }).length > 0;
+                            }
+                            let idMatch = res.filter(resMedia=>{
+                                return resMedia.id === media.id;
+                            }).length > 0;
+                            return dateMatch && idMatch;
+                        });
+                        this.setState(prevState=>({
+                            media: temp,
+                            isFiltered: true,
+                            update: !prevState.update
+                        }), ()=>{
+                            this.sortContent(this.state.sortCol, this.state.sortDir);
+                        });
+                    }
+                }               
+            });
+        }else{
+            let temp = this.props.media.filter(media=>{
+                let date = DateHelper.getMonthYearFromMillisecondDate(media.fileDate);
+                return dates.filter(d=>{
+                    return d.month === date.month && d.year === date.year;
+                }).length > 0;
+            });
+            this.setState(prevState=>({
+                media: temp,
+                isFiltered: true,
+                update: !prevState.update
+            }), ()=>{
+                this.sortContent(this.state.sortCol, this.state.sortDir);
+            });
+        }
     }
     handleViewChange(view){
         if(view === 'tiles'){
@@ -139,6 +170,7 @@ export class MediaCanvas extends React.Component{
                                 onDownloadClick={()=>this.props.onDownloadClick(this.state.selectedItems)}
                                 onDeleteClick={()=>this.props.onDeleteClick(this.state.selectedItems)}
                                 tags={this.props.tags}
+                                media={this.props.media}
                                 onTagFiltersChanged={(filters)=>this.handleTagFiltersChanged(filters)}/>
                 <ContentCanvas contentSource={this.state.media} 
                                 showAsRows={this.state.showContentAsRows} 

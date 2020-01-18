@@ -33,6 +33,7 @@ export class CanvasToolbar extends React.Component{
                 <ComplexContentFilters onChange={(event)=>this.props.onFilterChange(event)} 
                                         placeholder={'Filter filenames'} 
                                         tags={this.props.tags}
+                                        media={this.props.media}
                                         onTagFiltersChanged={(filters)=>this.props.onTagFiltersChanged(filters)}/>
                 <div className={styles.separator}/>
                 <div className={styles.viewToolbar}>
