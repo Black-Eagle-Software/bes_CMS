@@ -14,7 +14,7 @@ import PublicMedia from './containers/public-media.container';
 import AlbumDetails from './containers/album-details.container';
 import UserAlbums from './containers/user-albums.container';
 
-class App extends React.Component {
+class AppOld extends React.Component {
   constructor(props){
     super(props);
 
@@ -228,4 +228,4 @@ class App extends React.Component {
   }
 }
 
-export default withRouter(App);
+export default withRouter(AppOld);
