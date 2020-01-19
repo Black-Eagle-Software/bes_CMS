@@ -34,7 +34,9 @@ export class CanvasToolbar extends React.Component{
                                         placeholder={'Filter filenames'} 
                                         tags={this.props.tags}
                                         media={this.props.media}
-                                        onTagFiltersChanged={(filters)=>this.props.onTagFiltersChanged(filters)}/>
+                                        onTagFiltersChanged={(filters)=>this.props.onTagFiltersChanged(filters)}
+                                        externalFilter={this.props.externalFilter}
+                                        didConsumeExternalFilter={()=>this.props.didConsumeExternalFilter()}/>
                 <div className={styles.separator}/>
                 <div className={styles.viewToolbar}>
                     <div className={styles.button} title="List view" onClick={()=>this.props.onViewChange('rows')}>

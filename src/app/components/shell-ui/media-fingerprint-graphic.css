@@ -1,0 +1,18 @@
+.container{
+    display: flex;
+    flex-flow: row wrap;
+    width: 64px;
+    height: 64px;
+}
+.bit{
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    min-height: 8px;
+}
+.bit.on{
+    background: #1f1f1f;
+}
+.bit.off{
+    background: transparent;
+}

@@ -171,7 +171,9 @@ export class MediaCanvas extends React.Component{
                                 onDeleteClick={()=>this.props.onDeleteClick(this.state.selectedItems)}
                                 tags={this.props.tags}
                                 media={this.props.media}
-                                onTagFiltersChanged={(filters)=>this.handleTagFiltersChanged(filters)}/>
+                                onTagFiltersChanged={(filters)=>this.handleTagFiltersChanged(filters)}
+                                externalFilter={this.props.externalFilter}
+                                didConsumeExternalFilter={()=>this.props.didConsumeExternalFilter()}/>
                 <ContentCanvas contentSource={this.state.media} 
                                 showAsRows={this.state.showContentAsRows} 
                                 rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 

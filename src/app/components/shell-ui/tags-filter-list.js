@@ -19,7 +19,7 @@ export class TagsFilterList extends React.Component {
         return(
             <div className={styles.container}>
                 {tags.length > 0 && tags.map(tag=>{
-                    let selected = filters.indexOf(tag) !== -1;
+                    let selected = filters.findIndex(t=>{return t.id === tag.id}) !== -1;
                     return <TagsFilterListTagCheckbox key={uuid()} tag={tag} selected={selected} onChange={this.handleTagChange}/>
                     /*return (
                         <div key={uuid()}>

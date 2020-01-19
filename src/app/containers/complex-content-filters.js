@@ -23,12 +23,22 @@ export class ComplexContentFilters extends React.Component{
     }
     componentDidUpdate(prevProps, prevState){
         if(this.props.media.length > 0){
-            if(this.props.media.length !== prevProps.media.length){
+            if(this.props.media.length !== prevProps.media.length || this.state.dates.length === 0){
                 this.parseMediaDatesForFilter(this.props.media);
             }
-        }        
+        }
+        if(this.props.externalFilter !== null && this.props.externalFilter !== undefined){
+            this.handleClearClick(()=>{
+                this.handleTagChange(this.props.externalFilter);
+                this.setState({
+                    showAdditionalFilters: true,
+                    showAppliedFilters: true
+                });
+                this.props.didConsumeExternalFilter();
+            });            
+        }      
     }
-    handleClearClick(){
+    handleClearClick(callback = null){
         this.setState(prevState=>({
             appliedTagFilters: [],
             showAdditionalFilters: false,
@@ -36,6 +46,7 @@ export class ComplexContentFilters extends React.Component{
             update: !prevState.update
         }), ()=>{
             this.props.onTagFiltersChanged(this.state.appliedTagFilters);
+            if(callback !== null) callback();
         });
     }
     handleCloseClick(filter){
@@ -75,15 +86,20 @@ export class ComplexContentFilters extends React.Component{
         });
     }
     handleTagChange(tag){
+        if(tag === undefined || tag === null) return;
         let temp = this.state.appliedTagFilters;
-        let index = temp.indexOf(tag);
-        //let index = this.state.appliedTagFilters.indexOf(tag);
-        if(index === -1){
-            //this.state.appliedTagFilters.push(tag);
-            temp.push(tag);
+        if(temp.length > 0){
+            let index = temp.findIndex(t=>{return t.id === tag.id});
+            //let index = this.state.appliedTagFilters.indexOf(tag);
+            if(index === -1){
+                //this.state.appliedTagFilters.push(tag);
+                temp.push(tag);
+            }else{
+                //this.state.appliedTagFilters.splice(index, 1);
+                temp.splice(index, 1);
+            }
         }else{
-            //this.state.appliedTagFilters.splice(index, 1);
-            temp.splice(index, 1);
+            temp.push(tag);
         }
         this.setState(prevState=>({
             appliedTagFilters: temp,

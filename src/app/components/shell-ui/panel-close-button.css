@@ -1,0 +1,24 @@
+.closeButton{
+    position: fixed;
+    top: 64px;
+    right: 34px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    z-index: 2;
+}
+.closeButton::before, .closeButton::after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    height: 2px;
+    background: #666666;
+    transform: rotate(45deg);
+}
+.closeButton::after{
+    transform: rotate(-45deg);
+}
+.closeButton:hover::before, .closeButton:hover::after{
+    background: #1f1f1f;
+}

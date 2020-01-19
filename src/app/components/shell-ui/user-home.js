@@ -25,8 +25,7 @@ export class UserHome extends React.Component{
             showMediaZoom: false,
             zoomSource: {},
             zoomList: [],
-            showMediaDetails: false,
-            focusedMedia: {}
+            shouldShowAllMedia: true
         };
 
         this.handleContextMenuClose = this.handleContextMenuClose.bind(this);
@@ -42,7 +41,8 @@ export class UserHome extends React.Component{
             this.setState({
                 contentCanvasMedia: response.data,
                 contentCanvasTitle: title,
-                contentCanvasShowBackButton: true
+                contentCanvasShowBackButton: true,
+                shouldShowAllMedia: false
             });
         });
     }
@@ -63,15 +63,16 @@ export class UserHome extends React.Component{
     handleDeleteClick(media){
         console.log(media);
     }
+    handleDidShowAllMedia(){
+        this.setState({shouldShowAllMedia: false});
+    }
     handleDownloadClick(media){
         console.log(media);
     }
-    handleMediaDetailsClick(media){
-        //set a flag in the state
-        //show details overlay if flag set (similar to zoom)
+    handleMediaDetailsClick(){
         this.setState({
-            showMediaDetails: true,
-            focusedMedia: media
+            showContextMenu: false,
+            shouldShowAllMedia: false
         });
     }
     handleShowAllMedia(){
@@ -79,6 +80,7 @@ export class UserHome extends React.Component{
             contentCanvasMedia: this.state.media,
             contentCanvasTitle: 'Media',
             contentCanvasShowBackButton: false,
+            shouldShowAllMedia: true
         });
     }
     handleZoomMediaClick(media, origin){    //don't need to save origin here
@@ -87,9 +89,6 @@ export class UserHome extends React.Component{
             zoomSource: media,
             zoomList: origin
         });
-    }
-    hideMediaDetails(){
-        this.setState({showMediaDetails: false});
     }
     hideMediaZoom(){
         this.setState({showMediaZoom: false});
@@ -113,13 +112,15 @@ export class UserHome extends React.Component{
                                     media={this.state.contentCanvasMedia}
                                     tags={this.state.tags} 
                                     onZoomClick={(media, origin)=>this.handleZoomMediaClick(media, origin)}
-                                    onDetailsClick={(media)=>this.handleMediaDetailsClick(media)}
+                                    onDetailsClick={()=>this.handleMediaDetailsClick()}
                                     handleContextMenu={(loc, menu)=>this.handleContextMenu(loc, menu)}
                                     title={this.state.contentCanvasTitle}
                                     showBackButton={this.state.contentCanvasShowBackButton}
                                     onShowAllMedia={()=>this.handleShowAllMedia()}
                                     onDownloadClick={(media)=>this.handleDownloadClick(media)}
-                                    onDeleteClick={(media)=>this.handleDeleteClick(media)}/>                
+                                    onDeleteClick={(media)=>this.handleDeleteClick(media)}
+                                    shouldShowAllMedia={this.state.shouldShowAllMedia}
+                                    onDidShowAllMedia={()=>this.handleDidShowAllMedia()}/>                
             </div>
         )
     }

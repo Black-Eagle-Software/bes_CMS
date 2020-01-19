@@ -1,0 +1,22 @@
+.container{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    padding: 0px 8px;
+    width: 100%;
+    height: 24px;
+    cursor: default;
+}
+.container:hover{
+    background: #e6f1f8;
+}
+.searchIcon{
+    display: none !important;
+}
+.container:hover .searchIcon{
+    display: inline-block !important;
+}
+.title{
+    font-size: 14px;
+    flex: 1;
+}

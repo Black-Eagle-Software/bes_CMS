@@ -1,0 +1,14 @@
+.badge{
+    width: 8px;
+    height: 8px;
+    margin-right: 4px;
+}
+.badge.public{
+    background: #007527;
+}
+.badge.restricted{
+    background: #ffc801;
+}
+.badge.private{
+    background: #e30f01;
+}
