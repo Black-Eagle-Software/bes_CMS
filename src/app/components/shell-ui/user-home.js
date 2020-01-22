@@ -8,6 +8,8 @@ import MediaZoom from '../media-zoom.component';
 import styles from './user-home.css';
 import { ContextMenuWrapper } from './context-menu-wrapper';
 import { AlbumsList } from './albums-list';
+import { TagsList } from './tags-list';
+import { PageFooter } from './page-footer';
 
 export class UserHome extends React.Component{
     constructor(props){
@@ -96,31 +98,37 @@ export class UserHome extends React.Component{
     render(){
         return(
             <div className={styles.container}>
-                {this.state.showMediaZoom &&
-                    <MediaZoom media_source={this.state.zoomSource}
-                                media_list={this.state.zoomList}
-                                onCloseClick={()=>this.hideMediaZoom()}/>
-                }
-                {this.state.showContextMenu &&
-                    <ContextMenuWrapper location={this.state.contextMenuLocation} menu={this.state.contextMenu} onMenuClose={this.handleContextMenuClose}/>
-                }
-                <Menu onMediaClick={()=>this.handleShowAllMedia()}/>
-                <AlbumsList albums={this.state.albums} onRowClick={(album)=>this.handleAlbumClick(album)}/>                
-                {/*Pass in the origin from the content canvas to support zooming within a filtered list of media*/}
-                <UserContentCanvas id={this.props.id} 
-                                    username={this.props.username} 
-                                    media={this.state.contentCanvasMedia}
-                                    tags={this.state.tags} 
-                                    onZoomClick={(media, origin)=>this.handleZoomMediaClick(media, origin)}
-                                    onDetailsClick={()=>this.handleMediaDetailsClick()}
-                                    handleContextMenu={(loc, menu)=>this.handleContextMenu(loc, menu)}
-                                    title={this.state.contentCanvasTitle}
-                                    showBackButton={this.state.contentCanvasShowBackButton}
-                                    onShowAllMedia={()=>this.handleShowAllMedia()}
-                                    onDownloadClick={(media)=>this.handleDownloadClick(media)}
-                                    onDeleteClick={(media)=>this.handleDeleteClick(media)}
-                                    shouldShowAllMedia={this.state.shouldShowAllMedia}
-                                    onDidShowAllMedia={()=>this.handleDidShowAllMedia()}/>                
+                <div className={styles.content}>
+                    {this.state.showMediaZoom &&
+                        <MediaZoom media_source={this.state.zoomSource}
+                                    media_list={this.state.zoomList}
+                                    onCloseClick={()=>this.hideMediaZoom()}/>
+                    }
+                    {this.state.showContextMenu &&
+                        <ContextMenuWrapper location={this.state.contextMenuLocation} menu={this.state.contextMenu} onMenuClose={this.handleContextMenuClose}/>
+                    }
+                    <Menu onMediaClick={()=>this.handleShowAllMedia()}/>
+                    <div className={styles.albumsTagsContainer}>
+                        <AlbumsList albums={this.state.albums} onRowClick={(album)=>this.handleAlbumClick(album)}/>
+                        <TagsList tags={this.state.tags}/>                
+                    </div>
+                    {/*Pass in the origin from the content canvas to support zooming within a filtered list of media*/}
+                    <UserContentCanvas id={this.props.id} 
+                                        username={this.props.username} 
+                                        media={this.state.contentCanvasMedia}
+                                        tags={this.state.tags} 
+                                        onZoomClick={(media, origin)=>this.handleZoomMediaClick(media, origin)}
+                                        onDetailsClick={()=>this.handleMediaDetailsClick()}
+                                        handleContextMenu={(loc, menu)=>this.handleContextMenu(loc, menu)}
+                                        title={this.state.contentCanvasTitle}
+                                        showBackButton={this.state.contentCanvasShowBackButton}
+                                        onShowAllMedia={()=>this.handleShowAllMedia()}
+                                        onDownloadClick={(media)=>this.handleDownloadClick(media)}
+                                        onDeleteClick={(media)=>this.handleDeleteClick(media)}
+                                        shouldShowAllMedia={this.state.shouldShowAllMedia}
+                                        onDidShowAllMedia={()=>this.handleDidShowAllMedia()}/>
+                    </div>
+                <PageFooter />
             </div>
         )
     }

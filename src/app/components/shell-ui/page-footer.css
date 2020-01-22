@@ -1,0 +1,24 @@
+.container{
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    padding: 4px 0px;
+    background: #f5f5f5;
+    color: #006cb7;
+    border-top: 1px solid #c6c6c6;
+}
+.padLeft20{
+    padding-left: 20px;
+}
+a.link:link {
+	color: #1f1f1f;
+}
+a.link:visited {
+	color:#333333;
+}
+a.link:hover {
+	color:#006cb7;
+}
+a.link:active {
+	color:#00416e;
+}
