@@ -62,7 +62,9 @@ export class UserContentCanvas extends React.Component{
                 {this.state.showMediaDetails &&
                     <MediaDetails media={this.state.focusedMedia} 
                                     onCloseClick={this.handleDetailsCloseClick}
-                                    onTagClick={(tag)=>this.handleTagClick(tag)}/>
+                                    onTagClick={(tag)=>this.handleTagClick(tag)}
+                                    allTags={this.props.tags}
+                                    id={this.props.id}/>
                 }
                 <MediaCanvas media={this.props.media}
                                 tags={this.props.tags} 

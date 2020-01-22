@@ -26,6 +26,7 @@
     font-size: 12px;
     padding-left: 4px;
     cursor: default;
+    white-space: nowrap;
 }
 .separator{
     border-right: 1px solid #ebebeb;
@@ -40,6 +41,9 @@
     color: #666666;
     font-size: 18px;
     cursor: default;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .viewToolbar{
     display: flex;
