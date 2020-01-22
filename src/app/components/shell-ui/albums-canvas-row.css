@@ -8,8 +8,7 @@
     justify-content: space-between;
 }
 .container:hover{
-    background: #b8d6eb;
-    color: #1f1f1f;
+    background: #e6f1f8;
 }
 .imageContainer{
     height: 100%;
