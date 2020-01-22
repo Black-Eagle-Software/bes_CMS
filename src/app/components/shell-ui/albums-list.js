@@ -20,12 +20,16 @@ export class AlbumsList extends React.Component{
 
         this.sortContent = this.sortContent.bind(this);
         this.handleFilterChange = this.handleFilterChange.bind(this);
+        this.handleAddAlbum = this.handleAddAlbum.bind(this);
     }
     componentDidUpdate(){
         //may need to rework this a bit in the future
         if(this.props.albums.length > 0 && this.state.albums.length === 0 && !this.state.isFiltered){
             this.setState({albums: this.props.albums});
         }
+    }
+    handleAddAlbum(){
+        
     }
     handleFilterChange(filter){
         if(filter === ''){
@@ -54,7 +58,7 @@ export class AlbumsList extends React.Component{
                 {/*albums toolbar*/}
                 {/*headers for sorting*/}
                 {/*virtualized list of albums*/}
-                <AlbumsListToolbar onFilterChange={this.handleFilterChange}/>
+                <AlbumsListToolbar onFilterChange={this.handleFilterChange} onAddAlbumClick={this.handleAddAlbum}/>
                 <AlbumsCanvas contentSource={this.state.albums} update={this.state.update} sortContent={this.sortContent} onRowClick={(album)=>this.props.onRowClick(album)}/>
             </div>
         );
