@@ -2,9 +2,9 @@ import React from 'react';
 import { TagsCanvas } from './tags-canvas';
 import { TagsFilterInput } from './tags-filter-input';
 
-import styles from './tags-list.css';
+import styles from './media-details-tags-list.css';
 
-export class TagsList extends React.Component{
+export class MediaDetailsTagsList extends React.Component{
     constructor(props){
         super(props);
 

@@ -2,10 +2,10 @@ import React from 'react';
 import axios from 'axios';
 import { MediaFingerprintGraphic } from './media-fingerprint-graphic';
 import DateHelper from '../../../helpers/date';
-import { TagsList } from './tags-list';
+import { MediaDetailsTagsList } from './media-details-tags-list';
+import { MediaDetailsToolbar } from './media-details-toolbar';
 
 import styles from './media-details.css';
-import { MediaDetailsToolbar } from './media-details-toolbar';
 
 export class MediaDetails extends React.Component{
     constructor(props){
@@ -47,7 +47,7 @@ export class MediaDetails extends React.Component{
                     <div className={styles.contentContainer}>
                         <MediaDetailsToolbar media={this.props.media} onHideDetails={()=>this.props.onCloseClick()}/>
                         <div className={styles.innerContainer}>                        
-                            <TagsList tags={this.state.tags} 
+                            <MediaDetailsTagsList tags={this.state.tags} 
                                         onRowClick={(tag)=>this.props.onTagClick(tag)} 
                                         allTags={this.props.allTags}
                                         canEditTags={this.props.media.owner === this.props.id}
