@@ -4,7 +4,7 @@
     align-items: center;
     padding: 0px 8px;
     width: 100%;
-    height: 24px;
+    height: 100%;
     cursor: default;
 }
 .container:hover{
@@ -16,7 +16,31 @@
 .container:hover .searchIcon{
     display: inline-block !important;
 }
+.outerContainer{
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+    height: 24px;
+    align-items: center;
+    /*background: #ffffff;*/
+    /*border-bottom: 1px solid #f5f5f5;*/
+}
+.outerContainer:nth-child(even){
+    background: #f5f5f5;
+}
 .title{
     font-size: 14px;
     flex: 1;
+}
+.delete{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: #af8583;
+}
+.delete:hover{
+    color: #f5f5f5;
+    background: #e30f01;
 }

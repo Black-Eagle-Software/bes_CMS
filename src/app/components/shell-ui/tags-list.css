@@ -2,8 +2,9 @@
     display: flex;
     flex-flow: column;
     width: 100%;
-    flex: 1 1 auto;
-    overflow: hidden;    
+    /*flex: 1 1 auto;*/
+    overflow: hidden;
+    height: 50%;
 }
 .header{
     display: flex;

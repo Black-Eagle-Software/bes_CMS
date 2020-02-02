@@ -49,6 +49,12 @@ export class TagsCanvas extends React.Component{
     }
     rowRenderer({index, key, parent, style}){
         let item = this.props.contentSource[index];
-        return <TagCanvasRow key={uuid()} tag={item} style={style} onRowClick={(tag)=>this.handleRowClick(tag)}/>;
+        return <TagCanvasRow key={uuid()} 
+                                tag={item} 
+                                style={style} 
+                                onRowClick={(tag)=>this.handleRowClick(tag)} 
+                                isEditing={this.props.isEditing}
+                                canEdit={this.props.id === item.owner} 
+                                onRowDelete={(tag)=>this.props.onRowDelete(tag)}/>;
     }
 }

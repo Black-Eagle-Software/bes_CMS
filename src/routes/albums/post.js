@@ -35,14 +35,18 @@ module.exports = (req, res)=>{
         },
         //3. insert media mappings
         (data, callback)=>{
-            let queryString = "INSERT INTO albumsToMediaMap (album, media, albumIndex) VALUES ?";
-            res.locals.connection.query(queryString, [data.media], (error, results, fields)=>{
-                if(error) {
-                    callback(error);
-                    return;
-                }
+            if(data.media.length === 0){
                 callback(null);
-            });
+            } else{
+                let queryString = "INSERT INTO albumsToMediaMap (album, media, albumIndex) VALUES ?";
+                res.locals.connection.query(queryString, [data.media], (error, results, fields)=>{
+                    if(error) {
+                        callback(error);
+                        return;
+                    }
+                    callback(null);
+                });
+            }
         }
     ],(err)=>{
         if(err){

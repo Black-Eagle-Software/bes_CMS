@@ -1,0 +1,18 @@
+.container{
+    display: flex;
+    justify-content: center;
+    flex: 1 1 auto;
+    max-height: 50%;
+    object-fit: contain;
+}
+.commands{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+}
+.btn{
+    margin: 0em 0.25em;
+}
+.btn.delete{}
+.btn.close{}

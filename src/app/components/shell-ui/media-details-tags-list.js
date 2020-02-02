@@ -56,6 +56,7 @@ export class MediaDetailsTagsList extends React.Component{
         });
     }
     render(){
+        const editBtn = this.state.isEditing ? `codicon codicon-edit ${styles.editBtn} ${styles.active}` : `codicon codicon-edit ${styles.editBtn}`;
         return(
             <div className={styles.container}>
                 <div className={styles.header}>
@@ -68,7 +69,7 @@ export class MediaDetailsTagsList extends React.Component{
                                             onTagChange={this.onTagChange}/>
                     }
                     {this.props.canEditTags &&
-                        <span className={`codicon codicon-edit ${styles.editBtn}`} title="Edit applied tags" onClick={this.handleEditClick}/>
+                        <span className={editBtn} title="Edit applied tags" onClick={this.handleEditClick}/>
                     }
                 </div>
                 <TagsCanvas contentSource={this.state.tags} update={this.state.update} onRowClick={(tag)=>this.props.onRowClick(tag)}/>

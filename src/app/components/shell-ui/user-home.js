@@ -1,15 +1,17 @@
 import React from 'react';
 import axios from 'axios';
 import { Menu } from './menu';
-import { AlbumListFilterable } from '../../containers/album-list-filterable';
 import { UserContentCanvas } from './user-content-canvas';
 import MediaZoom from '../media-zoom.component';
-
-import styles from './user-home.css';
 import { ContextMenuWrapper } from './context-menu-wrapper';
 import { AlbumsList } from './albums-list';
 import { TagsList } from './tags-list';
 import { PageFooter } from './page-footer';
+import { Dialog } from './dialog';
+import { TagDeleteConfirmation } from './tag-delete-confirmation-dialog';
+import { AlbumDeleteConfirmation } from './album-delete-confirmation-dialog';
+
+import styles from './user-home.css';
 
 export class UserHome extends React.Component{
     constructor(props){
@@ -27,13 +29,30 @@ export class UserHome extends React.Component{
             showMediaZoom: false,
             zoomSource: {},
             zoomList: [],
-            shouldShowAllMedia: true
+            shouldShowAllMedia: true,
+            showDialog: false,
+            dialogChildren: null,
+            filterTag: null
         };
 
         this.handleContextMenuClose = this.handleContextMenuClose.bind(this);
+        this.updateAlbumsFromDatabase = this.updateAlbumsFromDatabase.bind(this);
+        this.updateMediaFromDatabase = this.updateMediaFromDatabase.bind(this);
+        this.updateTagsFromDatabase = this.updateTagsFromDatabase.bind(this);
     }
     componentDidMount(){
         this.updateMediaFromDatabase();
+        this.updateAlbumsFromDatabase();
+        this.updateTagsFromDatabase();
+    }
+    handleAddAlbum(name){
+        let temp = {'album_name': name, media: []};
+        axios.post(`/api/a`, temp)
+        .then(response=>{
+            //we'll want to edit the album immediately?
+            //decide what to do here
+            this.updateAlbumsFromDatabase();
+        });
     }
     handleAlbumClick(album){
         //need to make the album show up in the content canvas
@@ -46,6 +65,25 @@ export class UserHome extends React.Component{
                 contentCanvasShowBackButton: true,
                 shouldShowAllMedia: false
             });
+        });
+    }
+    handleAlbumDelete(album){
+        this.setState({
+            showDialog: true,
+            dialogChildren: <AlbumDeleteConfirmation album={album} 
+                                                        onCancelClick={()=>this.setState({
+                                                            showDialog: false,
+                                                            dialogChildren: null
+                                                        })} 
+                                                        onConfirmClick={(album)=>{
+                                                            axios.delete(`/api/a/${album.id}`).then(res=>{
+                                                                this.setState({
+                                                                    showDialog: false,
+                                                                    dialogChildren: null
+                                                                });
+                                                                this.updateAlbumsFromDatabase();
+                                                            });
+                                                        }}/>
         });
     }
     handleContextMenu(loc, menu){
@@ -85,6 +123,36 @@ export class UserHome extends React.Component{
             shouldShowAllMedia: true
         });
     }
+    handleTagAdd(name, access){
+        let data = {description: name, access_level: access};
+        axios.post('/api/t', data, {headers: {'Content-Type':'application/json'}})
+        .then(res=>{
+            this.updateTagsFromDatabase();
+        });
+    }
+    handleTagClick(tag){
+        //this needs to pass the tag down to the user-content-canvas
+        this.setState({filterTag: tag});
+    }
+    handleTagDelete(tag){
+        this.setState({
+            showDialog: true,
+            dialogChildren: <TagDeleteConfirmation tag={tag} 
+                                                    onCancelClick={()=>this.setState({
+                                                        showDialog: false,
+                                                        dialogChildren: null
+                                                    })} 
+                                                    onConfirmClick={(tag)=>{
+                                                        axios.delete(`/api/t/${tag.id}`).then(res=>{
+                                                            this.setState({
+                                                                showDialog: false,
+                                                                dialogChildren: null
+                                                            });
+                                                            this.updateTagsFromDatabase();
+                                                        });
+                                                    }}/>
+        });
+    }
     handleZoomMediaClick(media, origin){    //don't need to save origin here
         this.setState({
             showMediaZoom: true,
@@ -107,10 +175,21 @@ export class UserHome extends React.Component{
                     {this.state.showContextMenu &&
                         <ContextMenuWrapper location={this.state.contextMenuLocation} menu={this.state.contextMenu} onMenuClose={this.handleContextMenuClose}/>
                     }
+                    {this.state.showDialog &&
+                        <Dialog children={this.state.dialogChildren}/>
+                    }
                     <Menu onMediaClick={()=>this.handleShowAllMedia()}/>
                     <div className={styles.albumsTagsContainer}>
-                        <AlbumsList albums={this.state.albums} onRowClick={(album)=>this.handleAlbumClick(album)}/>
-                        <TagsList tags={this.state.tags}/>                
+                        <AlbumsList albums={this.state.albums}
+                                    id={this.props.id}
+                                    onRowClick={(album)=>this.handleAlbumClick(album)}
+                                    onAddAlbum={(name)=>this.handleAddAlbum(name)}
+                                    onAlbumDelete={(album)=>this.handleAlbumDelete(album)}/>
+                        <TagsList tags={this.state.tags} 
+                                    id={this.props.id} 
+                                    onTagAdd={(name, access)=>this.handleTagAdd(name, access)} 
+                                    onTagDelete={(tag)=>this.handleTagDelete(tag)}
+                                    onRowClick={(tag)=>this.handleTagClick(tag)}/>                
                     </div>
                     {/*Pass in the origin from the content canvas to support zooming within a filtered list of media*/}
                     <UserContentCanvas id={this.props.id} 
@@ -126,11 +205,20 @@ export class UserHome extends React.Component{
                                         onDownloadClick={(media)=>this.handleDownloadClick(media)}
                                         onDeleteClick={(media)=>this.handleDeleteClick(media)}
                                         shouldShowAllMedia={this.state.shouldShowAllMedia}
-                                        onDidShowAllMedia={()=>this.handleDidShowAllMedia()}/>
+                                        onDidShowAllMedia={()=>this.handleDidShowAllMedia()}
+                                        filterTag={this.state.filterTag}
+                                        onDidConsumeFilterTag={()=>this.setState({filterTag: null})}/>
                     </div>
                 <PageFooter />
             </div>
         )
+    }
+    updateAlbumsFromDatabase(){
+        //read our albums from the database
+        axios.get(`/api/u/${this.props.id}/a`)
+        .then(response=>{
+            this.setState({albums:response.data});
+        });
     }
     updateMediaFromDatabase(){
         //read our media from the dbase
@@ -161,14 +249,9 @@ export class UserHome extends React.Component{
                 media: response.data,
                 contentCanvasMedia: response.data
             });
-        });
-
-        //read our albums from the database
-        axios.get(`/api/u/${this.props.id}/a`)
-        .then(response=>{
-            this.setState({albums:response.data});
-        });
-
+        });        
+    }
+    updateTagsFromDatabase(){
         //read our tags from the database
         axios.get(`/api/u/${this.props.id}/t?all=true`)
         .then(res=>{
@@ -176,11 +259,5 @@ export class UserHome extends React.Component{
                 tags: res.data
             });
         });
-        /*axios.get('/api/t')
-        .then(res=>{
-            this.setState({
-                public_tags: res.data
-            });
-        });*/
     }
 }

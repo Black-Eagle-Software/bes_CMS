@@ -1,0 +1,17 @@
+.container{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+}
+.image{
+    flex: 1 1 auto;
+    object-fit: cover;
+    height: 50%;
+    max-height: 50%;
+    width: 50%;
+    max-width: 50%;
+}

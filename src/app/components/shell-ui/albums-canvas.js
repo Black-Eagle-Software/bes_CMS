@@ -49,6 +49,12 @@ export class AlbumsCanvas extends React.Component{
     }
     rowRenderer({index, key, parent, style}){
         let item = this.props.contentSource[index];
-        return <AlbumsCanvasRow key={uuid()} album={item} style={style} onRowClick={(album)=>this.handleRowClick(album)}/>;
+        return <AlbumsCanvasRow key={uuid()} 
+                                album={item} 
+                                style={style} 
+                                onRowClick={(album)=>this.handleRowClick(album)}
+                                isEditing={this.props.isEditing}
+                                canEdit={this.props.id === item.owner} 
+                                onRowDelete={(album)=>this.props.onRowDelete(album)}/>;
     }
 }

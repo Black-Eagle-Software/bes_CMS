@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { AlbumsListToolbar } from './albums-list-toolbar';
 import { AlbumsCanvas } from './albums-canvas';
 
@@ -14,22 +15,60 @@ export class AlbumsList extends React.Component{
             sortCol: '',
             sortDir: '',
             update: false,
-            showSelectionToolbarControls: false,
-            showContentAsRows: true
+            isEditing: false
         };
 
         this.sortContent = this.sortContent.bind(this);
         this.handleFilterChange = this.handleFilterChange.bind(this);
         this.handleAddAlbum = this.handleAddAlbum.bind(this);
+        this.handleEditClick = this.handleEditClick.bind(this);
+        this.handleRowDelete = this.handleRowDelete.bind(this);
     }
     componentDidUpdate(){
         //may need to rework this a bit in the future
-        if(this.props.albums.length > 0 && this.state.albums.length === 0 && !this.state.isFiltered){
-            this.setState({albums: this.props.albums});
+        /*if(this.props.albums.length > 0 && this.state.albums.length === 0 && !this.state.isFiltered){
+            this.setState({albums: this.props.albums}, ()=>{
+                this.state.albums.map(album=>{
+                    axios.get(`/api/a/${album.id}/m?limit=4`)
+                    .then(response=>{
+                        album.media = response.data;
+                        this.setState(prevState=>({update: !prevState.update}));
+                    });
+                });
+            });
+        }*/
+        if(this.props.albums.length > 0){ 
+            if(this.state.albums.length === 0 && !this.state.isFiltered){
+                this.setState({albums: this.props.albums}, ()=>{
+                    this.state.albums.map(album=>{
+                        axios.get(`/api/a/${album.id}/m?limit=4`)
+                        .then(response=>{
+                            album.media = response.data;
+                            this.setState(prevState=>({update: !prevState.update}));
+                        });
+                    });
+                });
+            }else if(this.state.albums.length !== this.props.albums.length && !this.state.isFiltered){
+                this.setState({albums: this.props.albums}, ()=>{
+                    this.state.albums.map(album=>{
+                        axios.get(`/api/a/${album.id}/m?limit=4`)
+                        .then(response=>{
+                            album.media = response.data;
+                            this.setState(prevState=>({update: !prevState.update}));
+                        });
+                    });
+                });
+            }
         }
     }
-    handleAddAlbum(){
-        
+    handleAddAlbum(name){
+        this.props.onAddAlbum(name);
+    }
+    handleEditClick(state){
+        this.setState(prevState=>({
+            isEditing: state,
+            update: !prevState.update
+        }));
     }
     handleFilterChange(filter){
         if(filter === ''){
@@ -51,6 +90,10 @@ export class AlbumsList extends React.Component{
             this.sortContent(this.state.sortCol, this.state.sortDir);
         });
     }
+    handleRowDelete(album){
+        //hand this off up above for fulfilling
+        this.props.onAlbumDelete(album);
+    }
     render(){
         return(
             <div className={styles.container}>
@@ -58,8 +101,14 @@ export class AlbumsList extends React.Component{
                 {/*albums toolbar*/}
                 {/*headers for sorting*/}
                 {/*virtualized list of albums*/}
-                <AlbumsListToolbar onFilterChange={this.handleFilterChange} onAddAlbumClick={this.handleAddAlbum}/>
-                <AlbumsCanvas contentSource={this.state.albums} update={this.state.update} sortContent={this.sortContent} onRowClick={(album)=>this.props.onRowClick(album)}/>
+                <AlbumsListToolbar onFilterChange={this.handleFilterChange} onEditClick={this.handleEditClick} onAddAlbum={this.handleAddAlbum}/>
+                <AlbumsCanvas contentSource={this.state.albums} 
+                                id={this.props.id} 
+                                update={this.state.update} 
+                                sortContent={this.sortContent} 
+                                isEditing={this.state.isEditing} 
+                                onRowClick={(album)=>this.props.onRowClick(album)}
+                                onRowDelete={this.handleRowDelete}/>
             </div>
         );
     }

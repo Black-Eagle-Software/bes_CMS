@@ -42,6 +42,9 @@ export class MediaCanvas extends React.Component{
                 });
             }
         }
+        if(this.props.media.length === 0 && this.state.media.length !== 0){
+            this.setState({media: []});
+        }
     }
     handleFilterChange(filter){
         if(filter === ''){

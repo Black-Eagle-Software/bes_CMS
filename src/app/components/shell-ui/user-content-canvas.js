@@ -27,6 +27,11 @@ export class UserContentCanvas extends React.Component{
                 focusedMedia: {}
             });
         }
+        if(this.props.filterTag){
+            this.setState({externalFilter: this.props.filterTag}, ()=>{
+                this.props.onDidConsumeFilterTag();
+            });
+        }
     }
     handleDetailsClick(media){
         this.setState({

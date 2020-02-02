@@ -18,8 +18,8 @@
     display: flex;
     flex-flow: column;
     height: 100%;
-    width: 30px;
-    min-width: 300px;
+    width: 260px;
+    min-width: 260px;
     background: #ffffff;
     border-right: 1px solid #666666;
 }
