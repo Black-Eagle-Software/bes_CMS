@@ -64,7 +64,7 @@ export class UserContentCanvas extends React.Component{
     render(){
         return(
             <div className={styles.container}>
-                <UserToolbar id={this.props.id} username={this.props.username}/>
+                {/*<UserToolbar id={this.props.id} username={this.props.username}/>*/}
                 {this.state.showMediaDetails &&
                     <MediaDetails media={this.state.focusedMedia} 
                                     onCloseClick={this.handleDetailsCloseClick}

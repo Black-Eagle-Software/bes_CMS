@@ -26,3 +26,6 @@
     background: #4091c9;
     color: #b8d6eb;
 }
+.spacer{
+    flex: 1;
+}

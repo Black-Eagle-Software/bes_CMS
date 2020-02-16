@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Menu } from './menu';
+import { UserToolbar } from './user-toolbar';
 import { UserContentCanvas } from './user-content-canvas';
 import MediaZoom from '../media-zoom.component';
 import { ContextMenuWrapper } from './context-menu-wrapper';
@@ -221,6 +222,7 @@ export class UserHome extends React.Component{
     render(){
         return(
             <div className={styles.container}>
+                <UserToolbar id={this.props.id} username={this.props.username} onMediaClick={()=>this.handleShowAllMedia()}/>
                 <div className={styles.content}>
                     {this.state.showMediaZoom &&
                         <MediaZoom media_source={this.state.zoomSource}
@@ -241,7 +243,7 @@ export class UserHome extends React.Component{
                                             onCloseClick={this.handleAlbumEditCloseClick}
                                             onSaveClick={this.handleAlbumEditSaveClick}/>
                     }
-                    <Menu onMediaClick={()=>this.handleShowAllMedia()}/>
+                    {/*<Menu onMediaClick={()=>this.handleShowAllMedia()}/>*/}                    
                     <div className={styles.albumsTagsContainer}>
                         <AlbumsList albums={this.state.albums}
                                     id={this.props.id}
