@@ -185,22 +185,24 @@ export class AlbumMediaEditorCanvas extends React.Component{
                                 enableDragAndDrop={this.props.isEditing}
                                 onSortEnd={(oldIndex, newIndex)=>this.props.onAlbumReordered(oldIndex, newIndex)}/>*/}
                 <ContentCanvasHeadersAlbumMedia sortCol={this.state.sortCol} sortDir={this.state.sortDir} onColumnHeaderClick={this.handleColumnHeaderClick} isEditing={this.props.isEditing}/>
-                <AutoSizer>
-                    {({height, width})=>{
-                        return <SortableList contentSource={this.state.media} 
-                                            showAsRows={this.state.showContentAsRows}
-                                            rowComponent={SortableRow}
-                                            tileComponent={SortableTile}
-                                            update={this.state.update}
-                                            height={height}
-                                            width={width}
-                                            axis={axis}
-                                            lockAxis={this.state.showContentAsRows ? 'y' : ''}
-                                            helperClass={styles.dndItem}
-                                            lockToContainerEdges={true}
-                                            onSortEnd={(deltas)=>this.props.onAlbumReordered(deltas)}/>
-                    }}                
-                </AutoSizer>
+                <div style={{height: '100%', width: '100%'}}>
+                    <AutoSizer>
+                        {({height, width})=>{
+                            return <SortableList contentSource={this.state.media} 
+                                                showAsRows={this.state.showContentAsRows}
+                                                rowComponent={SortableRow}
+                                                tileComponent={SortableTile}
+                                                update={this.state.update}
+                                                height={height}
+                                                width={width}
+                                                axis={axis}
+                                                lockAxis={this.state.showContentAsRows ? 'y' : ''}
+                                                helperClass={styles.dndItem}
+                                                lockToContainerEdges={true}
+                                                onSortEnd={(deltas)=>this.props.onAlbumReordered(deltas)}/>
+                        }}                
+                    </AutoSizer>
+                </div>
             </div>
         );
     }
