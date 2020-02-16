@@ -1,0 +1,46 @@
+.thumbCol{
+    width: 56px;
+    padding: 0px 8px;
+    height: 100%;
+    -webkit-user-select: none;
+}
+.idCol{
+    width: 50px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.filenameCol{
+    min-width: 50px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    flex: 1;
+    -webkit-user-select: none;
+}
+.typeCol{
+    width: 50px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.dateCol{
+    width: 150px;
+    font-size: 12px;
+    min-width: 150px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.widthCol{
+    width: 50px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.heightCol{
+    width: 50px;
+    text-align: center;
+    -webkit-user-select: none;
+}
+.gripCol{
+    width: 16px;
+    height: 100%;
+    -webkit-user-select: none;
+}

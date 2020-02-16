@@ -16,6 +16,16 @@ export class CanvasToolbar extends React.Component{
                     {this.props.title}
                 </div>
                 <div className={styles.spacer}/>
+                {/* Album editing controls */}
+                { this.props.isEditableAlbum &&
+                    <div className={styles.viewToolbar}>
+                        <div className={styles.button} onClick={()=>this.props.onAlbumEditClick()}>
+                            <span className='codicon codicon-edit'/>
+                            <span className={styles.buttonLabel}>Edit album</span>
+                        </div>
+                        <div className={styles.separator}/>                   
+                    </div>
+                }
                 {this.props.showSelectionToolbarControls &&
                     <div className={styles.viewToolbar}>
                         <div className={styles.button} onClick={()=>this.props.onDownloadClick()}>
@@ -30,14 +40,18 @@ export class CanvasToolbar extends React.Component{
                     </div>
                 }
                 {/*<ContentFilter onChange={(event)=>this.props.onFilterChange(event)} placeholder={'Filter filenames'} tags={this.props.tags}/>*/}
-                <ComplexContentFilters onChange={(event)=>this.props.onFilterChange(event)} 
-                                        placeholder={'Filter filenames'} 
-                                        tags={this.props.tags}
-                                        media={this.props.media}
-                                        onTagFiltersChanged={(filters)=>this.props.onTagFiltersChanged(filters)}
-                                        externalFilter={this.props.externalFilter}
-                                        didConsumeExternalFilter={()=>this.props.didConsumeExternalFilter()}/>
-                <div className={styles.separator}/>
+                {this.props.showComplexFilters &&
+                    <>
+                        <ComplexContentFilters onChange={(event)=>this.props.onFilterChange(event)} 
+                                                placeholder={'Filter filenames'} 
+                                                tags={this.props.tags}
+                                                media={this.props.media}
+                                                onTagFiltersChanged={(filters)=>this.props.onTagFiltersChanged(filters)}
+                                                externalFilter={this.props.externalFilter}
+                                                didConsumeExternalFilter={()=>this.props.didConsumeExternalFilter()}/>
+                        <div className={styles.separator}/>
+                    </>
+                }
                 <div className={styles.viewToolbar}>
                     <div className={styles.button} title="List view" onClick={()=>this.props.onViewChange('rows')}>
                         <span className='codicon codicon-list-unordered'/>

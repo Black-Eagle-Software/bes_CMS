@@ -2,6 +2,7 @@ import React from 'react';
 import { UserToolbar } from './user-toolbar';
 import { MediaCanvas } from './media-canvas';
 import { MediaDetails } from './media-details';
+import { AlbumMediaCanvas } from './album-media-canvas';
 
 import styles from './user-content-canvas.css';
 
@@ -71,18 +72,51 @@ export class UserContentCanvas extends React.Component{
                                     allTags={this.props.tags}
                                     id={this.props.id}/>
                 }
-                <MediaCanvas media={this.props.media}
-                                tags={this.props.tags} 
-                                onZoomClick={(media, origin)=>this.props.onZoomClick(media, origin)}
-                                onDetailsClick={(media)=>this.handleDetailsClick(media)}
-                                handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}
-                                title={this.props.title}
-                                showBackButton={this.props.showBackButton}
-                                onShowAllMedia={()=>this.props.onShowAllMedia()}
-                                onDownloadClick={(media)=>this.props.onDownloadClick(media)}
-                                onDeleteClick={(media)=>this.props.onDeleteClick(media)}
-                                externalFilter={this.state.externalFilter}
-                                didConsumeExternalFilter={()=>this.onDidConsumeExternalFilter()}/>
+                <div style={{display: 'flex', flexFlow: 'row', height: '100%', width: '100%'}}>
+                {this.props.isEditableAlbum &&
+                    <AlbumMediaCanvas media={this.props.media}
+                                        tags={this.props.tags} 
+                                        onZoomClick={(media, origin)=>this.props.onZoomClick(media, origin)}
+                                        onDetailsClick={(media)=>this.handleDetailsClick(media)}
+                                        handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}
+                                        title={this.props.title}
+                                        showBackButton={this.props.showBackButton}
+                                        onShowAllMedia={()=>this.props.onShowAllMedia()}
+                                        onDownloadClick={(media)=>this.props.onDownloadClick(media)}
+                                        onDeleteClick={(media)=>this.props.onDeleteClick(media)}
+                                        externalFilter={this.state.externalFilter}
+                                        didConsumeExternalFilter={()=>this.onDidConsumeExternalFilter()}
+                                        isEditableAlbum={this.props.isEditableAlbum}
+                                        onAlbumEditClick={()=>this.props.onAlbumEditClick()}
+                                        showRowToolbar={true}
+                                        allowRowSelection={true}
+                                        allowMultiSelect={false}
+                                        allowClickDeselect={false}
+                                        sortCol='albumIndex'
+                                        sortDir='up'
+                                        albumDidUpdate={this.props.albumDidUpdate}/>
+                }
+                {!this.props.isEditableAlbum &&
+                    <MediaCanvas media={this.props.media}
+                                    tags={this.props.tags} 
+                                    onZoomClick={(media, origin)=>this.props.onZoomClick(media, origin)}
+                                    onDetailsClick={(media)=>this.handleDetailsClick(media)}
+                                    handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}
+                                    title={this.props.title}
+                                    showBackButton={this.props.showBackButton}
+                                    onShowAllMedia={()=>this.props.onShowAllMedia()}
+                                    onDownloadClick={(media)=>this.props.onDownloadClick(media)}
+                                    onDeleteClick={(media)=>this.props.onDeleteClick(media)}
+                                    externalFilter={this.state.externalFilter}
+                                    didConsumeExternalFilter={()=>this.onDidConsumeExternalFilter()}
+                                    isEditableAlbum={this.props.isEditableAlbum}
+                                    onAlbumEditClick={()=>this.props.onAlbumEditClick()}
+                                    showRowToolbar={true}
+                                    allowRowSelection={true}
+                                    allowMultiSelect={false}
+                                    allowClickDeselect={false}/>
+                }
+                </div>
             </div>
         );
     }

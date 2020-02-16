@@ -49,3 +49,6 @@
     font-size: 12px;
     min-width: 150px;
 }
+.dndItem{
+    z-index: 2500;
+}

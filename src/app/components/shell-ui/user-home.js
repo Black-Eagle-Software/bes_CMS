@@ -12,6 +12,7 @@ import { TagDeleteConfirmation } from './tag-delete-confirmation-dialog';
 import { AlbumDeleteConfirmation } from './album-delete-confirmation-dialog';
 
 import styles from './user-home.css';
+import { AlbumEditOverlay } from './album-edit-overlay';
 
 export class UserHome extends React.Component{
     constructor(props){
@@ -32,13 +33,22 @@ export class UserHome extends React.Component{
             shouldShowAllMedia: true,
             showDialog: false,
             dialogChildren: null,
-            filterTag: null
+            filterTag: null,
+            selectedAlbum: {},
+            isEditableAlbum: false,
+            albumToEdit: {},
+            showAlbumEditOverlay: false,
+            update: false,
+            albumDidUpdate: -1
         };
 
         this.handleContextMenuClose = this.handleContextMenuClose.bind(this);
         this.updateAlbumsFromDatabase = this.updateAlbumsFromDatabase.bind(this);
         this.updateMediaFromDatabase = this.updateMediaFromDatabase.bind(this);
         this.updateTagsFromDatabase = this.updateTagsFromDatabase.bind(this);
+        this.handleAlbumEditClick = this.handleAlbumEditClick.bind(this);
+        this.handleAlbumEditCloseClick = this.handleAlbumEditCloseClick.bind(this);
+        this.handleAlbumEditSaveClick = this.handleAlbumEditSaveClick.bind(this);
     }
     componentDidMount(){
         this.updateMediaFromDatabase();
@@ -63,7 +73,9 @@ export class UserHome extends React.Component{
                 contentCanvasMedia: response.data,
                 contentCanvasTitle: title,
                 contentCanvasShowBackButton: true,
-                shouldShowAllMedia: false
+                shouldShowAllMedia: false,
+                isEditableAlbum: true,
+                selectedAlbum: album
             });
         });
     }
@@ -85,6 +97,48 @@ export class UserHome extends React.Component{
                                                             });
                                                         }}/>
         });
+    }
+    handleAlbumEditClick(){
+        this.setState({
+            showAlbumEditOverlay: true
+        });
+    }
+    handleAlbumEditCloseClick(){
+        this.setState({
+            showAlbumEditOverlay: false
+        });
+    }
+    handleAlbumEditSaveClick(media, name){
+        let temp = {'album_name': name};
+        temp.media = media.map(m=>{return {'id': m.id};});
+        //this should always be a put since our album list edit
+        //will create the album before we can edit contents
+        axios.put(`/api/a/${this.state.selectedAlbum.id}`, temp)
+        .then(response=>{
+            if(response.status !== 200) return;            
+            /*
+                This needs to update album MEDIA from database
+                (albums shouldn't be changing [added/deleted])
+                which means
+                -the albums list needs to update media for all its rows
+                -the selected album's media needs to get updated (here)
+                -the album list editor overlay needs to update to show albumIndex values
+            */
+            this.updateAlbumsFromDatabase().then(response=>{
+                let album = this.state.albums.find(a=>{return a.id === this.state.selectedAlbum.id;});
+                axios.get(`/api/a/${album.id}/m`)
+                .then(response=>{
+                    this.setState({
+                        contentCanvasMedia: response.data,
+                        contentCanvasTitle: name,
+                        selectedAlbum: album,   
+                        albumDidUpdate: album.id
+                    });
+                });
+            }); //reset our album state
+            
+                        
+        })
     }
     handleContextMenu(loc, menu){
         this.setState({
@@ -120,7 +174,8 @@ export class UserHome extends React.Component{
             contentCanvasMedia: this.state.media,
             contentCanvasTitle: 'Media',
             contentCanvasShowBackButton: false,
-            shouldShowAllMedia: true
+            shouldShowAllMedia: true,
+            isEditableAlbum: false
         });
     }
     handleTagAdd(name, access){
@@ -178,13 +233,23 @@ export class UserHome extends React.Component{
                     {this.state.showDialog &&
                         <Dialog children={this.state.dialogChildren}/>
                     }
+                    {this.state.showAlbumEditOverlay && 
+                        <AlbumEditOverlay album={this.state.selectedAlbum}
+                                            media={this.state.media}
+                                            tags={this.state.tags}
+                                            albumMedia={this.state.contentCanvasMedia}
+                                            onCloseClick={this.handleAlbumEditCloseClick}
+                                            onSaveClick={this.handleAlbumEditSaveClick}/>
+                    }
                     <Menu onMediaClick={()=>this.handleShowAllMedia()}/>
                     <div className={styles.albumsTagsContainer}>
                         <AlbumsList albums={this.state.albums}
                                     id={this.props.id}
                                     onRowClick={(album)=>this.handleAlbumClick(album)}
                                     onAddAlbum={(name)=>this.handleAddAlbum(name)}
-                                    onAlbumDelete={(album)=>this.handleAlbumDelete(album)}/>
+                                    onAlbumDelete={(album)=>this.handleAlbumDelete(album)}
+                                    albumDidUpdate={this.state.albumDidUpdate}
+                                    onDidConsumeAlbumUpdate={()=>this.setState({albumDidUpdate: -1})}/>
                         <TagsList tags={this.state.tags} 
                                     id={this.props.id} 
                                     onTagAdd={(name, access)=>this.handleTagAdd(name, access)} 
@@ -195,6 +260,7 @@ export class UserHome extends React.Component{
                     <UserContentCanvas id={this.props.id} 
                                         username={this.props.username} 
                                         media={this.state.contentCanvasMedia}
+                                        allMedia={this.state.media}
                                         tags={this.state.tags} 
                                         onZoomClick={(media, origin)=>this.handleZoomMediaClick(media, origin)}
                                         onDetailsClick={()=>this.handleMediaDetailsClick()}
@@ -207,7 +273,10 @@ export class UserHome extends React.Component{
                                         shouldShowAllMedia={this.state.shouldShowAllMedia}
                                         onDidShowAllMedia={()=>this.handleDidShowAllMedia()}
                                         filterTag={this.state.filterTag}
-                                        onDidConsumeFilterTag={()=>this.setState({filterTag: null})}/>
+                                        onDidConsumeFilterTag={()=>this.setState({filterTag: null})}
+                                        isEditableAlbum={this.state.isEditableAlbum}
+                                        onAlbumEditClick={this.handleAlbumEditClick}
+                                        albumDidUpdate={this.state.albumDidUpdate}/>
                     </div>
                 <PageFooter />
             </div>
@@ -215,10 +284,15 @@ export class UserHome extends React.Component{
     }
     updateAlbumsFromDatabase(){
         //read our albums from the database
-        axios.get(`/api/u/${this.props.id}/a`)
+        return axios.get(`/api/u/${this.props.id}/a`)
         .then(response=>{
             this.setState({albums:response.data});
+            return response;
         });
+        /*axios.get(`/api/u/${this.props.id}/a`)
+        .then(response=>{
+            this.setState({albums:response.data});
+        });*/
     }
     updateMediaFromDatabase(){
         //read our media from the dbase

@@ -1,6 +1,5 @@
 import React from 'react';
 import { ContentCanvasStatusbar } from './content-canvas-statusbar';
-import { ContentCanvasColumnHeader } from './content-canvas-column-header';
 
 import styles from './content-canvas.css';
 
@@ -17,16 +16,26 @@ export class ContentCanvas extends React.Component {
         super(props);
 
         this.state={            
-            selectedItems:[],
-            sortCol: 'id',
-            sortDir: 'down',
+            selectedItems: [],
             selectionChange: false
         };
 
-        this.rowRenderer = this.rowRenderer.bind(this);
-        this.handleColumnHeaderClick = this.handleColumnHeaderClick.bind(this);
+        //this.rowRenderer = this.rowRenderer.bind(this);
         this.handleCanvasClick = this.handleCanvasClick.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
+    }
+    buildInitialSelections(selections){
+        let temp = this.props.contentSource.filter((value)=>{
+            return selections.some(m=>{
+                return m.id === value.id;
+            });
+        });
+        this.setState(prevState=>({
+            selectedItems: temp,
+            selectionChange: !prevState.selectionChange
+        }), ()=>{
+            this.props.onRowSelectionChanged(this.state.selectedItems);
+        });
     }
     clearSelectionItems(){
         let temp = this.state.selectedItems;
@@ -40,6 +49,29 @@ export class ContentCanvas extends React.Component {
     }
     componentDidMount(){
         document.addEventListener("keydown", this.handleKeyDown);
+        if(this.props.initialSelections){
+            this.buildInitialSelections(this.props.initialSelections);
+        }
+        if(this.props.enableDragAndDrop){
+            /*var self = this;
+            $("#contentCanvas").sortable({
+                axis: "y",
+                cursor: "grab",
+                placeholder:"",
+                start: function(event, ui){
+                    ui.item.toggleClass(styles.rowDragged);
+                },
+                stop: function(event, ui){
+                    ui.item.toggleClass(styles.rowDragged);
+                    //sync our station reordering here
+                    //then fire the changed event
+                    let sorted = $("#contentCanvas").sortable('toArray', {attribute: 'data-id'});
+                    self.props.onMediaReordered(sorted);
+                },
+                change: function(event, ui){}
+            });
+            $("#contentCanvas").disableSelection();*/
+        }
     }
     componentWillUnmount(){
         document.removeEventListener("keydown", this.handleKeyDown);
@@ -48,21 +80,6 @@ export class ContentCanvas extends React.Component {
         //this works because tiles stop their
         //click events from propagating to canvas
         this.clearSelectionItems();
-    }
-    handleColumnHeaderClick(name){
-        if(this.state.sortCol === name){
-            this.setState(prevState=>({sortDir: prevState.sortDir === 'down' ? 'up' : 'down'}), ()=>{
-                this.props.sortContent(this.state.sortCol, this.state.sortDir);
-            });
-        }else{
-            this.setState({
-                sortCol: name,
-                sortDir: 'down'
-            }, ()=>{
-                this.props.sortContent(this.state.sortCol, this.state.sortDir);
-            });
-        }
-        
     }
     handleKeyDown(e){
         if(e.key === 'ArrowLeft'){
@@ -93,18 +110,25 @@ export class ContentCanvas extends React.Component {
         let temp = this.state.selectedItems;
         let index = temp.indexOf(media)
         if(index !== -1){
-            //don't deselect on clicking an item again
-            return;
-        }
-        if(event.ctrlKey){
-            //add this item to selected items
-            temp.push(media);
-        }else if(event.shiftKey){
-            //select all items between this one and the last one selected
+            if(this.props.allowClickDeselect){
+                temp.splice(index, 1);
+            }else{
+                //don't deselect on clicking an item again
+                return;
+            }
         }else{
-            //clicked a new item, so deselect all others
-            temp = [];
-            temp.push(media);
+            if(event.ctrlKey){
+                //add this item to selected items
+                temp.push(media);
+            }else if(event.shiftKey){
+                //select all items between this one and the last one selected
+            }else{
+                //clicked a new item, so deselect all others
+                if(!this.props.allowMultiSelect){
+                    temp = [];
+                }
+                temp.push(media);
+            }
         }        
         this.setState(prevState=>({
             selectedItems: temp,
@@ -113,27 +137,18 @@ export class ContentCanvas extends React.Component {
             this.props.onRowSelectionChanged(this.state.selectedItems);
         });
     }
-    render(){        
+    render(){
+        const {contentSource, columnHeaders, showAsRows} = this.props;
+
         return(
             <>
-                <div style={{width: '100%', overflow: 'hidden'}}>
-                        <div className={styles.header}>
-                            <ContentCanvasColumnHeader colClass={styles.thumbCol} onClick={()=>{}}/>
-                            <ContentCanvasColumnHeader name='id' colClass={styles.idCol} content='ID' sortable={true} sortDir={this.state.sortCol==='id' ? this.state.sortDir : ''} onClick={this.handleColumnHeaderClick}/>
-                            <ContentCanvasColumnHeader name='filename' colClass={styles.filenameCol} content='Filename' sortable={true} sortDir={this.state.sortCol==='filename' ? this.state.sortDir : ''} onClick={this.handleColumnHeaderClick}/>
-                            <ContentCanvasColumnHeader name='type' colClass={styles.typeCol} content='Type' sortable={true} sortDir={this.state.sortCol==='type' ? this.state.sortDir : ''} onClick={this.handleColumnHeaderClick}/>
-                            <ContentCanvasColumnHeader name='date' colClass={styles.dateCol} content='Date' sortable={true} sortDir={this.state.sortCol==='date' ? this.state.sortDir : ''} onClick={this.handleColumnHeaderClick}/>
-                            <ContentCanvasColumnHeader name='dateAdded' colClass={styles.dateCol} content='Date added' sortable={true} sortDir={this.state.sortCol==='dateAdded' ? this.state.sortDir : ''} onClick={this.handleColumnHeaderClick}/>
-                            <ContentCanvasColumnHeader name='width' colClass={styles.widthCol} content='Width' sortable={true} sortDir={this.state.sortCol==='width' ? this.state.sortDir : ''} onClick={this.handleColumnHeaderClick}/>
-                            <ContentCanvasColumnHeader name='height' colClass={styles.heightCol} content='Height' sortable={true} sortDir={this.state.sortCol==='height' ? this.state.sortDir : ''} onClick={this.handleColumnHeaderClick}/>
-                        </div>
-                    </div>
-                <div className={styles.rowsContainer} onClick={this.handleCanvasClick}>
+                {columnHeaders}
+                <div id="contentCanvas" className={styles.rowsContainer} onClick={this.handleCanvasClick}>
                     <AutoSizer>
                         {({height, width})=>{
-                            const itemsPerRow = this.props.showAsRows ? 1 : Math.floor(width/(200 + 16));
-                            const rowCount = this.props.showAsRows ? this.props.contentSource.length : Math.ceil(this.props.contentSource.length/itemsPerRow);
-                            const rowHeight = this.props.showAsRows ? 40 : 200 + 16;
+                            const itemsPerRow = showAsRows ? 1 : Math.floor(width/(200 + 16));
+                            const rowCount = showAsRows ? contentSource.length : Math.ceil(contentSource.length/itemsPerRow);
+                            const rowHeight = showAsRows ? 40 : 200 + 16;
                             //if (!this.props.showAsRows) height = rowCount * (200 + 16);
 
                             return(
@@ -152,19 +167,19 @@ export class ContentCanvas extends React.Component {
                     </AutoSizer>               
                 </div>
                 {this.state.selectedItems.length > 0 &&
-                    <ContentCanvasStatusbar selectedCount={this.state.selectedItems.length} totalCount={this.props.contentSource.length}/>
+                    <ContentCanvasStatusbar selectedCount={this.state.selectedItems.length} totalCount={contentSource.length}/>
                 }
             </>
         );
     }
-    rowRenderer({index, key, parent, style}){
+    rowRenderer = ({index, key, parent, style}) =>{
         if(this.props.contentSource.length > 0){ 
             //this is a naive approach for now
             //should include/use AutoSizer???
             if(this.props.showAsRows){
                 let item = this.props.contentSource[index];
                 let selected = this.state.selectedItems.indexOf(item) !== -1;
-                return React.cloneElement(this.props.rowComponent, {key:uuid(), media: item,  style: style, onRowClick:(media, event)=>this.handleItemClick(media, event),  isSelected: selected});
+                return React.cloneElement(this.props.rowComponent, {key:uuid(), index: index, media: item,  style: style, onRowClick:(media, event)=>this.handleItemClick(media, event),  isSelected: selected});                
             }else{
                 //this should maybe store each tile's row and column index?
                 const itemsPerRow = Math.floor(parent.props.width/(200 + 16));
@@ -176,10 +191,10 @@ export class ContentCanvas extends React.Component {
                 };
                 return(
                     <div key={key} style={Object.assign({}, style, divStyle)}>
-                        {this.props.contentSource.map((item, index)=>{
-                            if(index >= fromIndex && index < toIndex){
+                        {this.props.contentSource.map((item, tIndex)=>{
+                            if(tIndex >= fromIndex && tIndex < toIndex){
                                 let selected = this.state.selectedItems.indexOf(item) !== -1;
-                                return React.cloneElement(this.props.tileComponent, {key:uuid(), media: item,  style: style, onTileClick:(media, event)=>this.handleItemClick(media, event),  isSelected: selected});
+                                return React.cloneElement(this.props.tileComponent, {key:uuid(), index: tIndex, media: item,  style: style, onTileClick:(media, event)=>this.handleItemClick(media, event),  isSelected: selected});
                             }
                         })}
                     </div>
@@ -187,5 +202,5 @@ export class ContentCanvas extends React.Component {
                 
             }
         }
-    }    
+    };    
 }

@@ -2,23 +2,23 @@ import React from 'react';
 import axios from 'axios';
 import { ContentCanvas } from './content-canvas';
 import { CanvasToolbar } from './canvas-toolbar';
-import { ContentCanvasHeadersMedia } from './content-canvas-headers-media';
-import { MediaCanvasRow } from './media-canvas-row';
+import { ContentCanvasHeadersAlbumMedia } from './content-canvas-headers-album';
+import { AlbumMediaCanvasRow } from './album-media-canvas-row';
 import { MediaCanvasTile } from './media-canvas-tile';
 import DateHelper from '../../../helpers/date';
 import MediaSort from '../../../helpers/mediaSort';
 
 import styles from './media-canvas.css';
 
-export class MediaCanvas extends React.Component{
+export class AlbumMediaCanvas extends React.Component{
     constructor(props){
         super(props);
 
         this.state = {
             media: this.props.media,
             isFiltered: false,
-            sortCol: this.props.sortCol ? this.props.sortCol : 'id',
-            sortDir: this.props.sortDir ? this.props.sortDir : 'down',
+            sortCol: this.props.sortCol,
+            sortDir: this.props.sortDir,
             update: false,
             showSelectionToolbarControls: false,
             selectedItems: [],
@@ -28,14 +28,15 @@ export class MediaCanvas extends React.Component{
         this.sortContent = this.sortContent.bind(this);
         this.handleFilterChange = this.handleFilterChange.bind(this);
         this.handleColumnHeaderClick = this.handleColumnHeaderClick.bind(this);
-        this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);        
+        this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);
+        
+        this.didConsumeUpdate = false;
     }
     componentDidMount(){
         this.sortContent(this.state.sortCol, this.state.sortDir);        
     }
     componentDidUpdate(){
         //may need to rework this a bit in the future
-        //this doesn't work for 2 albums that have the same number of media items :(
         if(this.props.media.length > 0){ 
             if(this.state.media.length === 0 && !this.state.isFiltered){
                 this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, ()=>{
@@ -45,20 +46,26 @@ export class MediaCanvas extends React.Component{
                 this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, ()=>{
                     this.sortContent(this.state.sortCol, this.state.sortDir);
                 });
-            }else{
-                //probe media items to see if the state and props are actually the same
-                let matches = true;
-                for(let i = 0; i < this.state.media.length; i++){
-                    if(this.state.media[i].id !== this.props.media[i].id){
-                        matches = false;
-                        break;
-                    }
+            }
+            //check that our album media didn't get rearranged on us
+            /*let shouldUpdate = false;
+            for(let i = 0; i < this.props.media.length; i++){
+                if(this.props.media[i].id !== this.state.media[i]){
+                    shouldUpdate = true;
                 }
-                if(!matches){
-                    this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, ()=>{
-                        this.sortContent(this.state.sortCol, this.state.sortDir);
-                    });
-                }
+            }
+            if(shouldUpdate){
+                this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, ()=>{
+                    this.sortContent(this.state.sortCol, this.state.sortDir);
+                });
+            }*/
+            //console.log(this.props.albumDidUpdate);
+            if(this.props.albumDidUpdate !== -1 && !this.didConsumeUpdate){
+                this.didConsumeUpdate = true;
+                this.setState(prevState=>({media: this.props.media, showSelectionToolbarControls: false, selectedItems: [], update: !prevState.update}), ()=>{
+                    this.didConsumeUpdate = false;
+                    this.sortContent(this.state.sortCol, this.state.sortDir);
+                });
             }
         }
         if(this.props.media.length === 0 && this.state.media.length !== 0){
@@ -198,7 +205,7 @@ export class MediaCanvas extends React.Component{
                     --we want headered columns at the very least
                     --sortable would be nice
                     --as would resizing
-                */}
+                */}                
                 <CanvasToolbar title={title} 
                                 onFilterChange={this.handleFilterChange} 
                                 showSelectionToolbarControls={this.state.showSelectionToolbarControls} 
@@ -217,19 +224,22 @@ export class MediaCanvas extends React.Component{
                                 onAlbumEditClick={()=>this.props.onAlbumEditClick()}/>
                 <ContentCanvas contentSource={this.state.media} 
                                 showAsRows={this.state.showContentAsRows} 
-                                rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
+                                rowComponent={<AlbumMediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
                                                                 onDetailsClick={(media)=>this.props.onDetailsClick(media)} 
                                                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}
-                                                                showRowToolbar={this.props.showRowToolbar}/>} 
+                                                                showRowToolbar={this.props.showRowToolbar}
+                                                                isEditing={this.props.isEditing}/>} 
                                 tileComponent={<MediaCanvasTile onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
                                                                 onDetailsClick={(media)=>this.props.onDetailsClick(media)} 
                                                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}/>}
-                                columnHeaders={<ContentCanvasHeadersMedia sortCol={this.state.sortCol} sortDir={this.state.sortDir} onColumnHeaderClick={this.handleColumnHeaderClick}/>}
+                                columnHeaders={<ContentCanvasHeadersAlbumMedia sortCol={this.state.sortCol} sortDir={this.state.sortDir} onColumnHeaderClick={this.handleColumnHeaderClick} isEditing={this.props.isEditing}/>}
                                 update={this.state.update}
                                 onRowSelectionChanged={this.handleRowSelectionChanged}
                                 initialSelections={this.props.initialSelections}
                                 allowMultiSelect={this.props.allowMultiSelect}
-                                allowClickDeselect={this.props.allowClickDeselect}/>
+                                allowClickDeselect={this.props.allowClickDeselect}
+                                enableDragAndDrop={this.props.isEditing}
+                                onMediaReordered={(sorted)=>this.props.onAlbumReordered(sorted)}/>
             </div>
         );
     }

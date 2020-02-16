@@ -22,8 +22,10 @@ export class ContentCanvasRow extends React.Component{
     handleContextMenu(event){
         event.preventDefault();
         event.stopPropagation();
-        let pt = {x: event.clientX, y: event.clientY};
-        this.props.handleContextMenu(pt, this.props.contextMenu);
+        if(this.props.handleContextMenu){
+            let pt = {x: event.clientX, y: event.clientY};
+            this.props.handleContextMenu(pt, this.props.contextMenu);
+        }
     }
     handleRowClick(event){
         event.preventDefault();

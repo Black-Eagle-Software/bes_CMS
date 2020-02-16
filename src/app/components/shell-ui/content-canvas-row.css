@@ -33,3 +33,16 @@
     width: 40px;
     object-fit: cover;
 }
+.grip{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 100%;      
+    color: #4091c9; 
+    font-size: 12px; 
+    cursor: default;
+}
+.grip:hover{
+    background: #b8d6eb;    
+}

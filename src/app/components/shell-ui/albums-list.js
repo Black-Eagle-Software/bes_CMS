@@ -18,7 +18,7 @@ export class AlbumsList extends React.Component{
             isEditing: false
         };
 
-        this.sortContent = this.sortContent.bind(this);
+        //this.sortContent = this.sortContent.bind(this);
         this.handleFilterChange = this.handleFilterChange.bind(this);
         this.handleAddAlbum = this.handleAddAlbum.bind(this);
         this.handleEditClick = this.handleEditClick.bind(this);
@@ -37,7 +37,7 @@ export class AlbumsList extends React.Component{
                 });
             });
         }*/
-        if(this.props.albums.length > 0){ 
+        if(this.props.albums.length > 0){
             if(this.state.albums.length === 0 && !this.state.isFiltered){
                 this.setState({albums: this.props.albums}, ()=>{
                     this.state.albums.map(album=>{
@@ -60,6 +60,18 @@ export class AlbumsList extends React.Component{
                 });
             }
         }
+        if(this.props.albumDidUpdate !== -1){
+            this.props.onDidConsumeAlbumUpdate();   //do this here (first) because album-media-canvas can exceed update depth and can't consume the update like this can            
+            this.setState({albums: this.props.albums}, ()=>{
+                this.state.albums.map(album=>{
+                    axios.get(`/api/a/${album.id}/m?limit=4`)
+                    .then(response=>{
+                        album.media = response.data;
+                        this.setState(prevState=>({update: !prevState.update}));
+                    });
+                });
+            });
+        }
     }
     handleAddAlbum(name){
         this.props.onAddAlbum(name);
@@ -77,7 +89,7 @@ export class AlbumsList extends React.Component{
                 isFiltered: false,
                 update: !prevState.update  
             }), ()=>{
-                this.sortContent(this.state.sortCol, this.state.sortDir);
+                //this.sortContent(this.state.sortCol, this.state.sortDir);
             });            
             return;
         }
@@ -87,7 +99,7 @@ export class AlbumsList extends React.Component{
             isFiltered: true,
             update: !prevState.update
         }), ()=>{
-            this.sortContent(this.state.sortCol, this.state.sortDir);
+            //this.sortContent(this.state.sortCol, this.state.sortDir);
         });
     }
     handleRowDelete(album){
@@ -104,8 +116,7 @@ export class AlbumsList extends React.Component{
                 <AlbumsListToolbar onFilterChange={this.handleFilterChange} onEditClick={this.handleEditClick} onAddAlbum={this.handleAddAlbum}/>
                 <AlbumsCanvas contentSource={this.state.albums} 
                                 id={this.props.id} 
-                                update={this.state.update} 
-                                sortContent={this.sortContent} 
+                                update={this.state.update}  
                                 isEditing={this.state.isEditing} 
                                 onRowClick={(album)=>this.props.onRowClick(album)}
                                 onRowDelete={this.handleRowDelete}/>
