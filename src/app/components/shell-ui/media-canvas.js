@@ -1,12 +1,11 @@
 import React from 'react';
-import axios from 'axios';
 import { ContentCanvas } from './content-canvas';
 import { CanvasToolbar } from './canvas-toolbar';
 import { ContentCanvasHeadersMedia } from './content-canvas-headers-media';
 import { MediaCanvasRow } from './media-canvas-row';
 import { MediaCanvasTile } from './media-canvas-tile';
-import DateHelper from '../../../helpers/date';
 import MediaSort from '../../../helpers/mediaSort';
+import TagFilters from '../../../helpers/tagFilters';
 
 import styles from './media-canvas.css';
 
@@ -45,7 +44,7 @@ export class MediaCanvas extends React.Component{
                 this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, ()=>{
                     this.sortContent(this.state.sortCol, this.state.sortDir);
                 });
-            }else{
+            }else if(!this.state.isFiltered){
                 //probe media items to see if the state and props are actually the same
                 let matches = true;
                 for(let i = 0; i < this.state.media.length; i++){
@@ -108,77 +107,19 @@ export class MediaCanvas extends React.Component{
         });
     }
     handleTagFiltersChanged(filters){
-        if(filters.length === 0) {
-            //assuming we've filtered before, reset things
+        TagFilters.filter(filters, this.props.media)
+        .then(response=>{
             this.setState(prevState=>({
-                media: this.props.media,
-                isFiltered: false,
+                media: response.media,
+                isFiltered: response.isFiltered,
                 update: !prevState.update  
             }), ()=>{
                 this.sortContent(this.state.sortCol, this.state.sortDir);
-            });            
-            return;
-        };
-        let dates = [];        
-        //build our tag query
-        let query = "?t=";
-        let t = 0;
-        for(let i = 0; i < filters.length; i++){
-            if(filters[i].month) {
-                dates.push(filters[i]);
-            }else{
-                if(t !== 0){
-                    query += '&t=';
-                }
-                query += `${filters[i].description}`;
-                t += 1;
-            }
-        }        
-        if(query.length > 3){
-            axios.get(`/api/search${query}`)
-            .then(response=>{                
-                if(response.data.media){                
-                    let res = response.data.media;
-                    if(res){
-                        //need to rework this because it's overwriting our date filter
-                        let temp = this.props.media.filter(media=>{
-                            let dateMatch = true;
-                            if(dates.length > 0){
-                                let date = DateHelper.getMonthYearFromMillisecondDate(media.fileDate);
-                                dateMatch = dates.filter(d=>{
-                                    return d.month === date.month && d.year === date.year;
-                                }).length > 0;
-                            }
-                            let idMatch = res.filter(resMedia=>{
-                                return resMedia.id === media.id;
-                            }).length > 0;
-                            return dateMatch && idMatch;
-                        });
-                        this.setState(prevState=>({
-                            media: temp,
-                            isFiltered: true,
-                            update: !prevState.update
-                        }), ()=>{
-                            this.sortContent(this.state.sortCol, this.state.sortDir);
-                        });
-                    }
-                }               
             });
-        }else{
-            let temp = this.props.media.filter(media=>{
-                let date = DateHelper.getMonthYearFromMillisecondDate(media.fileDate);
-                return dates.filter(d=>{
-                    return d.month === date.month && d.year === date.year;
-                }).length > 0;
-            });
-            this.setState(prevState=>({
-                media: temp,
-                isFiltered: true,
-                update: !prevState.update
-            }), ()=>{
-                this.sortContent(this.state.sortCol, this.state.sortDir);
-            });
-        }
+        })
+        .catch(err=>{
+            console.log(err);
+        });
     }
     handleViewChange(view){
         if(view === 'tiles'){
