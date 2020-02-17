@@ -21,7 +21,7 @@ export class MediaSelectionCanvas extends React.Component{
             update: false,
             showSelectionToolbarControls: false,
             selectedItems: [],
-            showContentAsRows: true
+            showContentAsRows: this.props.showContentAsRows
         };
 
         this.sortContent = this.sortContent.bind(this);

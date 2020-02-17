@@ -136,7 +136,8 @@ export class AlbumEditOverlay extends React.Component{
                                             onRowSelectionChanged={this.handleAlbumRowSelectionChanged} 
                                             onAlbumReordered={this.handleAlbumReordered} 
                                             onAlbumDidUpdate={this.state.onAlbumDidUpdate}
-                                            didConsumeAlbumUpdate={this.handleDidConsumeAlbumUpdate}/>
+                                            didConsumeAlbumUpdate={this.handleDidConsumeAlbumUpdate}
+                                            showContentAsRows={this.props.showContentAsRows}/>
                         <MediaSelectionPane media={this.props.media} 
                                             tags={this.props.tags} 
                                             initialSelections={this.state.albumMedia} 

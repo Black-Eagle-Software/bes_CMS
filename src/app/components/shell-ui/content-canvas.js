@@ -146,6 +146,7 @@ export class ContentCanvas extends React.Component {
                 <div id="contentCanvas" className={styles.rowsContainer} onClick={this.handleCanvasClick}>
                     <AutoSizer>
                         {({height, width})=>{
+                            if(width === 0 || height === 0) return(<></>);
                             const itemsPerRow = showAsRows ? 1 : Math.floor(width/(200 + 16));
                             const rowCount = showAsRows ? contentSource.length : Math.ceil(contentSource.length/itemsPerRow);
                             const rowHeight = showAsRows ? 40 : 200 + 16;

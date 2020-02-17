@@ -20,7 +20,8 @@ export class AlbumEditorCanvas extends React.Component{
                                 isEditing={true}
                                 onAlbumDidUpdate={this.props.onAlbumDidUpdate}
                                 didConsumeAlbumUpdate={()=>this.props.didConsumeAlbumUpdate()}
-                                onAlbumReordered={(deltas)=>this.props.onAlbumReordered(deltas)}/>
+                                onAlbumReordered={(deltas)=>this.props.onAlbumReordered(deltas)}
+                                showContentAsRows={this.props.showContentAsRows}/>
             </div>
         );
     }

@@ -1,0 +1,22 @@
+.container{
+    position: absolute;
+    top: 40px;
+    right: 0px;
+    bottom: 28px;
+    width: 320px;
+    border-left: 1px solid #ebebeb;
+    background: #ffffff;
+    z-index: 250;
+    box-shadow: -4px 0px 20px 4px rgb(51,51,51,0.35);
+    /*transition: right ease-in-out 0.25s;*/
+    transition: right cubic-bezier(.1, .9, .2, 1) 0.25s;
+}
+.header{
+    font-size: 16px;
+    color: #006cb7;
+    margin: 8px 16px;
+}
+.hidden{
+    right: -321px;
+    box-shadow: none;
+}

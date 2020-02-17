@@ -1,11 +1,8 @@
 import React from 'react';
-import axios from 'axios';
-import { ContentCanvas } from './content-canvas';
 import { CanvasToolbar } from './canvas-toolbar';
 import { ContentCanvasHeadersAlbumMedia } from './content-canvas-headers-album';
 import { AlbumMediaCanvasRow } from './album-media-canvas-row';
 import { MediaCanvasTile } from './media-canvas-tile';
-import DateHelper from '../../../helpers/date';
 import MediaSort from '../../../helpers/mediaSort';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc/dist/react-sortable-hoc';
 import { AutoSizer, List } from 'react-virtualized';
@@ -93,7 +90,7 @@ export class AlbumMediaEditorCanvas extends React.Component{
             update: false,
             showSelectionToolbarControls: false,
             selectedItems: [],
-            showContentAsRows: true
+            showContentAsRows: this.props.showContentAsRows
         };
 
         this.sortContent = this.sortContent.bind(this);

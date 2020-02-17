@@ -11,9 +11,11 @@ import { PageFooter } from './page-footer';
 import { Dialog } from './dialog';
 import { TagDeleteConfirmation } from './tag-delete-confirmation-dialog';
 import { AlbumDeleteConfirmation } from './album-delete-confirmation-dialog';
+import { AlbumEditOverlay } from './album-edit-overlay';
+import { SettingsPane } from './settings';
+import { Settings } from '../../../helpers/settings';
 
 import styles from './user-home.css';
-import { AlbumEditOverlay } from './album-edit-overlay';
 
 export class UserHome extends React.Component{
     constructor(props){
@@ -40,7 +42,9 @@ export class UserHome extends React.Component{
             albumToEdit: {},
             showAlbumEditOverlay: false,
             update: false,
-            albumDidUpdate: -1
+            albumDidUpdate: -1,
+            showSettingsPane: false,
+            showContentAsRows: true
         };
 
         this.handleContextMenuClose = this.handleContextMenuClose.bind(this);
@@ -50,8 +54,11 @@ export class UserHome extends React.Component{
         this.handleAlbumEditClick = this.handleAlbumEditClick.bind(this);
         this.handleAlbumEditCloseClick = this.handleAlbumEditCloseClick.bind(this);
         this.handleAlbumEditSaveClick = this.handleAlbumEditSaveClick.bind(this);
+        this.handleSettingsClick = this.handleSettingsClick.bind(this);
+        this.handleSettingDidChange = this.handleSettingDidChange.bind(this);
     }
     componentDidMount(){
+        this.initSettings();        
         this.updateMediaFromDatabase();
         this.updateAlbumsFromDatabase();
         this.updateTagsFromDatabase();
@@ -170,6 +177,12 @@ export class UserHome extends React.Component{
             shouldShowAllMedia: false
         });
     }
+    handleSettingsClick(){
+        this.setState(prevState=>({showSettingsPane: !prevState.showSettingsPane}));
+    }
+    handleSettingDidChange(){
+        this.updateSettings();
+    }
     handleShowAllMedia(){
         this.setState({
             contentCanvasMedia: this.state.media,
@@ -219,10 +232,17 @@ export class UserHome extends React.Component{
     hideMediaZoom(){
         this.setState({showMediaZoom: false});
     }
+    initSettings(){
+        Settings.init();
+        this.updateSettings();        
+    }
     render(){
         return(
             <div className={styles.container}>
-                <UserToolbar id={this.props.id} username={this.props.username} onMediaClick={()=>this.handleShowAllMedia()}/>
+                <UserToolbar id={this.props.id} 
+                                username={this.props.username} 
+                                onMediaClick={()=>this.handleShowAllMedia()}
+                                onSettingsClick={()=>this.handleSettingsClick()}/>
                 <div className={styles.content}>
                     {this.state.showMediaZoom &&
                         <MediaZoom media_source={this.state.zoomSource}
@@ -241,8 +261,11 @@ export class UserHome extends React.Component{
                                             tags={this.state.tags}
                                             albumMedia={this.state.contentCanvasMedia}
                                             onCloseClick={this.handleAlbumEditCloseClick}
-                                            onSaveClick={this.handleAlbumEditSaveClick}/>
+                                            onSaveClick={this.handleAlbumEditSaveClick}
+                                            showContentAsRows={this.state.showContentAsRows}/>
                     }
+                    <SettingsPane show={this.state.showSettingsPane}
+                                    onSettingDidChange={this.handleSettingDidChange}/>
                     {/*<Menu onMediaClick={()=>this.handleShowAllMedia()}/>*/}                    
                     <div className={styles.albumsTagsContainer}>
                         <AlbumsList albums={this.state.albums}
@@ -278,7 +301,8 @@ export class UserHome extends React.Component{
                                         onDidConsumeFilterTag={()=>this.setState({filterTag: null})}
                                         isEditableAlbum={this.state.isEditableAlbum}
                                         onAlbumEditClick={this.handleAlbumEditClick}
-                                        albumDidUpdate={this.state.albumDidUpdate}/>
+                                        albumDidUpdate={this.state.albumDidUpdate}
+                                        showContentAsRows={this.state.showContentAsRows}/>
                     </div>
                 <PageFooter />
             </div>
@@ -326,6 +350,9 @@ export class UserHome extends React.Component{
                 contentCanvasMedia: response.data
             });
         });        
+    }
+    updateSettings(){
+        this.setState({showContentAsRows: Settings.getValue('defaultMediaView') === 'true'});
     }
     updateTagsFromDatabase(){
         //read our tags from the database

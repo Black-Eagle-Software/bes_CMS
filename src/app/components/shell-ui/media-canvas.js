@@ -21,7 +21,7 @@ export class MediaCanvas extends React.Component{
             update: false,
             showSelectionToolbarControls: false,
             selectedItems: [],
-            showContentAsRows: true
+            showContentAsRows: this.props.showContentAsRows
         };
 
         this.sortContent = this.sortContent.bind(this);
@@ -62,6 +62,9 @@ export class MediaCanvas extends React.Component{
         }
         if(this.props.media.length === 0 && this.state.media.length !== 0){
             this.setState({media: []});
+        }
+        if(this.props.showContentAsRows !== this.state.showContentAsRows){
+            this.setState({showContentAsRows: this.props.showContentAsRows});
         }
     }
     handleColumnHeaderClick(name){

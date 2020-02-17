@@ -10,6 +10,7 @@ export class UserToolbar extends React.Component{
 
         this.handleLogoutClick = this.handleLogoutClick.bind(this);
         this.handleMediaClick = this.handleMediaClick.bind(this);
+        this.handleSettingsClick = this.handleSettingsClick.bind(this);
         this.handleUploadClick = this.handleUploadClick.bind(this);
     }
     handleLogoutClick(){
@@ -20,13 +21,16 @@ export class UserToolbar extends React.Component{
     handleMediaClick(event){
         this.props.onMediaClick();
     }
+    handleSettingsClick(event){
+        this.props.onSettingsClick();
+    }
     handleUploadClick(event){
         this.props.onUploadClick();
     }
     render(){
         return(
             <div className={styles.container}>
-                <div className={styles.button} title="Show all medi" onClick={this.handleMediaClick}>
+                <div className={styles.button} title="Show all media" onClick={this.handleMediaClick}>
                     <span className='codicon codicon-device-camera'/>
                 </div>
                 <div className={styles.button} title="Upload media" onClick={this.handleUploadClick}>
@@ -34,6 +38,9 @@ export class UserToolbar extends React.Component{
                 </div>
                 <div className={styles.spacer}/>
                 <span>{this.props.username}</span>  {/*replace this with identity badge or something*/}
+                <div className={styles.button} title="Settings" onClick={this.handleSettingsClick}>
+                    <span style={{transform: 'rotate(22.5deg)'}} className='codicon codicon-settings-gear'/>
+                </div>                
                 <div className={styles.button} title="Logout" onClick={this.handleLogoutClick}>
                     <span className='codicon codicon-unlock'/>
                 </div>

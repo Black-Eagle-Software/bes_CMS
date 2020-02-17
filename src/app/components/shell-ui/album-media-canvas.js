@@ -21,7 +21,7 @@ export class AlbumMediaCanvas extends React.Component{
             update: false,
             showSelectionToolbarControls: false,
             selectedItems: [],
-            showContentAsRows: true
+            showContentAsRows: this.props.showContentAsRows
         };
 
         this.sortContent = this.sortContent.bind(this);
@@ -31,7 +31,7 @@ export class AlbumMediaCanvas extends React.Component{
         
         this.didConsumeUpdate = false;
     }
-    componentDidMount(){
+    componentDidMount(){        
         this.sortContent(this.state.sortCol, this.state.sortDir);        
     }
     componentDidUpdate(){
@@ -65,6 +65,9 @@ export class AlbumMediaCanvas extends React.Component{
                     this.didConsumeUpdate = false;
                     this.sortContent(this.state.sortCol, this.state.sortDir);
                 });
+            }
+            if(this.props.showContentAsRows !== this.state.showContentAsRows){
+                this.setState({showContentAsRows: this.props.showContentAsRows});
             }
         }
         if(this.props.media.length === 0 && this.state.media.length !== 0){

@@ -94,7 +94,8 @@ export class UserContentCanvas extends React.Component{
                                         allowClickDeselect={false}
                                         sortCol='albumIndex'
                                         sortDir='up'
-                                        albumDidUpdate={this.props.albumDidUpdate}/>
+                                        albumDidUpdate={this.props.albumDidUpdate}
+                                        showContentAsRows={this.props.showContentAsRows}/>
                 }
                 {!this.props.isEditableAlbum &&
                     <MediaCanvas media={this.props.media}
@@ -114,7 +115,8 @@ export class UserContentCanvas extends React.Component{
                                     showRowToolbar={true}
                                     allowRowSelection={true}
                                     allowMultiSelect={false}
-                                    allowClickDeselect={false}/>
+                                    allowClickDeselect={false}
+                                    showContentAsRows={this.props.showContentAsRows}/>
                 }
                 </div>
             </div>
