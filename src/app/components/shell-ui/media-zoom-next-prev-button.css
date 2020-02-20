@@ -1,0 +1,19 @@
+.button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 64px;
+    z-index: 10;
+    background: #1f1f1f;
+    border: 1px solid #c6c6c6;
+    color: #f5f5f5;
+}
+.next{
+    position: absolute;
+    right: -6px;
+}
+.prev{
+    position: absolute;
+    left: -6px;
+}

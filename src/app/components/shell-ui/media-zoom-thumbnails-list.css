@@ -1,0 +1,10 @@
+.container{
+    overflow: hidden;
+    width: 100%;
+}
+.items{
+    display: flex;
+}
+.list{
+    outline: none;
+}

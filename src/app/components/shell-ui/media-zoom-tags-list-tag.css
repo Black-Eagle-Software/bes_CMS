@@ -1,0 +1,35 @@
+.outerContainer{
+    display: flex;
+    flex-flow: row nowrap;
+    /*width: 100%;*/
+    height: 24px;
+    align-items: center;
+}
+.outerContainer:hover{
+    background: #ebebeb;
+    color: #1f1f1f;
+    border-radius: 3px;
+}
+.container{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    padding: 0px 8px;
+    width: 100%;
+    height: 100%;
+    cursor: default;
+}
+.title{
+    font-size: 16px;
+    flex: 1;
+    margin-right: 24px;
+}
+.searchIcon{
+    display: none !important;
+}
+.container:hover .searchIcon{
+    display: inline-block !important;
+}
+.container:hover .title{
+    margin-right: 8px;
+}

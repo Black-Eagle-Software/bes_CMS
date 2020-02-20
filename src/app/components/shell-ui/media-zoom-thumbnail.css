@@ -1,0 +1,16 @@
+.thumb{
+    width: 128px;
+    height: 128px;
+    padding: 0px;
+    object-fit: cover;
+}
+.thumb:hover{
+    border: 4px solid #006cb7;
+    opacity: 0.75;
+}
+.active{
+    border: 4px solid #ffc801;
+}
+.inactive{
+    opacity: 0.35;
+}

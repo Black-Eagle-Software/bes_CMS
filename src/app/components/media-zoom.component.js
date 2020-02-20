@@ -14,16 +14,17 @@ export default class MediaZoom extends React.PureComponent{
         };
 
         this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.fetchData = this.fetchData.bind(this);
     }
     componentDidMount(){
         this.fetchData();
         document.addEventListener("keydown", this.handleKeyDown);
     }
-    componentDidUpdate(prevProps, prevState, snapshot){
+    /*componentDidUpdate(prevProps, prevState, snapshot){
         if(this.props.media_source !== prevProps.media_source){
             this.fetchData();
         }
-    }
+    }*/
     componentWillUnmount(){
         document.removeEventListener("keydown", this.handleKeyDown);
     }
@@ -54,7 +55,7 @@ export default class MediaZoom extends React.PureComponent{
         }
         this.setState({
             media_source: this.state.media_list[media_index]
-        });
+        }, this.fetchData);
     }
     handleZoomMediaPrevious(){  //just pass origin array here
         let media_index = this.state.media_list.indexOf(this.state.media_source);
@@ -65,11 +66,11 @@ export default class MediaZoom extends React.PureComponent{
         }
         this.setState({
             media_source: this.state.media_list[media_index]
-        });
+        }, this.fetchData);
     }
     handleZoomMediaThumbClick(media){
         //set our new zoomed media to passed-in argument
-        this.setState({media_source: media});
+        this.setState({media_source: media}, this.fetchData);
     }
     render(){
         const contStyle = {

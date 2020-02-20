@@ -18,23 +18,18 @@ export class MediaSelectionPane extends React.Component{
 
             might be easier to build a new, dedicated MediaCanvas component for this
         */
-
-        const columns=[
-            'thumbnail',
-            'filename'
-        ];
         return(
             <OverlayPane>
                 <MediaSelectionCanvas media={this.props.media}
                                         title="All media"
                                         showRowToolbar={false}
-                                        showColumns={columns}
                                         tags={this.props.tags}
                                         initialSelections={this.props.initialSelections}
                                         allowRowSelection={false}
                                         onRowSelectionChanged={(selections)=>this.props.onRowSelectionChanged(selections)}
                                         allowMultiSelect={true}
-                                        allowClickDeselect={true}/>
+                                        allowClickDeselect={true}
+                                        showContentAsRows={this.props.showContentAsRows}/>
             </OverlayPane>
         );
     }

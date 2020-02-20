@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Menu } from './menu';
 import { UserToolbar } from './user-toolbar';
 import { UserContentCanvas } from './user-content-canvas';
-import MediaZoom from '../media-zoom.component';
+import { MediaZoom } from './media-zoom';
 import { ContextMenuWrapper } from './context-menu-wrapper';
 import { AlbumsList } from './albums-list';
 import { TagsList } from './tags-list';
@@ -201,7 +201,10 @@ export class UserHome extends React.Component{
     }
     handleTagClick(tag){
         //this needs to pass the tag down to the user-content-canvas
-        this.setState({filterTag: tag});
+        this.setState({
+            filterTag: tag,
+            showMediaZoom: false
+        });
     }
     handleTagDelete(tag){
         this.setState({
@@ -245,9 +248,10 @@ export class UserHome extends React.Component{
                                 onSettingsClick={()=>this.handleSettingsClick()}/>
                 <div className={styles.content}>
                     {this.state.showMediaZoom &&
-                        <MediaZoom media_source={this.state.zoomSource}
-                                    media_list={this.state.zoomList}
-                                    onCloseClick={()=>this.hideMediaZoom()}/>
+                        <MediaZoom mediaSource={this.state.zoomSource}
+                                    mediaList={this.state.zoomList}
+                                    onCloseClick={()=>this.hideMediaZoom()}
+                                    onTagClick={(tag)=>this.handleTagClick(tag)}/>
                     }
                     {this.state.showContextMenu &&
                         <ContextMenuWrapper location={this.state.contextMenuLocation} menu={this.state.contextMenu} onMenuClose={this.handleContextMenuClose}/>
