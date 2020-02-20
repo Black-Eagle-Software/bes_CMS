@@ -28,23 +28,23 @@ export class AlbumMediaCanvas extends React.Component{
         this.handleFilterChange = this.handleFilterChange.bind(this);
         this.handleColumnHeaderClick = this.handleColumnHeaderClick.bind(this);
         this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);
+        this.sortContentPostUpdate = this.sortContentPostUpdate.bind(this);
+        this.sortContentAndConsumeUpdate = this.sortContentAndConsumeUpdate.bind(this);
         
         this.didConsumeUpdate = false;
+        this.didOverrideView = false;
     }
-    componentDidMount(){        
-        this.sortContent(this.state.sortCol, this.state.sortDir);        
+    componentDidMount(){
+        this.setState({showContentAsRows: this.props.showContentAsRows});
+        this.sortContent(this.state.sortCol, this.state.sortDir);
     }
     componentDidUpdate(){
         //may need to rework this a bit in the future
         if(this.props.media.length > 0){ 
             if(this.state.media.length === 0 && !this.state.isFiltered){
-                this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, ()=>{
-                    this.sortContent(this.state.sortCol, this.state.sortDir);
-                });
+                this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, this.sortContentPostUpdate);
             }else if(this.state.media.length !== this.props.media.length && !this.state.isFiltered){
-                this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, ()=>{
-                    this.sortContent(this.state.sortCol, this.state.sortDir);
-                });
+                this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, this.sortContentPostUpdate);
             }
             //check that our album media didn't get rearranged on us
             /*let shouldUpdate = false;
@@ -61,12 +61,9 @@ export class AlbumMediaCanvas extends React.Component{
             //console.log(this.props.albumDidUpdate);
             if(this.props.albumDidUpdate !== -1 && !this.didConsumeUpdate){
                 this.didConsumeUpdate = true;
-                this.setState(prevState=>({media: this.props.media, showSelectionToolbarControls: false, selectedItems: [], update: !prevState.update}), ()=>{
-                    this.didConsumeUpdate = false;
-                    this.sortContent(this.state.sortCol, this.state.sortDir);
-                });
+                this.setState(prevState=>({media: this.props.media, showSelectionToolbarControls: false, selectedItems: [], update: !prevState.update}), this.sortContentAndConsumeUpdate);
             }
-            if(this.props.showContentAsRows !== this.state.showContentAsRows){
+            if(this.props.showContentAsRows !== this.state.showContentAsRows && !this.didOverrideView){
                 this.setState({showContentAsRows: this.props.showContentAsRows});
             }
         }
@@ -132,11 +129,12 @@ export class AlbumMediaCanvas extends React.Component{
         });
     }
     handleViewChange(view){
+        this.didOverrideView = true;
         if(view === 'tiles'){
             this.setState({showContentAsRows: false});
         }else{
             this.setState({showContentAsRows: true});
-        }
+        }        
     }
     render(){
         const title = this.state.isFiltered ? `${this.props.title} (${this.state.media.length} items match filter)` : `${this.props.title} (${this.state.media.length} items)`;
@@ -195,5 +193,12 @@ export class AlbumMediaCanvas extends React.Component{
             sortDir: direction,
             update: !prevState.update
         }));
+    }
+    sortContentAndConsumeUpdate(){
+        this.didConsumeUpdate = false;
+        this.sortContentPostUpdate();
+    }
+    sortContentPostUpdate(){
+        this.sortContent(this.state.sortCol, this.state.sortDir);
     }
 }

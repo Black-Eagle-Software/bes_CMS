@@ -90,13 +90,16 @@ export class AlbumMediaEditorCanvas extends React.Component{
             update: false,
             showSelectionToolbarControls: false,
             selectedItems: [],
-            showContentAsRows: this.props.showContentAsRows
+            showContentAsRows: false
         };
 
         this.sortContent = this.sortContent.bind(this);
-        this.handleColumnHeaderClick = this.handleColumnHeaderClick.bind(this);    
+        this.handleColumnHeaderClick = this.handleColumnHeaderClick.bind(this);
+        
+        this.didOverrideView = false;
     }
     componentDidMount(){
+        this.setState({showContentAsRows: this.props.showContentAsRows});
         this.sortContent(this.state.sortCol, this.state.sortDir);        
     }
     componentDidUpdate(){
@@ -135,6 +138,7 @@ export class AlbumMediaEditorCanvas extends React.Component{
         }
     }
     handleViewChange(view){
+        this.didOverrideView = true;
         if(view === 'tiles'){
             this.setState({showContentAsRows: false});
         }else{
@@ -185,6 +189,7 @@ export class AlbumMediaEditorCanvas extends React.Component{
                 <div style={{height: '100%', width: '100%'}}>
                     <AutoSizer>
                         {({height, width})=>{
+                            if(width === 0 || height === 0) return(<></>);
                             return <SortableList contentSource={this.state.media} 
                                                 showAsRows={this.state.showContentAsRows}
                                                 rowComponent={SortableRow}

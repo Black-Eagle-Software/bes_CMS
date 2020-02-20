@@ -21,15 +21,18 @@ export class MediaSelectionCanvas extends React.Component{
             update: false,
             showSelectionToolbarControls: false,
             selectedItems: [],
-            showContentAsRows: this.props.showContentAsRows
+            showContentAsRows: false
         };
 
         this.sortContent = this.sortContent.bind(this);
         this.handleFilterChange = this.handleFilterChange.bind(this);
         this.handleColumnHeaderClick = this.handleColumnHeaderClick.bind(this);
-        this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);        
+        this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);
+        
+        this.didOverrideView = false;
     }
     componentDidMount(){
+        this.setState({showContentAsRows: this.props.showContentAsRows});
         this.sortContent(this.state.sortCol, this.state.sortDir);        
     }
     componentDidUpdate(){
@@ -43,6 +46,9 @@ export class MediaSelectionCanvas extends React.Component{
                 this.setState({media: this.props.media, showSelectionToolbarControls: false, selectedItems: []}, ()=>{
                     this.sortContent(this.state.sortCol, this.state.sortDir);
                 });
+            }
+            if(this.props.showContentAsRows !== this.state.showContentAsRows && !this.didOverrideView){
+                this.setState({showContentAsRows: this.props.showContentAsRows});
             }
         }
         if(this.props.media.length === 0 && this.state.media.length !== 0){
@@ -107,6 +113,7 @@ export class MediaSelectionCanvas extends React.Component{
         });
     }
     handleViewChange(view){
+        this.didOverrideView = true;
         if(view === 'tiles'){
             this.setState({showContentAsRows: false});
         }else{

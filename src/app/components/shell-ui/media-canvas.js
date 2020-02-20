@@ -27,7 +27,9 @@ export class MediaCanvas extends React.Component{
         this.sortContent = this.sortContent.bind(this);
         this.handleFilterChange = this.handleFilterChange.bind(this);
         this.handleColumnHeaderClick = this.handleColumnHeaderClick.bind(this);
-        this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);        
+        this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);
+        
+        this.didOverrideView = false;
     }
     componentDidMount(){
         this.sortContent(this.state.sortCol, this.state.sortDir);        
@@ -63,7 +65,7 @@ export class MediaCanvas extends React.Component{
         if(this.props.media.length === 0 && this.state.media.length !== 0){
             this.setState({media: []});
         }
-        if(this.props.showContentAsRows !== this.state.showContentAsRows){
+        if(this.props.showContentAsRows !== this.state.showContentAsRows && !this.didOverrideView){
             this.setState({showContentAsRows: this.props.showContentAsRows});
         }
     }
@@ -125,6 +127,7 @@ export class MediaCanvas extends React.Component{
         });
     }
     handleViewChange(view){
+        this.didOverrideView = true;
         if(view === 'tiles'){
             this.setState({showContentAsRows: false});
         }else{
