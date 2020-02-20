@@ -31,6 +31,13 @@ class App extends React.Component {
       show_tags: false,
       search_query: ""      
     };
+
+    this.handleLogin = this.handleLogin.bind(this);
+    this.handleRegister = this.handleRegister.bind(this);
+    this.handleUpdatePass = this.handleUpdatePass.bind(this);
+    this.handleUpdateRequired = this.handleUpdateRequired.bind(this);
+    this.onLoginClick = this.onLoginClick.bind(this);
+    this.onRegisterClick = this.onRegisterClick.bind(this);
   }
   handleLogin(){
     WindowNavigation.goToLocation('/home');    
@@ -80,12 +87,12 @@ class App extends React.Component {
           <Landing 
           {...props} 
           {...routeProps}
-          handleLoginClick={()=>this.onLoginClick()}
-          handleRegisterClick={()=>this.onRegisterClick()} 
-          onLogin={()=>this.handleLogin()}
-          onRegister={()=>this.handleRegister()}
-          onUpdateRequired={()=>this.handleUpdateRequired()}
-          onUpdatePass={()=>this.handleUpdatePass()}
+          handleLoginClick={this.onLoginClick}
+          handleRegisterClick={this.onRegisterClick} 
+          onLogin={this.handleLogin}
+          onRegister={this.handleRegister}
+          onUpdateRequired={this.handleUpdateRequired}
+          onUpdatePass={this.handleUpdatePass}
           show_login={this.state.show_login}
           show_register={this.state.show_register}
           show_update={this.state.show_update}/>)} />
