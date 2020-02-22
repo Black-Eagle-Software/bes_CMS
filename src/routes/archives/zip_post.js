@@ -52,9 +52,10 @@ module.exports = (req, res) => {
     
     //append files to the stream
     for(let i = 0; i < req.body.media.length; i++){
-        let fullpath = path.join(__basedir, req.body.media[i].src_file);
+        let m = req.body.media[i];
+        let fullpath = path.join(__basedir, m.filePath, m.hashFilename);
         ServerConsole.debug(`Appending file to archive stream: ${fullpath}`);
-        archive.append(fs.createReadStream(fullpath), {name: req.body.media[i].file.originalFilename});
+        archive.append(fs.createReadStream(fullpath), {name: m.originalFilename});
     }
     archive.finalize();
 };

@@ -169,7 +169,10 @@ export class UserHome extends React.Component{
         this.setState({shouldShowAllMedia: false});
     }
     handleDownloadClick(media){
-        console.log(media);
+        axios.post(`/api/archive/zip`, {media: media}, {headers: {'Content-Type':'application/json'}})
+        .then(response=>{
+            window.location = `/api/archive/zip/${response.data.file}`;
+        });
     }
     handleMediaDetailsClick(){
         this.setState({
