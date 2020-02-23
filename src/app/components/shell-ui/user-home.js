@@ -14,8 +14,10 @@ import { AlbumDeleteConfirmation } from './album-delete-confirmation-dialog';
 import { AlbumEditOverlay } from './album-edit-overlay';
 import { SettingsPane } from './settings';
 import { Settings } from '../../../helpers/settings';
+import { MediaDeleteConfirmation } from './media-delete-confirmation-dialog';
 
 import styles from './user-home.css';
+import Queue from '../../../models/queue';
 
 export class UserHome extends React.Component{
     constructor(props){
@@ -163,7 +165,19 @@ export class UserHome extends React.Component{
         });
     }
     handleDeleteClick(media){
-        console.log(media);
+        this.setState({
+            showDialog: true,
+            dialogChildren: <MediaDeleteConfirmation media={media} 
+                                                        onCancelClick={()=>this.setState({
+                                                            showDialog: false,
+                                                            dialogChildren: null
+                                                        })} 
+                                                        onConfirmClick={(media)=>{
+                                                            //use a queue to delete everything
+                                                            let q = new Queue(media);
+                                                            this.handleMediaDelete(q);
+                                                        }}/>
+        });
     }
     handleDidShowAllMedia(){
         this.setState({shouldShowAllMedia: false});
@@ -173,6 +187,19 @@ export class UserHome extends React.Component{
         .then(response=>{
             window.location = `/api/archive/zip/${response.data.file}`;
         });
+    }
+    handleMediaDelete(queue){
+        axios.delete(`/api/m/${queue.next().id}`).then(res=>{
+            if(queue.length() > 0){
+                this.handleMediaDelete(queue);
+            }else{
+                this.setState({
+                    showDialog: false,
+                    dialogChildren: null
+                });
+                this.updateMediaFromDatabase(); 
+            }
+        }); 
     }
     handleMediaDetailsClick(){
         this.setState({
