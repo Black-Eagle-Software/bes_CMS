@@ -1,4 +1,4 @@
-class Media{
+export class Media{
     constructor(props){
         this.file = props.file;
         this.url = props.url;
@@ -24,9 +24,11 @@ class Media{
         this.height = size.height;
     }
     updateStatus(status, percent){
-        this.status_text = status;
-        this.percent = percent;
+        if(percent === -1){
+            this.appendStatus(status);
+        }else{
+            this.status_text = status;
+            this.percent = percent;
+        }
     }
 }
-
-module.exports = Media;

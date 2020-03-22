@@ -15,9 +15,10 @@ import { AlbumEditOverlay } from './album-edit-overlay';
 import { SettingsPane } from './settings';
 import { Settings } from '../../../helpers/settings';
 import { MediaDeleteConfirmation } from './media-delete-confirmation-dialog';
+import Queue from '../../../models/queue';
+import { UserUpload } from './user-upload';
 
 import styles from './user-home.css';
-import Queue from '../../../models/queue';
 
 export class UserHome extends React.Component{
     constructor(props){
@@ -46,7 +47,8 @@ export class UserHome extends React.Component{
             update: false,
             albumDidUpdate: -1,
             showSettingsPane: false,
-            showContentAsRows: true
+            showContentAsRows: true,
+            showUpload: false
         };
 
         this.handleContextMenuClose = this.handleContextMenuClose.bind(this);
@@ -219,7 +221,13 @@ export class UserHome extends React.Component{
             contentCanvasTitle: 'Media',
             contentCanvasShowBackButton: false,
             shouldShowAllMedia: true,
-            isEditableAlbum: false
+            isEditableAlbum: false,
+            showUpload: false
+        });
+    }
+    handleShowUpload(){
+        this.setState({
+            showUpload: true
         });
     }
     handleTagAdd(name, access){
@@ -275,8 +283,12 @@ export class UserHome extends React.Component{
                 <UserToolbar id={this.props.id} 
                                 username={this.props.username} 
                                 onMediaClick={()=>this.handleShowAllMedia()}
-                                onSettingsClick={()=>this.handleSettingsClick()}/>
+                                onSettingsClick={()=>this.handleSettingsClick()}
+                                onUploadClick={()=>this.handleShowUpload()}/>
                 <div className={styles.content}>
+                    {this.state.showUpload &&
+                        <UserUpload tags={this.state.tags} id={this.props.id}/>
+                    }
                     {this.state.showMediaZoom &&
                         <MediaZoom mediaSource={this.state.zoomSource}
                                     mediaList={this.state.zoomList}

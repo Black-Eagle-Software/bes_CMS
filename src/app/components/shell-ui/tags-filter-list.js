@@ -9,15 +9,37 @@ export class TagsFilterList extends React.Component {
     constructor(props){
         super(props);
 
+        this.state={
+            openListUp: false
+        };
+
+        this.elmRef = React.createRef();
+
         this.handleTagChange = this.handleTagChange.bind(this);
+    }
+    componentDidMount(){
+        let cont = this.elmRef.current;
+        let rect = cont.getBoundingClientRect();
+        let shouldOpenUp = false;
+        let height = this.props.tags.length * 24;
+        if(height < 50) height = 240;   //make sure we always have space
+        let margin = window.innerHeight - (rect.top + height);
+        if(margin < 28){    //status bar height is 28
+            shouldOpenUp = true;
+        }
+        this.setState({
+            openListUp: shouldOpenUp
+        });
     }
     handleTagChange(tag){
         this.props.onTagChange(tag);
     }
     render(){
         const {tags, filters} = this.props;
+        let contClass = styles.container;
+        if(this.state.openListUp) contClass += ` ${styles.openUp}`;
         return(
-            <div className={styles.container}>
+            <div ref={this.elmRef} className={contClass}>
                 {tags.length > 0 && tags.map(tag=>{
                     let selected = filters.findIndex(t=>{return t.id === tag.id}) !== -1;
                     return <TagsFilterListTagCheckbox key={uuid()} tag={tag} selected={selected} onChange={this.handleTagChange}/>

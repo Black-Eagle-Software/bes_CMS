@@ -129,3 +129,7 @@ input:invalid{
 .ReactVirtualized__List:focus{
     outline: none;
 }
+/*fix list items not being able to overflow the list container*/
+.ReactVirtualized__Grid__innerScrollContainer{
+    overflow: unset !important;
+}

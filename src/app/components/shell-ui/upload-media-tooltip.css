@@ -1,0 +1,20 @@
+.thumb{
+    /*flex: 1 1 auto;*/
+    object-fit: contain;
+    /*height: 100%;*/
+    /*width: 100%;*/
+    max-height: 500px;
+    max-width: 500px;
+}
+.tooltip{
+    position: absolute;
+    /*height: 500px;*/
+    max-height: 500px;
+    /*width: 500px;*/
+    max-width: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 8px 20px 0px rgba(0,0,0,0.75);
+    overflow: hidden;
+}

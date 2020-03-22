@@ -23,7 +23,7 @@ export class TagsFilterListTagCheckbox extends React.Component {
         const {tag} = this.props;
         return(
             <div className={styles.container} >
-                <label><input type='checkbox' name={tag.description} checked={this.state.isSelected} onChange={this.handleChange}/>{tag.description}</label>                
+                <label className={styles.label}><input type='checkbox' name={tag.description} checked={this.state.isSelected} onChange={this.handleChange}/>{tag.description}</label>                
             </div>
         );
     }
