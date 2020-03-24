@@ -5,9 +5,9 @@ module.exports = (req, res)=>{
         let queryString = `SELECT DISTINCT m.id, m.type, m.dateAdded, m.pHash, m.fileDate, m.width, m.height, 
                                         m.filePath, m.originalFilename, m.hashFilename, m.thumbnailFilename, m.owner, 
                                         tam.accessLevel FROM media m 
-                                        INNER JOIN tagsToMediaMap tmm 
+                                        LEFT JOIN tagsToMediaMap tmm 
                                         ON tmm.media = m.id 
-                                        INNER JOIN tagsToAccessLevelMap tam 
+                                        LEFT JOIN tagsToAccessLevelMap tam 
                                         ON tam.tagId = tmm.tag
                                         WHERE m.owner = ? 
                                             OR tam.accessLevel = 'Public' GROUP BY id ORDER BY id DESC`;
