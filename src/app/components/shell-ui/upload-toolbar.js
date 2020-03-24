@@ -61,6 +61,9 @@ export class UploadToolbar extends React.Component{
                 {itemsCount > 0 &&
                     <UploadTagsFilterAndCanvas tags={tags} onTagChange={(tags)=>this.props.onTagChange(tags)}/>
                 }
+                {itemsCount > 0 &&
+                    <div className={'btn btn-primary'} onClick={()=>this.props.onUploadAll()}>Upload all media</div>
+                }
             </div>
         );
     }

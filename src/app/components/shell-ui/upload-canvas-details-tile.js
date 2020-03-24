@@ -3,6 +3,7 @@ import { elementDimensions } from '../hocs/elementDimensions';
 import { TagsFilterInput } from './tags-filter-input';
 import { TagCanvasRowAccessBadge } from './tag-canvas-row-access-badge';
 import { UploadMediaVideoThumbnail } from './upload-media-video-thumbnail';
+import { UploadCanvasDetailsTileStatus } from './upload-canvas-details-tile-status';
 
 import styles from './upload-canvas-details-tile.css';
 
@@ -51,7 +52,9 @@ export class UploadCanvasDetailsTile extends React.Component{
         this.setState({
             width: size.width,
             height: size.height
-        });
+        }, ()=>{
+            this.props.onDimsChange(size, this.props.media);
+        });        
     }
     handleRemoveClick(event){
         event.preventDefault();
@@ -114,6 +117,9 @@ export class UploadCanvasDetailsTile extends React.Component{
 
         return(
             <div className={styles.container}>
+                {media.status_text !== "" &&
+                    <UploadCanvasDetailsTileStatus status={media.status_text} percent={media.percent}/>
+                }
                 <div className={styles.thumbContainer}>
                     <div className={styles.thumbMask}>
                         {media.file.type.includes('image') &&

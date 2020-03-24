@@ -5,14 +5,18 @@ export class Media{
         this.tags = props.tags;
         this.data = props.data;
         this.status_text = "";
+        this.previousStatus = "";
         this.percent = -1;
         this.width = -1;
         this.height = -1;
     }
     
     appendStatus(status){
+        if(status === this.previousStatus) return;
         this.percent = -1;
-        this.status_text += `\n${status}`;
+        //this.status_text += `\n${status}`;
+        this.status_text = status;
+        this.previousStatus = status;
     }
     updateData(newData){
         if(this.date === newData) return;

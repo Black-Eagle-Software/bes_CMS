@@ -1,5 +1,7 @@
 .container{
+    flex: 1 1 auto;
     margin-top: 16px;
+    margin-bottom: 16px;
     display: flex;
     flex-flow: column;
     align-items: baseline;

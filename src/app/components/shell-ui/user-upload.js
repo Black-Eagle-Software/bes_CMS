@@ -7,6 +7,7 @@ import { UploadCanvasDetailsTile } from './upload-canvas-details-tile';
 import { UploadMediaDetails } from './upload-media-details';
 import { SocketUploader } from '../../../helpers/socketUploader';
 import { UploadMediaTooltip } from './upload-media-tooltip';
+import Queue from '../../../models/queue';
 
 import styles from './user-upload.css';
 //import { clickOutsideToClose } from '../hocs/clickOutsideToClose';
@@ -36,6 +37,7 @@ export class UserUpload extends React.Component{
         this.handleMediaRemoveClick=this.handleMediaRemoveClick.bind(this);
         this.handleMediaUploadClick=this.handleMediaUploadClick.bind(this);
         this.handleShowMediaTooltip=this.handleShowMediaTooltip.bind(this);
+        this.handleUploadAllMedia = this.handleUploadAllMedia.bind(this);
     }
     handleCommonTagsChanged(tags){
         //ensure all media have these tags
@@ -81,16 +83,27 @@ export class UserUpload extends React.Component{
             update: !prevState.update
         }));
     }
+    handleMediaDimsChange(size, media){
+        let temp = this.state.media;
+        let index = temp.findIndex(m=>{return m.url === media.url;});
+        if(index !== -1){
+            temp[index].height=size.height;
+            temp[index].width=size.width;
+            this.setState(prevState=>({
+                media: temp
+            }));
+        }        
+    }
     handleMediaRemoveClick(media){
         let temp = this.state.media;
         let index = temp.findIndex(m=>{return m.url === media.url;});
         if(index !== -1){
             temp.splice(index, 1);
-        }
-        this.setState(prevState=>({
-            media: temp,
-            update: !prevState.update
-        }));
+            this.setState(prevState=>({
+                media: temp,
+                update: !prevState.update
+            }));
+        }        
     }
     handleMediaTagChanged(tags, media){
         //we get the tags media MUST have here
@@ -98,39 +111,27 @@ export class UserUpload extends React.Component{
         let index = temp.findIndex(m=>{return m.url === media.url;});
         if(index !== -1){            
             temp[index].tags = tags;
-        }
-        this.setState(prevState=>({
-            media: temp,
-            //update: !prevState.update
-        }));
+            this.setState(prevState=>({
+                media: temp,
+                //update: !prevState.update
+            }));
+        }        
     }
     handleMediaThumbnail(args){
         let temp = this.state.media;
         let index = temp.findIndex(m=>{return m.url === args.media.url;});
         if(index !== -1){            
             temp[index].data = args.data;
-        }
-        this.setState(prevState=>({
-            media: temp,
-            update: !prevState.update
-        }));
+            this.setState(prevState=>({
+                media: temp,
+                update: !prevState.update
+            }));
+        }        
     }
     handleMediaUploadClick(media){
         //handle upload
         //needs a helper
-        su.uploadMedia(media, this.props.id, (media)=>{
-            this.handleMediaRemoveClick(media);
-        }, (media, msg)=>{
-            console.log(msg.message);
-            let temp = this.state.media;
-            let index = temp.indexOf(m=>{return m.url === media.url;});
-            if(index !== -1){
-                temp[index].updateStatus(msg.message, msg.value);
-            }
-        }, (media, msg)=>{
-            console.log(msg.message);
-            console.log(msg.details);
-        });
+        this.upload(media);
     }
     handleRowSelectionChanged(rows){
         //this should only ever be a single row
@@ -150,6 +151,15 @@ export class UserUpload extends React.Component{
             showMediaTooltip: !prevState.showMediaTooltip,
             tooltipPos: pos
         }));
+    }
+    handleUploadAllMedia(){
+        let temp = [].concat(this.state.media);
+        for(let i = 0; i < temp.length; i++){
+            temp[i].updateStatus("Uploading...", -1);
+        }
+        //create a queue for our uploads;
+        let q = new Queue(temp);
+        this.uploadQueue(q);
     }
     render(){
         let ttStyle = {};
@@ -172,7 +182,8 @@ export class UserUpload extends React.Component{
                 <UploadToolbar onInputChange={this.handleInputChange} 
                                 itemsCount={this.state.media.length} 
                                 tags={this.props.tags}
-                                onTagChange={this.handleCommonTagsChanged}/>
+                                onTagChange={this.handleCommonTagsChanged}
+                                onUploadAll={this.handleUploadAllMedia}/>
                 <UploadCanvas contentSource={this.state.media}
                                 showAsRows={false}
                                 tileSize={{height:200, width:500}} 
@@ -182,7 +193,8 @@ export class UserUpload extends React.Component{
                                                                         onTagChange={(tag, media)=>this.handleMediaTagChanged(tag, media)}
                                                                         update={this.state.update}
                                                                         onShowMediaTooltip={(media, pos)=>this.handleShowMediaTooltip(media, pos)}
-                                                                        onMediaThumbnail={(data)=>this.handleMediaThumbnail(data)}/>}                                
+                                                                        onMediaThumbnail={(data)=>this.handleMediaThumbnail(data)}
+                                                                        onDimsChange={(size, media)=>this.handleMediaDimsChange(size, media)}/>}                                
                                 update={this.state.update}
                                 onRowSelectionChanged={this.handleRowSelectionChanged}/>
                 {this.state.selectedMedia !== null &&
@@ -196,5 +208,32 @@ export class UserUpload extends React.Component{
                 }
             </div>
         );
+    }
+    upload(media, callback){
+        su.uploadMedia(media, this.props.id, (media)=>{
+            this.handleMediaRemoveClick(media);
+            if(callback) callback();
+        }, (media, msg)=>{
+            console.log(msg.message);
+            let temp = this.state.media;
+            let index = temp.findIndex(m=>{return m.url === media.url;});
+            if(index !== -1){
+                temp[index].updateStatus(msg.message, msg.value);
+                this.setState(prevState=>({
+                    media: temp,
+                    update: !prevState.update
+                }));
+            }
+        }, (media, msg)=>{
+            console.log(msg.message);
+            console.log(msg.details);
+        });
+    }
+    uploadQueue(queue){
+        this.upload(queue.next(), ()=>{
+            if(queue.length() > 0){
+                this.uploadQueue(queue);
+            }
+        });
     }
 }
