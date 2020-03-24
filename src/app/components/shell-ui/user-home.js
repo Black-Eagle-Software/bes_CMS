@@ -167,9 +167,16 @@ export class UserHome extends React.Component{
         });
     }
     handleDeleteClick(media){
+        //we need an array, so make sure media is one
+        let m = [];
+        if(media.length === undefined){
+            m.push(media);
+        }else{
+            m = media;
+        }
         this.setState({
             showDialog: true,
-            dialogChildren: <MediaDeleteConfirmation media={media} 
+            dialogChildren: <MediaDeleteConfirmation media={m} 
                                                         onCancelClick={()=>this.setState({
                                                             showDialog: false,
                                                             dialogChildren: null
@@ -216,14 +223,16 @@ export class UserHome extends React.Component{
         this.updateSettings();
     }
     handleShowAllMedia(){
-        this.setState({
-            contentCanvasMedia: this.state.media,
-            contentCanvasTitle: 'Media',
-            contentCanvasShowBackButton: false,
-            shouldShowAllMedia: true,
-            isEditableAlbum: false,
-            showUpload: false
-        });
+        this.updateMediaFromDatabase().then(response=>{
+            this.setState({
+                contentCanvasMedia: this.state.media,
+                contentCanvasTitle: 'Media',
+                contentCanvasShowBackButton: false,
+                shouldShowAllMedia: true,
+                isEditableAlbum: false,
+                showUpload: false
+            });
+        });        
     }
     handleShowUpload(){
         this.setState({
@@ -384,7 +393,7 @@ export class UserHome extends React.Component{
             this.setState({public_media: response.data});
         });*/
 
-        axios.get(`/api/u/${this.props.id}/m?all=true`)
+        return axios.get(`/api/u/${this.props.id}/m?all=true`)
         .then(response=>{
             let temp_media = [];
             let res = response.data;
@@ -395,6 +404,7 @@ export class UserHome extends React.Component{
                 media: response.data,
                 contentCanvasMedia: response.data
             });
+            return response;
         });        
     }
     updateSettings(){
