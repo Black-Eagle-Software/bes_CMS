@@ -26,7 +26,8 @@ module.exports = (socket, dbase) => {
             width       : data.width,
             start       : performance.now()
         };
-        let time = Date.now();
+        let time = Math.floor(Date.now() / (1000 * 60));    //convert epoch milliseconds to minutes
+        let fileTime = Date.now();
         let item = queue[id];
         ServerConsole.debug(`Media socket upload item: ${item}`);
         async.waterfall([
@@ -190,7 +191,7 @@ module.exports = (socket, dbase) => {
                         socket.emit(`process_status_${id}`, {'step' : 'Thumbnail creation', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});                        
                         callback(null, {
                             type: medType,
-                            dateAdded: time,
+                            dateAdded: fileTime,
                             pHash: data.pHash, 
                             fileDate: item.fileDate,
                             width: item.width,
