@@ -11,8 +11,12 @@ export class MediaCanvasRow extends React.Component{
     constructor(props){
         super(props);
 
+        this.handleDeleteClick = this.handleDeleteClick.bind(this);
         this.handleDetailsClick = this.handleDetailsClick.bind(this);
         this.handleZoomClick = this.handleZoomClick.bind(this);
+    }
+    handleDeleteClick(){
+        this.props.onDeleteClick(this.props.media);
     }
     handleDetailsClick(){
         this.props.onDetailsClick(this.props.media);
@@ -27,7 +31,7 @@ export class MediaCanvasRow extends React.Component{
             <ContentCanvasRow onRowClick={(event)=>this.props.onRowClick(media, event)}
                                 isSelected={this.props.isSelected}
                                 style={this.props.style}
-                                contextMenu={<ContentCanvasRowPopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={this.handleDetailsClick}/>}
+                                contextMenu={<ContentCanvasRowPopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={this.handleDetailsClick} onDeleteClick={this.handleDeleteClick}/>}
                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}>
                 <span className={tableStyles.thumbCol}>
                     <img src={`/${media.filePath}/thumbnails/${media.thumbnailFilename}`} className={styles.thumb}/>
@@ -45,7 +49,7 @@ export class MediaCanvasRow extends React.Component{
                 <ContentCanvasRowCommandButton buttonClass={styles.rowButton}
                                                 buttonContents={<span className='codicon codicon-more'/>}
                                                 popupChildren={
-                                                    <ContentCanvasRowPopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={this.handleDetailsClick}/>
+                                                    <ContentCanvasRowPopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={this.handleDetailsClick} onDeleteClick={this.handleDeleteClick}/>
                                                 }/>
             </ContentCanvasRow>
         );

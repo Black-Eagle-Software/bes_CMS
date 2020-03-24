@@ -165,11 +165,13 @@ export class MediaCanvas extends React.Component{
                 <ContentCanvas contentSource={this.state.media} 
                                 showAsRows={this.state.showContentAsRows} 
                                 rowComponent={<MediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
-                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)} 
+                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)}
+                                                                onDeleteClick={(media)=>this.props.onDeleteClick(media)} 
                                                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}
                                                                 showRowToolbar={this.props.showRowToolbar}/>} 
                                 tileComponent={<MediaCanvasTile onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
-                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)} 
+                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)}
+                                                                onDeleteClick={(media)=>this.props.onDeleteClick(media)} 
                                                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}/>}
                                 columnHeaders={<ContentCanvasHeadersMedia sortCol={this.state.sortCol} sortDir={this.state.sortDir} onColumnHeaderClick={this.handleColumnHeaderClick}/>}
                                 update={this.state.update}

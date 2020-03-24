@@ -8,8 +8,12 @@ export class MediaCanvasTile extends React.Component{
     constructor(props){
         super(props);
 
+        this.handleDeleteClick = this.handleDeleteClick.bind(this);
         this.handleDetailsClick = this.handleDetailsClick.bind(this);
         this.handleZoomClick = this.handleZoomClick.bind(this);
+    }
+    handleDeleteClick(){
+        this.props.onDeleteClick(this.props.media);
     }
     handleDetailsClick(){
         this.props.onDetailsClick(this.props.media);
@@ -25,7 +29,7 @@ export class MediaCanvasTile extends React.Component{
                                 onTileDoubleClick={this.handleZoomClick}
                                 isSelected={this.props.isSelected}
                                 style={this.props.style}
-                                contextMenu={<ContentCanvasTilePopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={this.handleDetailsClick}/>}
+                                contextMenu={<ContentCanvasTilePopupMenu onZoomClick={this.handleZoomClick} onDetailsClick={this.handleDetailsClick} onDeleteClick={this.handleDeleteClick}/>}
                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}>
                 <div className={styles.thumbContainer}>
                     <div className={styles.thumbMask}>

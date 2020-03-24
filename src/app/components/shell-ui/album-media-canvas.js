@@ -167,12 +167,14 @@ export class AlbumMediaCanvas extends React.Component{
                 <ContentCanvas contentSource={this.state.media} 
                                 showAsRows={this.state.showContentAsRows} 
                                 rowComponent={<AlbumMediaCanvasRow onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
-                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)} 
+                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)}
+                                                                onDeleteClick={(media)=>this.props.onDeleteClick(media)}
                                                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}
                                                                 showRowToolbar={this.props.showRowToolbar}
                                                                 isEditing={this.props.isEditing}/>} 
                                 tileComponent={<MediaCanvasTile onZoomClick={(media)=>this.props.onZoomClick(media, this.state.media)} 
-                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)} 
+                                                                onDetailsClick={(media)=>this.props.onDetailsClick(media)}
+                                                                onDeleteClick={(media)=>this.props.onDeleteClick(media)}
                                                                 handleContextMenu={(loc, menu)=>this.props.handleContextMenu(loc, menu)}/>}
                                 columnHeaders={<ContentCanvasHeadersAlbumMedia sortCol={this.state.sortCol} sortDir={this.state.sortDir} onColumnHeaderClick={this.handleColumnHeaderClick} isEditing={this.props.isEditing}/>}
                                 update={this.state.update}
