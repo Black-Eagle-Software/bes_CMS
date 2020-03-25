@@ -26,7 +26,7 @@ export class AdditionalFiltersList extends React.Component{
                     <span>Additional filters</span>
                 }
                 {this.props.filters.length > 0 &&
-                    <div className={styles.clearButton} title="Remove all filters" onClick={this.onClearClick}>
+                    <div className={styles.clearButton} title="Remove all filters" onClick={this.handleClearClick}>
                         <span className='codicon codicon-close'/>
                     </div>
                 }
