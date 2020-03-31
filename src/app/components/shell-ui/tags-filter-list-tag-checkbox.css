@@ -4,6 +4,7 @@
     width: 100%;
     height: 24px;
     white-space: nowrap;
+    padding-right: 6px;
 }
 .container:hover{
     background: #4091c9;
