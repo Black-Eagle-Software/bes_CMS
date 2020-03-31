@@ -16,7 +16,7 @@ import { SettingsPane } from './settings';
 import { Settings } from '../../../helpers/settings';
 import { MediaDeleteConfirmation } from './media-delete-confirmation-dialog';
 import Queue from '../../../models/queue';
-import { UserUpload } from './user-upload';
+import { UserUploadContainer } from '../../containers/user-upload';
 
 import styles from './user-home.css';
 
@@ -223,6 +223,7 @@ export class UserHome extends React.Component{
         this.updateSettings();
     }
     handleShowAllMedia(){
+        this.updateAlbumsFromDatabase();
         this.updateMediaFromDatabase().then(response=>{
             this.setState({
                 contentCanvasMedia: this.state.media,
@@ -296,7 +297,7 @@ export class UserHome extends React.Component{
                                 onUploadClick={()=>this.handleShowUpload()}/>
                 <div className={styles.content}>
                     {this.state.showUpload &&
-                        <UserUpload tags={this.state.tags} id={this.props.id}/>
+                        <UserUploadContainer tags={this.state.tags} id={this.props.id}/>
                     }
                     {this.state.showMediaZoom &&
                         <MediaZoom mediaSource={this.state.zoomSource}

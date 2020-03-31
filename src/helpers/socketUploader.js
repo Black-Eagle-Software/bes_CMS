@@ -1,7 +1,7 @@
 const uuid = require('uuid/v4');
 
 export class SocketUploader{
-    uploadMedia(media, owner, onUploaded, onStatusUpdated, onError){
+    uploadMedia(media, owner, onUploaded, onStatusUpdated, onError, uploadAlbum=''){
         let socket = io();
         let reader = new FileReader();
         let name = uuid();
@@ -37,7 +37,8 @@ export class SocketUploader{
                 size        : media.file.size,            
                 tags        : media.tags,
                 width       : media.width,
-            };
+                album       : uploadAlbum,
+            };            
             socket.on(`process_status_${name}`, (data)=>{
                 let message = `${data.step} - ${data.status}`;
                 if(data.elapsed_time) message += ` (${data.elapsed_time.toFixed(3)} s)`;

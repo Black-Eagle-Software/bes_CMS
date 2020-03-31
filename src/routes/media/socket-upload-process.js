@@ -24,6 +24,7 @@ module.exports = (socket, dbase) => {
             size        : data.size,
             tags        : data.tags,            
             width       : data.width,
+            album       : data.album,
             start       : performance.now()
         };
         let time = Math.floor(Date.now() / (1000 * 60));    //convert epoch milliseconds to minutes
@@ -248,16 +249,68 @@ module.exports = (socket, dbase) => {
                 }
                 if(temp.length === 0) {
                     socket.emit(`process_status_${id}`, {'step' : 'Mapping media to tags in the database', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
-                    callback(null);   //no tags selected for media, that's fine, i guess
+                    callback(null, data);   //no tags selected for media, that's fine, i guess
+                    //return;
+                }else{
+                    let query = "INSERT INTO tagsToMediaMap (media, tag) VALUES ?";
+                    dbase.query(query, [temp], (error, results, fields)=>{
+                        if(error) {
+                            callback(error);
+                            return;
+                        }
+                        socket.emit(`process_status_${id}`, {'step' : 'Mapping media to tags in the database', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
+                        callback(null, data);
+                    });
+                }
+            },
+            //6. check for album, create if needed, and map media
+            (data, callback)=>{
+                if(item.album === ''){
+                    //no album needs to be created
+                    callback(null);
                     return;
                 }
-                let query = "INSERT INTO tagsToMediaMap (media, tag) VALUES ?";
-                dbase.query(query, [temp], (error, results, fields)=>{
-                    if(error) {
+                socket.emit(`process_status_${id}`, {'step' : 'Mapping media to album in the database', 'status' : 'starting'});
+                //i really want this to use the existing process :(
+                //data is not being passed here :(
+                console.log(item.album);
+                let query = "SELECT * FROM albums WHERE name=? AND owner=?";
+                dbase.query(query, [item.album, item.owner], (error, results, fields)=>{
+                    if(error){
                         callback(error);
                         return;
                     }
-                    socket.emit(`process_status_${id}`, {'step' : 'Mapping media to tags in the database', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
+                    if(results.length !== 0){
+                        console.log(results[0].id);
+                        callback(null, {albumId: results[0].id, mediaId: data.mediaId});
+                    }else{
+                        query = "INSERT INTO albums SET name=?, owner=?, dateCreated=?";
+                        dbase.query(query, [item.album, item.owner, fileTime], (error, results, fields)=>{
+                            if(error){
+                                callback(error);
+                                return;
+                            }
+                            callback(null, {albumId: results.insertId, mediaId: data.mediaId});
+                        });
+                    }
+                });                
+            },
+            //7. map media to album
+            (data, callback)=>{
+                if(item.album === ''){
+                    //no album needs to be created
+                    callback(null);
+                    return;
+                }
+                console.log(data);
+                let query = "INSERT INTO albumsToMediaMap SET album=?, media=?, albumIndex=?";
+                //set a default index to the media ID since we don't know what the actual is
+                dbase.query(query, [data.albumId, data.mediaId, data.mediaId], (error, results, fields)=>{
+                    if(error){
+                        callback(error);
+                        return;
+                    }
+                    socket.emit(`process_status_${id}`, {'step' : 'Mapping media to album in the database', 'status' : 'complete', 'elapsed_time' : (performance.now() - item.start) / 1000});
                     callback(null);
                 });
             }

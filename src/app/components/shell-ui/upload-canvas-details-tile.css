@@ -62,6 +62,10 @@
     background: #006cb7;
     color: #f5f5f5;
 }
+.disabled{
+    pointer-events: none;
+    color: #c6c6c6;
+}
 .remove{
     background: #fce7e6;
 }
@@ -80,28 +84,6 @@
 .tagsFilterContainer{
     position: absolute;
     right: 28px;
-}
-.tagsList{
-    display: flex;
-    flex-flow: row wrap;
-    overflow-y: auto;
-    flex: 1 1 auto;
-    /*padding: 0px 2px;*/
-    align-items: flex-start;
-    align-content: flex-start;
-}
-.tagsListEntry{
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    font-size: 12px;
-    padding: 0px 2px;
-    cursor: default;
-}
-.tagsListEntryTitle{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 .title{    
     width: 100%;
@@ -152,7 +134,7 @@
     /*background: rgba(51, 51, 51, 0.75);*/
     background: rgba(0, 108, 183, 0.75);
     color: #f5f5f5;
-    border-radius: 8px;
+    border-radius: 16px;
     padding: 4px 16px;
     font-size: 12px;
     /*height: 32px;*/

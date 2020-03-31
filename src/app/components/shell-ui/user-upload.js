@@ -1,239 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { UploadToolbar } from './upload-toolbar';
-import { Media } from '../../../models/media';
 import { UploadCanvas } from './upload-canvas';
-import { UploadCanvasTile } from './upload-canvas-tile';
-import { UploadCanvasDetailsTile } from './upload-canvas-details-tile';
-import { UploadMediaDetails } from './upload-media-details';
-import { SocketUploader } from '../../../helpers/socketUploader';
+import { UploadCanvasDetailsTileContainer } from '../../containers/upload-canvas-details-tile';
 import { UploadMediaTooltip } from './upload-media-tooltip';
-import Queue from '../../../models/queue';
 
 import styles from './user-upload.css';
-//import { clickOutsideToClose } from '../hocs/clickOutsideToClose';
 
-const su = new SocketUploader();
-//const ClickOut = new clickOutsideToClose(UploadMediaTooltip);
+export const UserUpload = ({
+    media, tags, uploadInProgress, onInputChanged, onCommonTagsChanged, 
+    onUploadAllMedia, onShouldCreateAlbum, onMediaUploadClick, onMediaRemoveClick,
+    onMediaThumbnail, onMediaTagChanged, onMediaDimsChanged, update
+}) => {
+    const [showMediaTooltip, onShowMediaTooltipChanged] = useState(false);
+    const [tooltipMedia, onTooltipMediaChanged] = useState(null);
+    const [tooltipPos, onTooltipPosChanged] = useState({});
 
-export class UserUpload extends React.Component{
-    constructor(props){
-        super(props);
-
-        this.state={
-            media: [],
-            selectedMedia: null,
-            tags: [],
-            commonTags: [],
-            showMediaTooltip: false,
-            tooltipMedia: null,
-            tooltipPos: {}
-        };
-
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleRowSelectionChanged = this.handleRowSelectionChanged.bind(this);
-        this.handleCommonTagsChanged =this.handleCommonTagsChanged.bind(this);
-        this.handleMediaTagChanged = this.handleMediaTagChanged.bind(this);
-        this.handleDetailsCloseClick = this.handleDetailsCloseClick.bind(this);
-        this.handleMediaRemoveClick=this.handleMediaRemoveClick.bind(this);
-        this.handleMediaUploadClick=this.handleMediaUploadClick.bind(this);
-        this.handleShowMediaTooltip=this.handleShowMediaTooltip.bind(this);
-        this.handleUploadAllMedia = this.handleUploadAllMedia.bind(this);
-    }
-    handleCommonTagsChanged(tags){
-        //ensure all media have these tags
-        if(this.state.media.length === 0) return;
-        let temp = this.state.media;
-        for(let i = 0; i < temp.length; i++){
-            //first, ensure all media have the selected tags
-            for(let j = 0; j < tags.length; j++){
-                let exists = temp[i].tags.some(t=>{return t.id === tags[j].id;});
-                if(!exists){
-                    temp[i].tags.push(tags[j]);
-                }
-            }
-            //now check our previous common tags to see if any were removed
-            for(let k = 0; k < this.state.commonTags.length; k++){
-                let exists = tags.some(t=>{return t.id === this.state.commonTags[k].id;});
-                if(!exists){
-                    temp[i].tags.splice(temp[i].tags.indexOf(this.state.commonTags[k]), 1);
-                }
-            }
-        }
-        //use a concat here so it doesn't get updated outside this function
-        this.setState(prevState=>({
-            commonTags: [].concat(tags),
-            update: !prevState.update
-        }));
-    }
-    handleDetailsCloseClick(){
-        this.setState({
-            selectedMedia: null
-        });
-    }
-    handleInputChange(files){
-        let temp = [];
-        for(let i=0; i<files.length; i++){
-            if(!files[i].type.includes('image') && !files[i].type.includes('video')) continue;
-            let url = URL.createObjectURL(files[i]);
-            let m = new Media({file: files[i], url: url, tags:[], data: null});
-            temp.push(m);
-        }
-        this.setState(prevState=>({
-            media: temp,
-            update: !prevState.update
-        }));
-    }
-    handleMediaDimsChange(size, media){
-        let temp = this.state.media;
-        let index = temp.findIndex(m=>{return m.url === media.url;});
-        if(index !== -1){
-            temp[index].height=size.height;
-            temp[index].width=size.width;
-            this.setState(prevState=>({
-                media: temp
-            }));
-        }        
-    }
-    handleMediaRemoveClick(media){
-        let temp = this.state.media;
-        let index = temp.findIndex(m=>{return m.url === media.url;});
-        if(index !== -1){
-            temp.splice(index, 1);
-            this.setState(prevState=>({
-                media: temp,
-                update: !prevState.update
-            }));
-        }        
-    }
-    handleMediaTagChanged(tags, media){
-        //we get the tags media MUST have here
-        let temp = this.state.media;
-        let index = temp.findIndex(m=>{return m.url === media.url;});
-        if(index !== -1){            
-            temp[index].tags = tags;
-            this.setState(prevState=>({
-                media: temp,
-                //update: !prevState.update
-            }));
-        }        
-    }
-    handleMediaThumbnail(args){
-        let temp = this.state.media;
-        let index = temp.findIndex(m=>{return m.url === args.media.url;});
-        if(index !== -1){            
-            temp[index].data = args.data;
-            this.setState(prevState=>({
-                media: temp,
-                update: !prevState.update
-            }));
-        }        
-    }
-    handleMediaUploadClick(media){
-        //handle upload
-        //needs a helper
-        this.upload(media);
-    }
-    handleRowSelectionChanged(rows){
-        //this should only ever be a single row
-        if(rows.length === 0){
-            this.setState({
-                selectedMedia:null
-            });
+    const handleMediaTagChanged = (tag, media) => {
+        onMediaTagChanged(tag, media);
+    };
+    const handleShowMediaTooltip = (media, pos) => {
+        onTooltipMediaChanged(media);
+        onTooltipPosChanged(pos);
+        onShowMediaTooltipChanged(!showMediaTooltip);
+    };
+    const handleMediaThumbnail = (data) => {
+        onMediaThumbnail(data);
+    };
+    const handleMediaDimsChange = (size, media) => {
+        onMediaDimsChanged(size, media);
+    };
+    
+    let ttStyle = {};
+    if(showMediaTooltip){
+        if(tooltipPos.top === -1){
+            ttStyle = {
+                bottom: tooltipPos.bottom,
+                left: tooltipPos.left
+            };
         }else{
-            this.setState({
-                selectedMedia:rows[0]
-            });
+            ttStyle = {
+                top: tooltipPos.top - 40,
+                left: tooltipPos.left
+            };
         }
     }
-    handleShowMediaTooltip(media, pos){
-        this.setState(prevState=>({
-            tooltipMedia: media,
-            showMediaTooltip: !prevState.showMediaTooltip,
-            tooltipPos: pos
-        }));
-    }
-    handleUploadAllMedia(){
-        let temp = [].concat(this.state.media);
-        for(let i = 0; i < temp.length; i++){
-            temp[i].updateStatus("Uploading...", -1);
-        }
-        //create a queue for our uploads;
-        let q = new Queue(temp);
-        this.uploadQueue(q);
-    }
-    render(){
-        let ttStyle = {};
-        if(this.state.showMediaTooltip){
-            if(this.state.tooltipPos.top === -1){
-                ttStyle = {
-                    bottom: this.state.tooltipPos.bottom,
-                    left: this.state.tooltipPos.left
-                };
-            }else{
-                ttStyle = {
-                    top: this.state.tooltipPos.top - 40,
-                    left: this.state.tooltipPos.left
-                };
+    //this should takeover the window from the user toolbar to the statusbar
+    return(
+        <div className={styles.container}>
+            <UploadToolbar onInputChange={onInputChanged}
+                            itemsCount={media.length} 
+                            tags={tags}
+                            onTagChange={onCommonTagsChanged}
+                            onUploadAll={onUploadAllMedia}
+                            onShouldCreateAlbum={onShouldCreateAlbum}/>
+            <UploadCanvas contentSource={media}
+                            showAsRows={false}
+                            tileSize={{height:200, width:500}} 
+                            tileComponent={<UploadCanvasDetailsTileContainer onUploadClick={onMediaUploadClick}
+                                                                                onRemoveClick={onMediaRemoveClick}
+                                                                                allTags={tags} 
+                                                                                onTagChange={(tag, media)=>handleMediaTagChanged(tag, media)}
+                                                                                onShowMediaTooltip={(media, pos)=>handleShowMediaTooltip(media, pos)}
+                                                                                onMediaThumbnail={(data)=>handleMediaThumbnail(data)}
+                                                                                onDimsChange={(size, media)=>handleMediaDimsChange(size, media)}
+                                                                                canUpload={!uploadInProgress}/>}
+                                                                                update={update}
+                            update={update}/>
+            {showMediaTooltip &&
+                <UploadMediaTooltip media={tooltipMedia} pos={tooltipPos} onClick={handleShowMediaTooltip} popupOpen={showMediaTooltip}/>
             }
-        }
-        //this should takeover the window from the user toolbar to the statusbar
-        return(
-            <div className={styles.container}>
-                <UploadToolbar onInputChange={this.handleInputChange} 
-                                itemsCount={this.state.media.length} 
-                                tags={this.props.tags}
-                                onTagChange={this.handleCommonTagsChanged}
-                                onUploadAll={this.handleUploadAllMedia}/>
-                <UploadCanvas contentSource={this.state.media}
-                                showAsRows={false}
-                                tileSize={{height:200, width:500}} 
-                                tileComponent={<UploadCanvasDetailsTile onUploadClick={this.handleMediaUploadClick}
-                                                                        onRemoveClick={this.handleMediaRemoveClick}
-                                                                        allTags={this.props.tags} 
-                                                                        onTagChange={(tag, media)=>this.handleMediaTagChanged(tag, media)}
-                                                                        update={this.state.update}
-                                                                        onShowMediaTooltip={(media, pos)=>this.handleShowMediaTooltip(media, pos)}
-                                                                        onMediaThumbnail={(data)=>this.handleMediaThumbnail(data)}
-                                                                        onDimsChange={(size, media)=>this.handleMediaDimsChange(size, media)}/>}                                
-                                update={this.state.update}
-                                onRowSelectionChanged={this.handleRowSelectionChanged}/>
-                {this.state.selectedMedia !== null &&
-                    <UploadMediaDetails media={this.state.selectedMedia} 
-                                        allTags={this.props.tags} 
-                                        onTagChange={(tag, media)=>this.handleMediaTagChanged(tag, media)}
-                                        onCloseClick={this.handleDetailsCloseClick}/>
-                }
-                {this.state.showMediaTooltip &&
-                    <UploadMediaTooltip media={this.state.tooltipMedia} pos={this.state.tooltipPos} onClick={this.handleShowMediaTooltip} popupOpen={this.state.showMediaTooltip}/>
-                }
-            </div>
-        );
-    }
-    upload(media, callback){
-        su.uploadMedia(media, this.props.id, (media)=>{
-            this.handleMediaRemoveClick(media);
-            if(callback) callback();
-        }, (media, msg)=>{
-            console.log(msg.message);
-            let temp = this.state.media;
-            let index = temp.findIndex(m=>{return m.url === media.url;});
-            if(index !== -1){
-                temp[index].updateStatus(msg.message, msg.value);
-                this.setState(prevState=>({
-                    media: temp,
-                    update: !prevState.update
-                }));
-            }
-        }, (media, msg)=>{
-            console.log(msg.message);
-            console.log(msg.details);
-        });
-    }
-    uploadQueue(queue){
-        this.upload(queue.next(), ()=>{
-            if(queue.length() > 0){
-                this.uploadQueue(queue);
-            }
-        });
-    }
+        </div>
+    );
 }
