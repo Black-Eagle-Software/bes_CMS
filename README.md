@@ -89,6 +89,10 @@ From the root BES CMS folder, run the following command to install all the requi
 ```javascript
 npm install
 ```
+Before running the server for the first time, webpack must be run once to compile the .js files for use by the server.
+```javascript
+npm run webpack
+```
 After all dependencies have been installed successfully, and the database has been setup, start the server via:
 ```javascript
 npm start
