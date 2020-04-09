@@ -57,7 +57,7 @@ passport.use(new localStrategy(
         passReqToCallback: true
     },
     (req, email, password, done)=>{
-        axios.get(`http://localhost:8080/api/users?email=${email}`).then(results=>{
+        axios.get(`http://localhost:${port}/api/users?email=${email}`).then(results=>{
             //email exists in the database, so now check the password
             if(results.data[0] === undefined){
                 return done('No user entry found', null);
@@ -72,7 +72,7 @@ passport.use(new localStrategy(
                 if(challenge.isDirty){
                     return done(null, user, {message: 'USER_PASS_UPDATE'});
                 }
-                axios.get(`http://localhost:8080/api/auth/role?user=${user.id}`).then(results=>{   
+                axios.get(`http://localhost:${port}/api/auth/role?user=${user.id}`).then(results=>{   
                     user.role = results.data.role;
                     return done(null, user);
                 });
@@ -84,8 +84,8 @@ passport.serializeUser((user, done)=>{
     done(null, user.id);
 });
 passport.deserializeUser((id, done)=>{
-    axios.get(`http://localhost:8080/api/users/${id}`).then(results=>{
-        axios.get(`http://localhost:8080/api/auth/role?user=${id}`).then(results2=>{  
+    axios.get(`http://localhost:${port}/api/users/${id}`).then(results=>{
+        axios.get(`http://localhost:${port}/api/auth/role?user=${id}`).then(results2=>{  
             results.data[0].role = results2.data.role;
             results = JSON.stringify(results.data[0]);
             return done(null, results);
