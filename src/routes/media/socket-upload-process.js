@@ -132,7 +132,7 @@ module.exports = (socket, dbase) => {
                 });
             },
             (data, callback)=>{
-                fs.mkdir(data.fullPath, (err)=>{
+                fs.mkdir(data.fullPath, {recursive: true}, (err)=>{
                     if(err && err.code !== 'EEXIST') {  //ignore if the directory exists
                         callback(err); 
                         return;
@@ -141,7 +141,7 @@ module.exports = (socket, dbase) => {
                 });
             },
             (data, callback)=>{
-                fs.mkdir(data.thumb_path, (err)=>{
+                fs.mkdir(data.thumb_path, {recursive: true}, (err)=>{
                     if(err && err.code !== 'EEXIST') {  //ignore if the directory exists
                         callback(err); 
                         return;
