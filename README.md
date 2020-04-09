@@ -58,6 +58,7 @@ git clone [address]/BES_CMS.redux.git
 Create a .env file in the root project folder.  The .env file will need the following entries in order for the Node.js server to function:
 ```javascript
 IS_PRODUCTION=true
+PORT=0666   //OPTIONAL
 
 //Database connection details
 DBASE_HOST_PROD='some value'        //IP address of the database host system
@@ -77,6 +78,8 @@ DBASE_USER_DEV='some value'
 DBASE_PASSWORD_DEV='some value'
 DBASE_DATABASE_DEV='some value'
 ```
+
+*If it is desirous to run both a produciton and development server, we would recommend having them hosted on 2 different machines/virtual machines if possible.  Express passport uses cookies to manage sessions and cookies are bound to a host.  If 2 servers are running on the same host, one option would be to access one server via IP directly to workaround this issue.*
 ##### Developing Over a Network Share
 For some systems doing development on a network share, the Node.js webpack may not pick up when files are changed.  Similarly, nodemon may not reload the server after files change.  One possible work around for this is to add the following entry to the .env file:
 ```javascript
@@ -108,9 +111,9 @@ This will give an output similar to the following:
 [nodemon] starting `node server.js`
 Server now running on port: 8080
 ```
-Now the server should be accessible via `http:\\SERVER_ADDRESS:8080`.  If a port other than 8080 needs to be used, that can be changed via the `src/server.js` `port` variable:
+Now the server should be accessible via `http:\\SERVER_ADDRESS:8080`.  If a port other than 8080 needs to be used, that can be changed via the `.env` `PORT` variable:
 ```javascript
-var port = env.PORT || 8080;    //set our port
+PORT=0666;    //set our port
 ```
 
 ## Development
