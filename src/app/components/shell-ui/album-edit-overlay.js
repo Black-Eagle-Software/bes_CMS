@@ -1,8 +1,12 @@
 import React from 'react';
-
-import styles from './album-edit-overlay.css';
 import { MediaSelectionPane } from './media-selection-pane';
 import { AlbumEditorCanvas } from './album-editor-canvas';
+import { MediaList } from './media-list';
+import { MediaSelectionContentListRow } from './media-selection-content-list-row';
+import { MediaContentListTile } from './media-content-list-tile';
+
+import styles from './album-edit-overlay.css';
+import { ContentCanvasHeadersMediaSelection } from './content-canvas-headers-media-selection';
 
 export class AlbumEditOverlay extends React.Component{
     /*
@@ -138,11 +142,24 @@ export class AlbumEditOverlay extends React.Component{
                                             onAlbumDidUpdate={this.state.onAlbumDidUpdate}
                                             didConsumeAlbumUpdate={this.handleDidConsumeAlbumUpdate}
                                             showContentAsRows={this.props.showContentAsRows}/>
-                        <MediaSelectionPane media={this.props.media} 
+                        {/*<MediaSelectionPane media={this.props.media} 
                                             tags={this.props.tags} 
                                             initialSelections={this.state.albumMedia} 
                                             onRowSelectionChanged={this.handleRowSelectionChanged}
-                                            showContentAsRows={this.props.showContentAsRows}/>
+                                            showContentAsRows={this.props.showContentAsRows}/>*/}
+                        <MediaList  media={this.props.media}
+                                    tags={this.props.tags}
+                                    title="All media"
+                                    showContentAsRows={this.props.showContentAsRows}                                    
+                                    allowRowSelection={true}
+                                    allowMultiSelect={true}
+                                    allowClickDeselect={true}
+                                    initialSelections={this.state.albumMedia}
+                                    onRowSelectionChanged={this.handleRowSelectionChanged}
+                                    contentRowComponent={MediaSelectionContentListRow}
+                                    contentTileComponent={MediaContentListTile}
+                                    columnHeaders={ContentCanvasHeadersMediaSelection}
+                                    selectionCommands={null}/>
                     </div>
                 </div>
             </div>

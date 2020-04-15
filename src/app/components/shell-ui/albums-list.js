@@ -4,6 +4,8 @@ import { AlbumsListToolbar } from './albums-list-toolbar';
 import { AlbumsCanvas } from './albums-canvas';
 
 import styles from './albums-list.css';
+import { ContentList } from './content-list';
+import { AlbumContentListRow } from './album-content-list-row';
 
 export class AlbumsList extends React.Component{
     constructor(props){
@@ -23,6 +25,7 @@ export class AlbumsList extends React.Component{
         this.handleAddAlbum = this.handleAddAlbum.bind(this);
         this.handleEditClick = this.handleEditClick.bind(this);
         this.handleRowDelete = this.handleRowDelete.bind(this);
+        this.handleAlbumSelection = this.handleAlbumSelection.bind(this);
     }
     componentDidUpdate(){
         //may need to rework this a bit in the future
@@ -106,6 +109,12 @@ export class AlbumsList extends React.Component{
         //hand this off up above for fulfilling
         this.props.onAlbumDelete(album);
     }
+    handleAlbumSelection(selections){
+        //this should only include a single tag because reasons
+        if(selections.length === 1){
+            this.props.onRowClick(selections[0]);
+        }
+    }
     render(){
         return(
             <div className={styles.container}>
@@ -113,13 +122,17 @@ export class AlbumsList extends React.Component{
                 {/*albums toolbar*/}
                 {/*headers for sorting*/}
                 {/*virtualized list of albums*/}
-                <AlbumsListToolbar onFilterChange={this.handleFilterChange} onEditClick={this.handleEditClick} onAddAlbum={this.handleAddAlbum}/>
-                <AlbumsCanvas contentSource={this.state.albums} 
+                {/*<AlbumsListToolbar onFilterChange={this.handleFilterChange} onEditClick={this.handleEditClick} onAddAlbum={this.handleAddAlbum}/>*/}
+                {/*<AlbumsCanvas contentSource={this.state.albums} 
                                 id={this.props.id} 
                                 update={this.state.update}  
                                 isEditing={this.state.isEditing} 
                                 onRowClick={(album)=>this.props.onRowClick(album)}
-                                onRowDelete={this.handleRowDelete}/>
+                                onRowDelete={this.handleRowDelete}/>*/}
+                <ContentList    content={this.state.albums}
+                                contentRowComponent={<AlbumContentListRow isEditing={this.state.isEditing} userID={this.props.id} onRowDelete={this.handleRowDelete}/>}
+                                onSelectionChanged={this.handleAlbumSelection}
+                                toolbarContent={<AlbumsListToolbar onFilterChange={this.handleFilterChange} onEditClick={this.handleEditClick} onAddAlbum={this.handleAddAlbum}/>}/>
             </div>
         );
     }

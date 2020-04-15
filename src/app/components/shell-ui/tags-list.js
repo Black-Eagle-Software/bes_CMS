@@ -3,6 +3,8 @@ import { TagsCanvas } from './tags-canvas';
 import { TagsListToolbar } from './tags-list-toolbar';
 
 import styles from './tags-list.css';
+import { ContentList } from './content-list';
+import { TagContentListRow } from './tag-content-list-row';
 
 export class TagsList extends React.Component{
     constructor(props){
@@ -19,6 +21,7 @@ export class TagsList extends React.Component{
         this.handleEditClick = this.handleEditClick.bind(this);
         this.handleRowDelete = this.handleRowDelete.bind(this);
         this.handleAddTag = this.handleAddTag.bind(this);
+        this.handleTagSelection = this.handleTagSelection.bind(this);
     }
     componentDidUpdate(){
         //may need to rework this a bit in the future
@@ -65,15 +68,23 @@ export class TagsList extends React.Component{
         //console.log(tag);
         this.props.onTagDelete(tag);
     }
+    handleTagSelection(selections){
+        //this should only include a single tag because reasons
+        if(selections.length === 1){
+            this.props.onRowClick(selections[0]);
+        }
+    }
     render(){
         return(
             <div className={styles.container}>
                 <div className={styles.header}>Tags ({this.state.tags.length})</div>
-                {/*albums toolbar*/}
-                {/*headers for sorting*/}
-                {/*virtualized list of albums*/}
-                <TagsListToolbar onFilterChange={this.handleFilterChange} onEditClick={this.handleEditClick} onAddTag={this.handleAddTag}/>
-                <TagsCanvas contentSource={this.state.tags} id={this.props.id} update={this.state.update} onRowClick={(tag)=>this.props.onRowClick(tag)} isEditing={this.state.isEditing} onRowDelete={this.handleRowDelete}/>
+                {/*<TagsListToolbar onFilterChange={this.handleFilterChange} onEditClick={this.handleEditClick} onAddTag={this.handleAddTag}/>*/}
+                {/*<TagsCanvas contentSource={this.state.tags} id={this.props.id} update={this.state.update} onRowClick={(tag)=>this.props.onRowClick(tag)} isEditing={this.state.isEditing} onRowDelete={this.handleRowDelete}/>*/}
+                <ContentList    content={this.state.tags} 
+                                contentRowComponent={<TagContentListRow isEditing={this.state.isEditing} userID={this.props.id} onRowDelete={this.handleRowDelete}/>} 
+                                rowHeight={24}
+                                onSelectionChanged={this.handleTagSelection}
+                                toolbarContent={<TagsListToolbar onFilterChange={this.handleFilterChange} onEditClick={this.handleEditClick} onAddTag={this.handleAddTag}/>}/>
             </div>
         );
     }
