@@ -13,3 +13,4 @@ package-lock.json
 .vs/3/v16/.suo
 public/css/styles.css
 public/css/styles.css.map
+.vs/*
